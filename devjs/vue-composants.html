@@ -6,6 +6,7 @@
     <title>Composants Vue.js — Props, Emits & Slots</title>
     <script src="../libs/tailwind.js"></script>
     <link rel="stylesheet" href="../libs/fonts.css">
+    <link rel="stylesheet" href="../libs/slides.css">
     <script>
         tailwind.config = {
             theme: {
@@ -24,52 +25,8 @@
         }
     </script>
     <style>
-        html, body { margin: 0; overflow: hidden; height: 100vh; }
-        .slide { display: none; min-height: 100vh; flex-direction: column; justify-content: center; overflow-y: auto; }
-        .slide.active { display: flex; }
-        .code-block { background: #1e1e1e; }
         .gradient-vue { background: linear-gradient(135deg, #42b883 0%, #35495e 100%); }
         .gradient-vuetify { background: linear-gradient(135deg, #1867C0 0%, #5CBBF6 100%); }
-
-        /* Animations */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeInLeft {
-            from { opacity: 0; transform: translateX(-30px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        @keyframes pulse-slow {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-        .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
-        .animate-fade-in-left { animation: fadeInLeft 0.6s ease-out forwards; }
-        .animate-pulse-slow { animation: pulse-slow 3s ease-in-out infinite; }
-
-        /* Delay classes */
-        .delay-100 { animation-delay: 0.1s; opacity: 0; }
-        .delay-200 { animation-delay: 0.2s; opacity: 0; }
-        .delay-300 { animation-delay: 0.3s; opacity: 0; }
-        .delay-400 { animation-delay: 0.4s; opacity: 0; }
-        .delay-500 { animation-delay: 0.5s; opacity: 0; }
-        .delay-600 { animation-delay: 0.6s; opacity: 0; }
-
-        /* Navigation dots */
-        .nav-dot { transition: all 0.3s ease; }
-        .nav-dot.active { transform: scale(1.3); }
-
-        /* Code highlighting */
-        .keyword { color: #c586c0; }
-        .string { color: #ce9178; }
-        .function { color: #dcdcaa; }
-        .comment { color: #6a9955; }
-        .tag { color: #569cd6; }
-        .attr { color: #9cdcfe; }
-        .value { color: #ce9178; }
-        .type { color: #4ec9b0; }
-        .variable { color: #9cdcfe; }
 
         /* Component diagram */
         .component-box {
@@ -91,20 +48,6 @@
         }
         .arrow-flow { animation: flowDown 2s ease-in-out infinite; }
         .arrow-flow-delay { animation: flowDown 2s ease-in-out infinite 1s; }
-
-        /* High contrast */
-        body.high-contrast { background: #000 !important; }
-        body.high-contrast .bg-slate-900,
-        body.high-contrast .bg-slate-800 { background: #000 !important; }
-        body.high-contrast .bg-slate-800\/50 { background: rgba(0,0,0,0.8) !important; }
-        body.high-contrast .text-slate-300,
-        body.high-contrast .text-slate-400,
-        body.high-contrast .text-slate-500 { color: #fff !important; }
-        body.high-contrast .text-vue { color: #5fffb0 !important; }
-        body.high-contrast .border-slate-700 { border-color: #888 !important; }
-        body.high-contrast .gradient-vue,
-        body.high-contrast .gradient-vuetify { background: #000 !important; }
-        #contrast-badge { position: fixed; top: 1rem; left: 1rem; z-index: 100; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); backdrop-filter: blur(4px); pointer-events: none; }
     </style>
 </head>
 <body class="font-sans bg-slate-900 text-white">
@@ -836,42 +779,6 @@
         </div>
     </section>
 
-    <script>
-        const slides = document.querySelectorAll('.slide');
-        const dotsContainer = document.getElementById('dots');
-        const badge = document.getElementById('contrast-badge');
-        let current = 0;
-
-        slides.forEach((_, i) => {
-            const btn = document.createElement('button');
-            btn.className = 'nav-dot w-3 h-3 rounded-full bg-white/30 hover:bg-vue transition-all cursor-pointer border-0 p-0';
-            btn.addEventListener('click', () => go(i));
-            dotsContainer.appendChild(btn);
-        });
-        const dots = dotsContainer.querySelectorAll('.nav-dot');
-
-        function update() {
-            slides.forEach((s, i) => s.classList.toggle('active', i === current));
-            dots.forEach((d, i) => {
-                d.classList.toggle('bg-vue', i === current);
-                d.classList.toggle('bg-white/30', i !== current);
-                d.classList.toggle('active', i === current);
-            });
-        }
-        function next() { if (current < slides.length - 1) { current++; update(); } }
-        function prev() { if (current > 0) { current--; update(); } }
-        function go(i) { current = i; update(); }
-
-        document.addEventListener('keydown', (e) => {
-            if (['ArrowDown', 'ArrowRight', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); next(); }
-            else if (['ArrowUp', 'ArrowLeft'].includes(e.key)) { e.preventDefault(); prev(); }
-            else if (e.key.toLowerCase() === 'c') {
-                document.body.classList.toggle('high-contrast');
-                badge.style.display = document.body.classList.contains('high-contrast') ? 'block' : 'none';
-            }
-        });
-
-        update();
-    </script>
+    <script src="../libs/slides.js"></script>
 </body>
 </html>
