@@ -1,8 +1,15 @@
 # Leçons apprises — SFA-PRESENTATION
 
-## 2026-03-12 — Création du dépôt
+## 2026-03-12 — Chemins relatifs cassés après déplacement
 
-- Les présentations étaient dispersées dans 5 projets différents → centralisation nécessaire
-- Lors du déplacement, les chemins relatifs vers `assets/` doivent être corrigés (`../assets/` depuis un sous-dossier)
-- Le dépôt `2026-sfa-wordpress-gestion-medias` a été archivé sur GitHub après migration
-- GitHub Pages en mode "legacy" suffit pour du HTML statique (pas besoin de workflow Actions)
+**Contexte** : Migration des présentations depuis 5 projets sources vers SFA-PRESENTATION
+**Erreur** : La présentation `cours-mots-de-passes` référençait `assets/logos/proton.svg` mais le fichier était maintenant dans `../assets/`
+**Correction** : `sed` sur tous les chemins `assets/` → `../assets/` dans le HTML
+**Règle** : Toute présentation dans un sous-dossier doit référencer les assets avec `../assets/`, pas `assets/`
+
+## 2026-03-12 — GitHub Pages mode legacy vs workflow
+
+**Contexte** : Activation de GitHub Pages pour le dépôt
+**Erreur** : Tentative initiale avec `build_type=workflow` (nécessite un fichier GitHub Actions)
+**Correction** : Basculé en mode `legacy` avec `source.branch=main`
+**Règle** : Pour du HTML statique sans build, utiliser le mode legacy. Le mode workflow est réservé aux sites nécessitant un build (Jekyll, Astro, etc.)
