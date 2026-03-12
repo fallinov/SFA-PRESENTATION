@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des médias — WordPress</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        wp: '#0073aa',
+                        wpDark: '#23282d',
+                        wpLight: '#00a0d2',
+                        wpOrange: '#d54e21',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        .slide {
+            min-height: 100vh;
+            height: 100vh;
+            max-height: 100vh;
+            scroll-snap-align: start;
+            overflow: hidden;
+        }
+        .code-block { background: #1e1e1e; }
+        .gradient-wp { background: linear-gradient(135deg, #0073aa 0%, #23282d 100%); }
+        .gradient-wp-light { background: linear-gradient(135deg, #00a0d2 0%, #0073aa 100%); }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
+        .animate-fade-in-left { animation: fadeInLeft 0.6s ease-out forwards; }
+        .animate-pulse-slow { animation: pulse-slow 3s ease-in-out infinite; }
+
+        /* Delay classes */
+        .delay-100 { animation-delay: 0.1s; opacity: 0; }
+        .delay-200 { animation-delay: 0.2s; opacity: 0; }
+        .delay-300 { animation-delay: 0.3s; opacity: 0; }
+        .delay-400 { animation-delay: 0.4s; opacity: 0; }
+        .delay-500 { animation-delay: 0.5s; opacity: 0; }
+
+        /* Navigation dots */
+        .nav-dot { transition: all 0.3s ease; }
+        .nav-dot.active { transform: scale(1.3); }
+
+        /* Code highlighting */
+        .keyword { color: #c586c0; }
+        .string { color: #ce9178; }
+        .function { color: #dcdcaa; }
+        .comment { color: #6a9955; }
+        .tag { color: #569cd6; }
+        .attr { color: #9cdcfe; }
+        .value { color: #ce9178; }
+
+        /* Mode contraste élevé */
+        .high-contrast body,
+        .high-contrast .bg-slate-900,
+        .high-contrast .bg-slate-800 {
+            background-color: #000000 !important;
+        }
+
+        .high-contrast .text-slate-300,
+        .high-contrast .text-slate-400,
+        .high-contrast .text-slate-500 {
+            color: #e2e8f0 !important;
+        }
+
+        .high-contrast .text-white\/70,
+        .high-contrast .text-white\/80 {
+            color: #ffffff !important;
+        }
+
+        .high-contrast .text-wp {
+            color: #00a0d2 !important;
+        }
+
+        .high-contrast .bg-wp {
+            background-color: #00a0d2 !important;
+        }
+
+        .high-contrast .border-slate-700,
+        .high-contrast .border-slate-800 {
+            border-color: rgba(255,255,255,0.3) !important;
+        }
+
+        .high-contrast .bg-slate-700\/30,
+        .high-contrast .bg-slate-800\/50,
+        .high-contrast .bg-slate-900\/50 {
+            background-color: rgba(255,255,255,0.1) !important;
+        }
+
+        /* Mode contraste: réduire paddings pour garder le contenu dans l'écran */
+        .high-contrast .slide {
+            padding-top: 1rem !important;
+            padding-bottom: 1rem !important;
+        }
+
+        .high-contrast .py-20 {
+            padding-top: 2rem !important;
+            padding-bottom: 2rem !important;
+        }
+
+        .high-contrast .mb-12 {
+            margin-bottom: 1.5rem !important;
+        }
+
+        .high-contrast .mb-8 {
+            margin-bottom: 1rem !important;
+        }
+
+        .high-contrast .mb-6 {
+            margin-bottom: 0.75rem !important;
+        }
+
+        .high-contrast .gap-12 {
+            gap: 1.5rem !important;
+        }
+
+        .high-contrast .gap-6 {
+            gap: 1rem !important;
+        }
+
+        .high-contrast .p-6 {
+            padding: 1rem !important;
+        }
+
+        .high-contrast .p-5 {
+            padding: 0.75rem !important;
+        }
+
+        .high-contrast .nav-dot {
+            width: 1rem !important;
+            height: 1rem !important;
+        }
+
+        .high-contrast .nav-dot:not(.active) {
+            background-color: rgba(255,255,255,0.5) !important;
+        }
+
+        /* Indicateur mode contraste */
+        .contrast-indicator {
+            position: fixed;
+            bottom: 1.5rem;
+            left: 1.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(0, 160, 210, 0.9);
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border-radius: 9999px;
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .high-contrast .contrast-indicator { display: flex; }
+    </style>
+</head>
+<body class="font-sans bg-slate-900 text-white overflow-x-hidden">
+
+    <!-- Navigation latérale -->
+    <nav class="fixed right-6 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col gap-3">
+        <a href="#slide-1" class="nav-dot w-4 h-4 rounded-full bg-white/40 hover:bg-wpLight transition-all" title="Accueil"></a>
+        <a href="#slide-2" class="nav-dot w-4 h-4 rounded-full bg-white/40 hover:bg-wpLight transition-all" title="Erreurs fréquentes"></a>
+        <a href="#slide-3" class="nav-dot w-4 h-4 rounded-full bg-white/40 hover:bg-wpLight transition-all" title="Formats d'images"></a>
+        <a href="#slide-4" class="nav-dot w-4 h-4 rounded-full bg-white/40 hover:bg-wpLight transition-all" title="Redimensionner"></a>
+        <a href="#slide-5" class="nav-dot w-4 h-4 rounded-full bg-white/40 hover:bg-wpLight transition-all" title="Compresser"></a>
+        <a href="#slide-6" class="nav-dot w-4 h-4 rounded-full bg-white/40 hover:bg-wpLight transition-all" title="Nommer ses images"></a>
+        <a href="#slide-7" class="nav-dot w-4 h-4 rounded-full bg-white/40 hover:bg-wpLight transition-all" title="Texte alternatif"></a>
+        <a href="#slide-8" class="nav-dot w-4 h-4 rounded-full bg-white/40 hover:bg-wpLight transition-all" title="WordPress"></a>
+        <a href="#slide-9" class="nav-dot w-4 h-4 rounded-full bg-white/40 hover:bg-wpLight transition-all" title="Outils"></a>
+        <a href="#slide-10" class="nav-dot w-4 h-4 rounded-full bg-white/40 hover:bg-wpLight transition-all" title="Récapitulatif"></a>
+    </nav>
+
+    <!-- Slide 1: Titre -->
+    <section id="slide-1" class="slide flex items-center justify-center gradient-wp relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-20 left-20 w-64 h-64 bg-white rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 right-20 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+        </div>
+        <div class="text-center px-6 relative z-10">
+            <div class="mb-8 animate-fade-in-up">
+                <!-- WordPress Logo -->
+                <svg class="w-32 h-32 mx-auto" viewBox="0 0 122.52 122.523" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#fff">
+                        <path d="m8.708 61.26c0 20.802 12.089 38.779 29.619 47.298l-25.069-68.686c-2.916 6.536-4.55 13.769-4.55 21.388z"/>
+                        <path d="m96.74 58.608c0-6.495-2.333-10.993-4.334-14.494-2.664-4.329-5.161-7.995-5.161-12.324 0-4.831 3.664-9.328 8.825-9.328.233 0 .454.029.681.042-9.35-8.566-21.807-13.796-35.489-13.796-18.36 0-34.513 9.42-43.91 23.688 1.233.037 2.395.063 3.382.063 5.497 0 14.006-.667 14.006-.667 2.833-.167 3.167 3.994.337 4.329 0 0-2.847.335-6.015.501l19.138 56.925 11.501-34.493-8.188-22.434c-2.83-.166-5.511-.501-5.511-.501-2.832-.166-2.5-4.496.332-4.329 0 0 8.679.667 13.843.667 5.496 0 14.006-.667 14.006-.667 2.835-.167 3.168 3.994.337 4.329 0 0-2.853.335-6.015.501l18.992 56.494 5.242-17.517c2.272-7.269 4.001-12.49 4.001-16.989z"/>
+                        <path d="m62.184 65.857-15.768 45.819c4.708 1.384 9.687 2.141 14.846 2.141 6.12 0 11.989-1.058 17.452-2.979-.14-.225-.269-.464-.374-.724z"/>
+                        <path d="m107.376 36.046c.226 1.674.354 3.471.354 5.404 0 5.333-.996 11.328-3.996 18.824l-16.053 46.413c15.624-9.111 26.133-26.038 26.133-45.426.001-9.137-2.333-17.729-6.438-25.215z"/>
+                        <path d="m61.262 0c-33.779 0-61.262 27.481-61.262 61.26 0 33.783 27.483 61.263 61.262 61.263 33.778 0 61.265-27.48 61.265-61.263-.001-33.779-27.487-61.26-61.265-61.26zm0 119.715c-32.23 0-58.453-26.223-58.453-58.455 0-32.23 26.222-58.451 58.453-58.451 32.229 0 58.45 26.221 58.45 58.451 0 32.232-26.221 58.455-58.45 58.455z"/>
+                    </g>
+                </svg>
+            </div>
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 animate-fade-in-up delay-100">Gestion des médias</h1>
+            <p class="text-xl md:text-2xl text-white/90 mb-8 animate-fade-in-up delay-200">Optimiser vos images pour le web</p>
+            <div class="flex flex-wrap gap-4 justify-center animate-fade-in-up delay-300">
+                <span class="px-4 py-2 bg-white/20 rounded-full text-sm backdrop-blur-sm">Formats</span>
+                <span class="px-4 py-2 bg-white/20 rounded-full text-sm backdrop-blur-sm">Compression</span>
+                <span class="px-4 py-2 bg-white/20 rounded-full text-sm backdrop-blur-sm">SEO</span>
+                <span class="px-4 py-2 bg-white/20 rounded-full text-sm backdrop-blur-sm">Accessibilité</span>
+            </div>
+            <div class="mt-16 animate-pulse-slow">
+                <svg class="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                </svg>
+                <p class="text-sm text-white/80 mt-2">Défiler pour commencer</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 2: Pourquoi c'est important -->
+    <section id="slide-2" class="slide flex items-center bg-slate-900 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <span class="text-wp font-mono text-base mb-4 block">01 / Introduction</span>
+                    <h2 class="text-4xl md:text-5xl font-bold mb-6">Pourquoi <span class="text-wp">optimiser</span> ses images ?</h2>
+                    <blockquote class="text-xl text-slate-300 mb-6 leading-relaxed border-l-4 border-wp pl-6 italic">
+                        "Un bon croquis vaut mieux qu'un long discours"
+                    </blockquote>
+                    <p class="text-lg text-slate-300 leading-relaxed">
+                        Une mauvaise gestion des images impacte le <strong class="text-white">référencement</strong> de votre site et la <strong class="text-wpOrange">patience</strong> de vos visiteurs.
+                    </p>
+                    <p class="text-lg text-slate-300 mt-4 leading-relaxed">
+                        <strong class="text-wpOrange">3 secondes</strong> — c'est déjà une éternité pour un internaute !
+                    </p>
+                </div>
+                <div class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700">
+                    <h3 class="text-lg font-semibold mb-4 text-red-400 flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                        Erreurs fréquentes
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="flex items-start gap-3 p-3 bg-red-500/10 rounded-lg">
+                            <span class="text-red-400 text-xl">✗</span>
+                            <div>
+                                <p class="font-medium">Mauvais format d'image</p>
+                                <p class="text-sm text-slate-300">JPG pour un logo, PNG pour une photo...</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-3 bg-red-500/10 rounded-lg">
+                            <span class="text-red-400 text-xl">✗</span>
+                            <div>
+                                <p class="font-medium">Images trop lourdes</p>
+                                <p class="text-sm text-slate-300">Pas de compression = pages lentes</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-3 bg-red-500/10 rounded-lg">
+                            <span class="text-red-400 text-xl">✗</span>
+                            <div>
+                                <p class="font-medium">Images trop grandes</p>
+                                <p class="text-sm text-slate-300">Photos de 5000px non redimensionnées</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-3 bg-red-500/10 rounded-lg">
+                            <span class="text-red-400 text-xl">✗</span>
+                            <div>
+                                <p class="font-medium">Noms incompréhensibles</p>
+                                <p class="text-sm text-slate-300">DC00345.jpg, IMG_2847.png...</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-3 bg-red-500/10 rounded-lg">
+                            <span class="text-red-400 text-xl">✗</span>
+                            <div>
+                                <p class="font-medium">Pas de texte alternatif</p>
+                                <p class="text-sm text-slate-300">Mauvais pour l'accessibilité et le SEO</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 3: Formats d'images -->
+    <section id="slide-3" class="slide flex items-center bg-slate-800 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-wp font-mono text-base mb-4 block">02 / Formats</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-12">Utiliser le <span class="text-wp">bon format</span></h2>
+
+            <div class="grid md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-slate-900/50 p-5 rounded-2xl border border-slate-700 hover:border-wp/50 transition-colors">
+                    <div class="w-12 h-12 bg-yellow-500/20 rounded-xl flex items-center justify-center mb-3">
+                        <span class="text-yellow-400 font-bold text-lg">JPG</span>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">JPEG</h3>
+                    <p class="text-slate-400 text-sm mb-2">Idéal pour les <strong class="text-white">photos</strong></p>
+                    <ul class="text-sm text-slate-300 space-y-1">
+                        <li>✓ Compression efficace</li>
+                        <li>✓ 100% navigateurs</li>
+                        <li>✗ Pas de transparence</li>
+                    </ul>
+                </div>
+
+                <div class="bg-slate-900/50 p-5 rounded-2xl border border-slate-700 hover:border-wp/50 transition-colors">
+                    <div class="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center mb-3">
+                        <span class="text-blue-400 font-bold text-lg">PNG</span>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">PNG</h3>
+                    <p class="text-slate-400 text-sm mb-2">Idéal pour les <strong class="text-white">logos</strong></p>
+                    <ul class="text-sm text-slate-300 space-y-1">
+                        <li>✓ Transparence</li>
+                        <li>✓ Sans perte (lossless)</li>
+                        <li>✗ Fichiers lourds</li>
+                    </ul>
+                </div>
+
+                <div class="bg-slate-900/50 p-5 rounded-2xl border border-slate-700 hover:border-wp/50 transition-colors">
+                    <div class="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center mb-3">
+                        <span class="text-orange-400 font-bold text-lg">SVG</span>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">SVG</h3>
+                    <p class="text-slate-400 text-sm mb-2">Idéal pour les <strong class="text-white">icônes</strong></p>
+                    <ul class="text-sm text-slate-300 space-y-1">
+                        <li>✓ Vectoriel (zoom ∞)</li>
+                        <li>✓ Très léger</li>
+                        <li>✗ Pas pour photos</li>
+                    </ul>
+                </div>
+
+                <div class="bg-slate-900/50 p-5 rounded-2xl border border-slate-700 hover:border-wp/50 transition-colors">
+                    <div class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center mb-3">
+                        <span class="text-purple-400 font-bold text-lg">GIF</span>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">GIF</h3>
+                    <p class="text-slate-400 text-sm mb-2">Idéal pour les <strong class="text-white">animations</strong></p>
+                    <ul class="text-sm text-slate-300 space-y-1">
+                        <li>✓ Animations simples</li>
+                        <li>✗ 256 couleurs max</li>
+                        <li>✗ Fichiers lourds</li>
+                    </ul>
+                </div>
+
+                <div class="bg-wp/20 p-5 rounded-2xl border border-wp/50 transition-colors">
+                    <div class="w-12 h-12 bg-wp/30 rounded-xl flex items-center justify-center mb-3">
+                        <span class="text-wp font-bold text-sm">WebP</span>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2 text-wp">WebP</h3>
+                    <p class="text-slate-400 text-sm mb-2"><strong class="text-white">Moderne</strong> (Google)</p>
+                    <ul class="text-sm text-slate-300 space-y-1">
+                        <li>✓ 25-35% plus léger que JPG</li>
+                        <li>✓ Transparence + animation</li>
+                        <li>✓ <strong class="text-green-400">97% navigateurs</strong></li>
+                    </ul>
+                </div>
+
+                <div class="bg-green-500/20 p-5 rounded-2xl border border-green-500/50 transition-colors">
+                    <div class="w-12 h-12 bg-green-500/30 rounded-xl flex items-center justify-center mb-3">
+                        <span class="text-green-400 font-bold text-sm">AVIF</span>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2 text-green-400">AVIF</h3>
+                    <p class="text-slate-400 text-sm mb-2"><strong class="text-white">Nouvelle génération</strong></p>
+                    <ul class="text-sm text-slate-300 space-y-1">
+                        <li>✓ <strong class="text-green-400">50% plus léger</strong> que JPG</li>
+                        <li>✓ Meilleure qualité</li>
+                        <li>✓ ~90% navigateurs</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="bg-wp/10 border border-wp/30 p-4 rounded-2xl">
+                    <p class="text-wp font-medium">💡 Recommandation 2026</p>
+                    <p class="text-slate-300 text-sm mt-2"><strong class="text-white">WebP</strong> reste le choix le plus sûr (97% de support). <strong class="text-green-400">AVIF</strong> offre une meilleure compression mais avec un support légèrement inférieur (~90%).</p>
+                </div>
+                <div class="bg-slate-900/50 border border-slate-700 p-4 rounded-2xl">
+                    <p class="text-slate-300 font-medium">📊 Comparaison taille (photo 1MB en JPG)</p>
+                    <div class="flex gap-4 mt-2 text-sm">
+                        <span class="text-yellow-400">JPG: 1 MB</span>
+                        <span class="text-wp">WebP: ~700 KB</span>
+                        <span class="text-green-400">AVIF: ~500 KB</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 4: Redimensionner -->
+    <section id="slide-4" class="slide flex items-center bg-slate-900 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-wp font-mono text-base mb-4 block">03 / Dimensions</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8"><span class="text-wp">Redimensionner</span> ses images</h2>
+
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <p class="text-lg text-slate-300 mb-6 leading-relaxed">
+                        Si vos images s'affichent au maximum sur <strong class="text-white">750px</strong> de large, pourquoi envoyer des images de <strong class="text-wpOrange">5000px</strong> ?
+                    </p>
+                    <p class="text-lg text-slate-300 mb-6 leading-relaxed">
+                        Il est rare de voir des images de plus de <strong class="text-white">1800px</strong> de large sur un site web.
+                    </p>
+
+                    <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700 mb-6">
+                        <h3 class="text-lg font-bold mb-3 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-wp" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Trouver la taille max utile
+                        </h3>
+                        <ol class="text-slate-400 space-y-2 text-sm">
+                            <li><span class="text-wp font-bold">1.</span> Ouvrir la page sur un grand écran</li>
+                            <li><span class="text-wp font-bold">2.</span> Inspecter l'image (F12 → Elements)</li>
+                            <li><span class="text-wp font-bold">3.</span> Vérifier sa taille réelle d'affichage</li>
+                            <li><span class="text-wp font-bold">4.</span> Redimensionner à cette taille (ou légèrement plus pour le Retina)</li>
+                        </ol>
+                    </div>
+
+                    <div class="bg-wp/10 border border-wp/30 p-4 rounded-xl">
+                        <p class="text-wp font-medium">✨ Règle d'or</p>
+                        <p class="text-slate-300 text-sm mt-1">Toujours redimensionner <strong class="text-white">avant</strong> d'envoyer sur le serveur.</p>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
+                        <h3 class="text-lg font-bold mb-4">Comparaison de poids</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span class="text-slate-300">Photo originale (5000px)</span>
+                                    <span class="text-red-400 font-bold">8.5 Mo</span>
+                                </div>
+                                <div class="w-full bg-slate-700 rounded-full h-4">
+                                    <div class="bg-red-500 h-4 rounded-full" style="width: 100%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span class="text-slate-300">Redimensionnée (1800px)</span>
+                                    <span class="text-yellow-400 font-bold">1.2 Mo</span>
+                                </div>
+                                <div class="w-full bg-slate-700 rounded-full h-4">
+                                    <div class="bg-yellow-500 h-4 rounded-full" style="width: 14%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span class="text-slate-300">Optimisée (1800px + compression)</span>
+                                    <span class="text-green-400 font-bold">180 Ko</span>
+                                </div>
+                                <div class="w-full bg-slate-700 rounded-full h-4">
+                                    <div class="bg-green-500 h-4 rounded-full" style="width: 2%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-slate-400 text-sm mt-4">
+                            <strong class="text-white">Gain : 98%</strong> de réduction de taille !
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-red-500/10 p-4 rounded-xl text-center">
+                            <span class="text-3xl">🐌</span>
+                            <p class="text-red-400 font-bold mt-2">8.5 Mo</p>
+                            <p class="text-sm text-slate-300">~17 sec en 4G</p>
+                        </div>
+                        <div class="bg-green-500/10 p-4 rounded-xl text-center">
+                            <span class="text-3xl">⚡</span>
+                            <p class="text-green-400 font-bold mt-2">180 Ko</p>
+                            <p class="text-sm text-slate-300">~0.3 sec en 4G</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 5: Compresser -->
+    <section id="slide-5" class="slide flex items-center gradient-wp-light py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="font-mono text-sm mb-4 block text-white/80">04 / Compression</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">Compresser ses images</h2>
+
+            <div class="grid md:grid-cols-2 gap-12 items-start">
+                <div>
+                    <p class="text-xl text-white/90 mb-8 leading-relaxed">
+                        Trouver le bon compromis entre <strong>taille</strong>, <strong>poids</strong> et <strong>qualité</strong>.
+                    </p>
+
+                    <div class="space-y-4">
+                        <div class="bg-white/10 backdrop-blur-sm p-5 rounded-xl">
+                            <h3 class="font-bold mb-2 flex items-center gap-2">
+                                <span class="text-2xl">📏</span>
+                                Résolution (DPI)
+                            </h3>
+                            <p class="text-white/80 text-sm mb-2">Pixels par pouce — D'origine à <strong>300 DPI</strong></p>
+                            <p class="text-white/60 text-sm">Pour le web, <strong class="text-white">72 ou 96 DPI</strong> suffisent largement.</p>
+                        </div>
+
+                        <div class="bg-white/10 backdrop-blur-sm p-5 rounded-xl">
+                            <h3 class="font-bold mb-2 flex items-center gap-2">
+                                <span class="text-2xl">🎚️</span>
+                                Qualité de compression
+                            </h3>
+                            <p class="text-white/80 text-sm mb-2">100% = qualité maximum</p>
+                            <p class="text-white/60 text-sm">Généralement <strong class="text-white">60-80%</strong> offre un bon compromis.</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 bg-white/20 backdrop-blur-sm p-4 rounded-xl">
+                        <p class="text-white font-medium">⚠️ Attention</p>
+                        <p class="text-white/80 text-sm mt-1">La compression est <strong class="text-white">irréversible</strong>. Gardez toujours vos originaux !</p>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
+                        <h3 class="text-lg font-bold mb-4">Niveaux de qualité</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-3 bg-red-500/20 rounded-lg">
+                                <span>100%</span>
+                                <span class="text-sm">Maximum — souvent inutile</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-yellow-500/20 rounded-lg">
+                                <span>80%</span>
+                                <span class="text-sm">Haute qualité — bon compromis</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-green-500/20 rounded-lg">
+                                <span>60%</span>
+                                <span class="text-sm">Bonne qualité — fichiers légers</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-slate-500/20 rounded-lg">
+                                <span>&lt; 50%</span>
+                                <span class="text-sm">Dégradation visible — à éviter</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
+                        <h3 class="text-lg font-bold mb-4">Processus recommandé</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center font-bold">1</span>
+                                <span>Redimensionner à la taille utile</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center font-bold">2</span>
+                                <span>Passer la résolution à 72 DPI</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center font-bold">3</span>
+                                <span>Compresser à 60-80%</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center font-bold">4</span>
+                                <span>Convertir en WebP si possible</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 6: Nommer ses images -->
+    <section id="slide-6" class="slide flex items-center bg-slate-900 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-wp font-mono text-base mb-4 block">05 / Nommage</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">Utiliser des noms <span class="text-wp">descriptifs</span></h2>
+
+            <div class="grid md:grid-cols-2 gap-12 items-start">
+                <div>
+                    <p class="text-lg text-slate-300 mb-6 leading-relaxed">
+                        Les robots de recherche lisent les noms de fichiers pour comprendre le contenu des images.
+                    </p>
+                    <p class="text-lg text-slate-300 mb-8 leading-relaxed">
+                        Un nom descriptif avec des <strong class="text-wp">mots-clés séparés par des tirets</strong> améliore votre référencement.
+                    </p>
+
+                    <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700">
+                        <h3 class="text-lg font-bold mb-4 text-green-400">✓ Bonnes pratiques</h3>
+                        <ul class="text-slate-300 space-y-2">
+                            <li>• Utiliser des <strong class="text-white">mots-clés pertinents</strong></li>
+                            <li>• Séparer par des <strong class="text-white">tirets (-)</strong> pas des underscores</li>
+                            <li>• Tout en <strong class="text-white">minuscules</strong></li>
+                            <li>• Éviter les caractères spéciaux et accents</li>
+                            <li>• Garder des noms concis mais explicites</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-red-500/10 p-6 rounded-2xl border border-red-500/30">
+                        <h3 class="text-lg font-bold mb-4 text-red-400 flex items-center gap-2">
+                            <span>✗</span> Mauvais noms
+                        </h3>
+                        <div class="space-y-2 font-mono text-sm">
+                            <div class="bg-slate-900/50 p-3 rounded-lg text-red-300">DSC_004372.jpg</div>
+                            <div class="bg-slate-900/50 p-3 rounded-lg text-red-300">Photo.jpg</div>
+                            <div class="bg-slate-900/50 p-3 rounded-lg text-red-300">img_23.png</div>
+                            <div class="bg-slate-900/50 p-3 rounded-lg text-red-300">aterixcouverture.jpg</div>
+                            <div class="bg-slate-900/50 p-3 rounded-lg text-red-300">logo_final_v2_DEFINITIF.gif</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-green-500/10 p-6 rounded-2xl border border-green-500/30">
+                        <h3 class="text-lg font-bold mb-4 text-green-400 flex items-center gap-2">
+                            <span>✓</span> Bons noms
+                        </h3>
+                        <div class="space-y-2 font-mono text-sm">
+                            <div class="bg-slate-900/50 p-3 rounded-lg text-green-300">pneu-hiver-michelin-alpin-6.jpg</div>
+                            <div class="bg-slate-900/50 p-3 rounded-lg text-green-300">pierre-kiroule.jpg</div>
+                            <div class="bg-slate-900/50 p-3 rounded-lg text-green-300">polenta-tomates-sechees.png</div>
+                            <div class="bg-slate-900/50 p-3 rounded-lg text-green-300">asterix-bretons-couverture.jpg</div>
+                            <div class="bg-slate-900/50 p-3 rounded-lg text-green-300">ecole-metiers-porrentruy-logo.svg</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 7: Texte alternatif -->
+    <section id="slide-7" class="slide flex items-center bg-slate-800 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-wp font-mono text-base mb-4 block">06 / Accessibilité</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">Le <span class="text-wp">texte alternatif</span></h2>
+
+            <div class="grid md:grid-cols-2 gap-12 items-start">
+                <div>
+                    <p class="text-lg text-slate-300 mb-6 leading-relaxed">
+                        L'attribut <code class="bg-slate-700 px-2 py-1 rounded text-wp">alt</code> est essentiel pour l'<strong class="text-white">accessibilité</strong> et le <strong class="text-white">référencement</strong>.
+                    </p>
+
+                    <div class="space-y-4 mb-8">
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-2xl">♿</span>
+                                <h3 class="font-bold">Accessibilité</h3>
+                            </div>
+                            <p class="text-slate-400 text-sm">Les lecteurs d'écran utilisent le texte alt pour décrire les images aux personnes malvoyantes.</p>
+                        </div>
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-2xl">🔍</span>
+                                <h3 class="font-bold">SEO</h3>
+                            </div>
+                            <p class="text-slate-400 text-sm">Google utilise le texte alt pour comprendre et indexer le contenu des images.</p>
+                        </div>
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-2xl">🖼️</span>
+                                <h3 class="font-bold">Fallback</h3>
+                            </div>
+                            <p class="text-slate-400 text-sm">S'affiche si l'image ne charge pas correctement.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                        <p class="text-sm text-slate-300 mb-3 font-mono">Syntaxe HTML</p>
+                        <div class="code-block rounded-xl p-4 font-mono text-sm overflow-x-auto">
+                            <code>
+                                <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="value">"etang-gruere.jpg"</span><br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="attr">alt</span>=<span class="value">"Vue de l'étang de la Gruère depuis la berge"</span> <span class="tag">/&gt;</span>
+                            </code>
+                        </div>
+                    </div>
+
+                    <div class="bg-wp/10 border border-wp/30 p-4 rounded-xl">
+                        <p class="text-wp font-medium">📝 Conseils pour le texte alt</p>
+                        <ul class="text-slate-300 text-sm mt-2 space-y-1">
+                            <li>• Décrire le contenu ou la fonction de l'image</li>
+                            <li>• Utiliser des mots-clés pertinents</li>
+                            <li>• Rester concis (125 caractères max)</li>
+                            <li>• Ne pas commencer par "Image de..."</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                        <p class="text-sm text-slate-300 mb-3 font-mono">Bonus : figure + figcaption</p>
+                        <div class="code-block rounded-xl p-4 font-mono text-sm overflow-x-auto">
+                            <code>
+                                <span class="tag">&lt;figure&gt;</span><br>
+                                &nbsp;&nbsp;<span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="value">"chat.jpg"</span><br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="attr">alt</span>=<span class="value">"Chat roux dormant"</span> <span class="tag">/&gt;</span><br>
+                                &nbsp;&nbsp;<span class="tag">&lt;figcaption&gt;</span><br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;Mon chat Pixel fait sa sieste<br>
+                                &nbsp;&nbsp;<span class="tag">&lt;/figcaption&gt;</span><br>
+                                <span class="tag">&lt;/figure&gt;</span>
+                            </code>
+                        </div>
+                        <p class="text-slate-400 text-sm mt-3">Les légendes permettent d'ajouter du contexte visible pour tous.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 8: WordPress spécifique -->
+    <section id="slide-8" class="slide flex items-center bg-slate-900 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-wp font-mono text-base mb-4 block">07 / WordPress</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">Médias dans <span class="text-wp">WordPress</span></h2>
+
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <p class="text-lg text-slate-300 mb-6 leading-relaxed">
+                        WordPress génère automatiquement <strong class="text-white">plusieurs tailles</strong> pour chaque image téléversée.
+                    </p>
+
+                    <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700 mb-6">
+                        <h3 class="text-lg font-bold mb-4">Champs importants</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 bg-wp/20 rounded flex items-center justify-center flex-shrink-0">
+                                    <span class="text-wp font-bold text-sm">T</span>
+                                </div>
+                                <div>
+                                    <p class="font-medium">Titre</p>
+                                    <p class="text-sm text-slate-300">Pour la recherche interne WordPress. Utilisez des mots-clés !</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 bg-wp/20 rounded flex items-center justify-center flex-shrink-0">
+                                    <span class="text-wp font-bold text-sm">A</span>
+                                </div>
+                                <div>
+                                    <p class="font-medium">Texte alternatif</p>
+                                    <p class="text-sm text-slate-300">Le plus important ! Décrit l'image pour l'accessibilité et le SEO.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 bg-slate-600/50 rounded flex items-center justify-center flex-shrink-0">
+                                    <span class="text-slate-400 font-bold text-sm">L</span>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-slate-400">Légende</p>
+                                    <p class="text-sm text-slate-500">Optionnel — s'affiche sous l'image si configuré.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 bg-slate-600/50 rounded flex items-center justify-center flex-shrink-0">
+                                    <span class="text-slate-400 font-bold text-sm">D</span>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-slate-400">Description</p>
+                                    <p class="text-sm text-slate-500">Optionnel — pour les pages d'attachement.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
+                        <h3 class="text-lg font-bold mb-4">Tailles générées par WP</h3>
+                        <div class="space-y-3 font-mono text-sm">
+                            <div class="flex justify-between p-3 bg-slate-700/30 rounded-lg">
+                                <span>Miniature</span>
+                                <span class="text-slate-400">150 × 150 px</span>
+                            </div>
+                            <div class="flex justify-between p-3 bg-slate-700/30 rounded-lg">
+                                <span>Moyenne</span>
+                                <span class="text-slate-400">300 × 300 px</span>
+                            </div>
+                            <div class="flex justify-between p-3 bg-slate-700/30 rounded-lg">
+                                <span>Grande</span>
+                                <span class="text-slate-400">1024 × 1024 px</span>
+                            </div>
+                            <div class="flex justify-between p-3 bg-slate-700/30 rounded-lg">
+                                <span>Originale</span>
+                                <span class="text-slate-400">Taille d'upload</span>
+                            </div>
+                        </div>
+                        <p class="text-slate-400 text-sm mt-4">
+                            Configurable dans <strong class="text-white">Réglages → Médias</strong>
+                        </p>
+                    </div>
+
+                    <div class="bg-wpOrange/10 border border-wpOrange/30 p-4 rounded-xl">
+                        <p class="text-wpOrange font-medium">⚠️ Important</p>
+                        <p class="text-slate-300 text-sm mt-2">
+                            WordPress utilise le <strong class="text-white">titre</strong> comme texte alternatif par défaut si le champ alt est vide. Ce n'est <strong class="text-wpOrange">pas</strong> une bonne pratique — remplissez toujours le texte alternatif !
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 9: Outils -->
+    <section id="slide-9" class="slide flex items-center bg-slate-800 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-wp font-mono text-base mb-4 block">08 / Outils</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-12">Outils <span class="text-wp">recommandés</span></h2>
+
+            <div class="grid md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                    <div class="text-4xl mb-4">🗜️</div>
+                    <h3 class="text-xl font-bold mb-3">Compression en ligne</h3>
+                    <div class="space-y-2 text-sm">
+                        <a href="https://compressjpeg.com/fr/" target="_blank" class="flex items-center gap-2 text-wp hover:underline">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                            compressjpeg.com
+                        </a>
+                        <a href="https://tinypng.com/" target="_blank" class="flex items-center gap-2 text-wp hover:underline">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                            tinypng.com
+                        </a>
+                        <a href="https://squoosh.app/" target="_blank" class="flex items-center gap-2 text-wp hover:underline">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                            squoosh.app (Google)
+                        </a>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                    <div class="text-4xl mb-4">✂️</div>
+                    <h3 class="text-xl font-bold mb-3">Recadrer / Redimensionner</h3>
+                    <div class="space-y-2 text-sm">
+                        <a href="https://www.iloveimg.com/fr/recadrer-image" target="_blank" class="flex items-center gap-2 text-wp hover:underline">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                            iloveimg.com
+                        </a>
+                        <a href="https://www.photopea.com/" target="_blank" class="flex items-center gap-2 text-wp hover:underline">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                            photopea.com (Photoshop gratuit)
+                        </a>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                    <div class="text-4xl mb-4">🔄</div>
+                    <h3 class="text-xl font-bold mb-3">Conversion WebP / AVIF</h3>
+                    <div class="space-y-2 text-sm">
+                        <a href="https://squoosh.app/" target="_blank" class="flex items-center gap-2 text-wp hover:underline">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                            squoosh.app (WebP + AVIF)
+                        </a>
+                        <a href="https://avif.io/" target="_blank" class="flex items-center gap-2 text-wp hover:underline">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                            avif.io (spécialisé AVIF)
+                        </a>
+                        <a href="https://cloudconvert.com/" target="_blank" class="flex items-center gap-2 text-wp hover:underline">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                            cloudconvert.com
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                    <div class="text-4xl mb-4">💻</div>
+                    <h3 class="text-xl font-bold mb-3">Applications de bureau</h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-center gap-2 text-slate-300">
+                            <span class="text-wp">•</span>
+                            <span><strong>Photoshop</strong> — Export for Web (Ctrl+Shift+Alt+S)</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-slate-300">
+                            <span class="text-wp">•</span>
+                            <span><strong>XnView</strong> — Gratuit, traitement par lot</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-slate-300">
+                            <span class="text-wp">•</span>
+                            <span><strong>GIMP</strong> — Alternative gratuite à Photoshop</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-wp/10 p-6 rounded-2xl border border-wp/30">
+                    <div class="text-4xl mb-4">🔌</div>
+                    <h3 class="text-xl font-bold mb-3 text-wp">Plugins WordPress (Top 5)</h3>
+                    <div class="space-y-2 text-sm">
+                        <a href="https://wordpress.org/plugins/imagify/" target="_blank" class="flex items-center gap-2 text-wp hover:underline">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                            Imagify — Simple et efficace
+                        </a>
+                        <a href="https://wordpress.org/plugins/ewww-image-optimizer/" target="_blank" class="flex items-center gap-2 text-wp hover:underline">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                            EWWW — Conversion WebP/AVIF
+                        </a>
+                        <a href="https://wordpress.org/plugins/shortpixel-image-optimiser/" target="_blank" class="flex items-center gap-2 text-wp hover:underline">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                            ShortPixel — Bon rapport qualité/prix
+                        </a>
+                        <a href="https://wordpress.org/plugins/wp-smushit/" target="_blank" class="flex items-center gap-2 text-wp hover:underline">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                            Smush — Populaire, version gratuite généreuse
+                        </a>
+                        <a href="https://wordpress.org/plugins/optimole-wp/" target="_blank" class="flex items-center gap-2 text-wp hover:underline">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                            Optimole — CDN + lazy loading inclus
+                        </a>
+                    </div>
+                    <p class="text-slate-400 text-sm mt-3">Tous supportent WebP. EWWW et ShortPixel supportent aussi AVIF.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 10: Récapitulatif -->
+    <section id="slide-10" class="slide flex items-center gradient-wp py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full text-center">
+            <span class="font-mono text-sm mb-4 block text-white/80">09 / Résumé</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-12">Checklist avant upload</h2>
+
+            <div class="grid md:grid-cols-5 gap-4 mb-12">
+                <div class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
+                    <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl font-bold">1</span>
+                    </div>
+                    <h3 class="font-bold mb-2">Format</h3>
+                    <p class="text-white/80 text-sm">WebP/AVIF pour photos, PNG/SVG pour logos</p>
+                </div>
+
+                <div class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
+                    <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl font-bold">2</span>
+                    </div>
+                    <h3 class="font-bold mb-2">Dimensions</h3>
+                    <p class="text-white/80 text-sm">Redimensionner à la taille max d'affichage</p>
+                </div>
+
+                <div class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
+                    <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl font-bold">3</span>
+                    </div>
+                    <h3 class="font-bold mb-2">Compression</h3>
+                    <p class="text-white/80 text-sm">72 DPI, qualité 60-80%</p>
+                </div>
+
+                <div class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
+                    <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl font-bold">4</span>
+                    </div>
+                    <h3 class="font-bold mb-2">Nom</h3>
+                    <p class="text-white/80 text-sm">mots-cles-pertinents.jpg</p>
+                </div>
+
+                <div class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
+                    <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl font-bold">5</span>
+                    </div>
+                    <h3 class="font-bold mb-2">Alt</h3>
+                    <p class="text-white/80 text-sm">Description courte et pertinente</p>
+                </div>
+            </div>
+
+            <div class="bg-white/20 backdrop-blur-sm p-8 rounded-2xl max-w-2xl mx-auto mb-8">
+                <h3 class="text-2xl font-bold mb-4">Objectif : moins de 200 Ko par image</h3>
+                <p class="text-white/80">Une image optimisée charge en moins d'une seconde, même sur mobile.</p>
+            </div>
+
+            <div class="flex justify-center gap-4">
+                <a href="https://developers.google.com/speed/pagespeed/insights/" target="_blank" class="px-8 py-4 bg-white text-wpDark font-bold rounded-xl hover:bg-white/90 transition-colors">
+                    Tester avec PageSpeed
+                </a>
+                <a href="https://gtmetrix.com/" target="_blank" class="px-8 py-4 bg-white/20 font-bold rounded-xl hover:bg-white/30 transition-colors">
+                    Tester avec GTmetrix
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800 py-8">
+        <div class="max-w-6xl mx-auto px-6 text-center">
+            <p class="text-slate-400">
+                Cours C741 — WordPress — ESIG
+            </p>
+            <p class="text-slate-500 text-sm mt-2">
+                <kbd class="px-2 py-1 bg-slate-700 rounded text-slate-300 font-mono text-xs">C</kbd> Mode contraste élevé
+            </p>
+        </div>
+    </footer>
+
+    <!-- Indicateur mode contraste -->
+    <div class="contrast-indicator">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+        </svg>
+        Contraste élevé (C)
+    </div>
+
+    <script>
+        // Navigation state
+        const sections = document.querySelectorAll('.slide');
+        const navDots = document.querySelectorAll('.nav-dot');
+        let currentSlide = 0;
+
+        // Update navigation dots
+        function updateNavDots(index) {
+            navDots.forEach((dot, i) => {
+                dot.classList.remove('active', 'bg-wp', 'bg-wpLight');
+                dot.classList.add('bg-white/40');
+                if (i === index) {
+                    dot.classList.add('active', 'bg-wpLight');
+                    dot.classList.remove('bg-white/40');
+                }
+            });
+        }
+
+        // Go to specific slide
+        function goToSlide(index) {
+            if (index >= 0 && index < sections.length) {
+                currentSlide = index;
+                sections[index].scrollIntoView({ behavior: 'smooth' });
+                updateNavDots(index);
+            }
+        }
+
+        // Next slide
+        function nextSlide() {
+            if (currentSlide < sections.length - 1) {
+                goToSlide(currentSlide + 1);
+            }
+        }
+
+        // Previous slide
+        function prevSlide() {
+            if (currentSlide > 0) {
+                goToSlide(currentSlide - 1);
+            }
+        }
+
+        // Intersection Observer to track current slide
+        const observerOptions = {
+            root: null,
+            rootMargin: '-40% 0px -40% 0px',
+            threshold: 0
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const index = Array.from(sections).indexOf(entry.target);
+                    if (index !== -1) {
+                        currentSlide = index;
+                        updateNavDots(index);
+                    }
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => observer.observe(section));
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            // Next: ArrowDown, ArrowRight, Space, Enter
+            if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                nextSlide();
+            }
+            // Previous: ArrowUp, ArrowLeft
+            else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+            }
+            // Home: go to first slide
+            else if (e.key === 'Home') {
+                e.preventDefault();
+                goToSlide(0);
+            }
+            // End: go to last slide
+            else if (e.key === 'End') {
+                e.preventDefault();
+                goToSlide(sections.length - 1);
+            }
+        });
+
+        // Click on nav dots
+        navDots.forEach((dot, index) => {
+            dot.addEventListener('click', (e) => {
+                e.preventDefault();
+                goToSlide(index);
+            });
+        });
+
+        // ============================================
+        // Mode contraste élevé
+        // ============================================
+
+        // Initialiser le mode contraste depuis localStorage
+        function initHighContrastMode() {
+            if (localStorage.getItem('highContrast') === 'true') {
+                document.documentElement.classList.add('high-contrast');
+            }
+        }
+
+        // Basculer le mode contraste
+        function toggleHighContrast() {
+            const isActive = document.documentElement.classList.toggle('high-contrast');
+            localStorage.setItem('highContrast', isActive.toString());
+        }
+
+        // Initialiser au chargement
+        initHighContrastMode();
+
+        // Ajouter la touche C pour le mode contraste
+        document.addEventListener('keydown', (e) => {
+            // Ignorer si focus dans un input
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                return;
+            }
+            // Toggle avec la touche C
+            if (e.key === 'c' || e.key === 'C') {
+                toggleHighContrast();
+            }
+        });
+    </script>
+</body>
+</html>

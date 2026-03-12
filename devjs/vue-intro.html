@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction à Vue.js et Vuetify</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        vue: '#42b883',
+                        vueDark: '#35495e',
+                        vuetify: '#1867C0',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html, body { margin: 0; overflow: hidden; height: 100vh; }
+        .slide { display: none; min-height: 100vh; flex-direction: column; justify-content: center; overflow-y: auto; }
+        .slide.active { display: flex; }
+        .code-block { background: #1e1e1e; }
+        .gradient-vue { background: linear-gradient(135deg, #42b883 0%, #35495e 100%); }
+        .gradient-vuetify { background: linear-gradient(135deg, #1867C0 0%, #5CBBF6 100%); }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
+        .animate-fade-in-left { animation: fadeInLeft 0.6s ease-out forwards; }
+        .animate-pulse-slow { animation: pulse-slow 3s ease-in-out infinite; }
+
+        /* Delay classes */
+        .delay-100 { animation-delay: 0.1s; opacity: 0; }
+        .delay-200 { animation-delay: 0.2s; opacity: 0; }
+        .delay-300 { animation-delay: 0.3s; opacity: 0; }
+        .delay-400 { animation-delay: 0.4s; opacity: 0; }
+        .delay-500 { animation-delay: 0.5s; opacity: 0; }
+
+        /* Navigation dots */
+        .nav-dot { transition: all 0.3s ease; }
+        .nav-dot.active { transform: scale(1.3); }
+
+        /* Code highlighting */
+        .keyword { color: #c586c0; }
+        .string { color: #ce9178; }
+        .function { color: #dcdcaa; }
+        .comment { color: #6a9955; }
+        .tag { color: #569cd6; }
+        .attr { color: #9cdcfe; }
+        .value { color: #ce9178; }
+
+        /* High contrast */
+        body.high-contrast { background: #000 !important; }
+        body.high-contrast .bg-slate-900,
+        body.high-contrast .bg-slate-800 { background: #000 !important; }
+        body.high-contrast .bg-slate-800\/50 { background: rgba(0,0,0,0.8) !important; }
+        body.high-contrast .text-slate-300,
+        body.high-contrast .text-slate-400,
+        body.high-contrast .text-slate-500 { color: #fff !important; }
+        body.high-contrast .text-vue { color: #5fffb0 !important; }
+        body.high-contrast .border-slate-700 { border-color: #888 !important; }
+        body.high-contrast .gradient-vue,
+        body.high-contrast .gradient-vuetify { background: #000 !important; }
+        #contrast-badge { position: fixed; top: 1rem; left: 1rem; z-index: 100; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); backdrop-filter: blur(4px); pointer-events: none; }
+    </style>
+</head>
+<body class="font-sans bg-slate-900 text-white">
+
+    <!-- Navigation latérale (générée en JS) -->
+    <nav id="dots" class="fixed right-6 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col gap-3"></nav>
+    <div id="contrast-badge" style="display:none">Contraste élevé (C)</div>
+
+    <!-- Slide 1: Titre -->
+    <section id="slide-1" class="slide active items-center justify-center gradient-vue relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-20 left-20 w-64 h-64 bg-white rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 right-20 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+        </div>
+        <div class="text-center px-6 relative z-10">
+            <div class="mb-8 animate-fade-in-up">
+                <svg class="w-32 h-32 mx-auto" viewBox="0 0 261.76 226.69" xmlns="http://www.w3.org/2000/svg">
+                    <path d="m161.096.001-30.224 52.35L100.647.002H0L130.872 226.69 261.76 0z" fill="#41b883"/>
+                    <path d="m161.096.001-30.224 52.35L100.647.002H52.33l78.542 136.01L209.398.001z" fill="#35495e"/>
+                </svg>
+            </div>
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 animate-fade-in-up delay-100">Vue.js & Vuetify</h1>
+            <p class="text-xl md:text-2xl text-white/90 mb-8 animate-fade-in-up delay-200">Créer des applications web modernes</p>
+            <div class="flex flex-wrap gap-4 justify-center animate-fade-in-up delay-300">
+                <span class="px-4 py-2 bg-white/20 rounded-full text-sm backdrop-blur-sm">Introduction</span>
+                <span class="px-4 py-2 bg-white/20 rounded-full text-sm backdrop-blur-sm">Environnement</span>
+                <span class="px-4 py-2 bg-white/20 rounded-full text-sm backdrop-blur-sm">Premier projet</span>
+            </div>
+            <div class="mt-16 animate-pulse-slow">
+                <svg class="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                </svg>
+                <p class="text-sm text-white/70 mt-2">Flèches pour naviguer</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 2: Qu'est-ce que Vue.js -->
+    <section id="slide-2" class="slide items-center bg-slate-900 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <span class="text-vue font-mono text-sm mb-4 block">01 / Introduction</span>
+                    <h2 class="text-4xl md:text-5xl font-bold mb-6">Qu'est-ce que <span class="text-vue">Vue.js</span> ?</h2>
+                    <p class="text-lg text-slate-300 mb-6 leading-relaxed">
+                        Framework JavaScript créé par <strong class="text-white">Evan You</strong> en 2014.
+                        Après avoir travaillé chez Google sur AngularJS, il a voulu créer un outil
+                        <strong class="text-vue">plus simple et accessible</strong>.
+                    </p>
+                    <p class="text-lg text-slate-300 leading-relaxed">
+                        Vue.js est un framework <strong class="text-white">progressif</strong> : utilisable comme
+                        une simple librairie ou comme un framework complet pour des applications complexes.
+                    </p>
+                </div>
+                <div class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700">
+                    <h3 class="text-lg font-semibold mb-4 text-slate-200">Évolution de Vue.js</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4 p-3 bg-slate-700/30 rounded-lg">
+                            <span class="text-2xl font-bold text-vue">1.0</span>
+                            <div>
+                                <p class="font-medium">2015 — Evangelion</p>
+                                <p class="text-sm text-slate-400">Première version stable</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 p-3 bg-slate-700/30 rounded-lg">
+                            <span class="text-2xl font-bold text-vue">2.0</span>
+                            <div>
+                                <p class="font-medium">2016 — Ghost in the Shell</p>
+                                <p class="text-sm text-slate-400">Virtual DOM, rendu serveur</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 p-3 bg-slate-700/30 rounded-lg">
+                            <span class="text-2xl font-bold text-vue">3.0</span>
+                            <div>
+                                <p class="font-medium">2020 — One Piece</p>
+                                <p class="text-sm text-slate-400">Composition API, performances</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 p-3 bg-vue/20 rounded-lg border border-vue/30">
+                            <span class="text-2xl font-bold text-vue">3.5</span>
+                            <div>
+                                <p class="font-medium">2024</p>
+                                <p class="text-sm text-slate-400">Améliorations TypeScript</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-sm text-slate-400 italic">
+                        💡 Les noms de code sont des références à des animes japonais !
+                    </p>
+                    <a href="https://fr.vuejs.org/" target="_blank" class="mt-4 inline-flex items-center gap-2 text-vue hover:underline text-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                        </svg>
+                        Documentation Vue.js →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 3: Pourquoi Vue.js -->
+    <section id="slide-3" class="slide items-center bg-slate-800 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">02 / Avantages</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-12">Pourquoi choisir <span class="text-vue">Vue.js</span> ?</h2>
+
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <div class="bg-slate-900/50 p-8 rounded-2xl border border-slate-700 hover:border-vue/50 transition-colors">
+                    <div class="w-14 h-14 bg-vue/20 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-vue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Performant</h3>
+                    <p class="text-slate-400">Léger (~10 Ko) et optimisé pour être rapide grâce au Virtual DOM</p>
+                </div>
+
+                <div class="bg-slate-900/50 p-8 rounded-2xl border border-slate-700 hover:border-vue/50 transition-colors">
+                    <div class="w-14 h-14 bg-vue/20 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-vue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Accessible</h3>
+                    <p class="text-slate-400">Basé sur HTML, CSS et JavaScript — vous savez déjà presque tout !</p>
+                </div>
+
+                <div class="bg-slate-900/50 p-8 rounded-2xl border border-slate-700 hover:border-vue/50 transition-colors">
+                    <div class="w-14 h-14 bg-vue/20 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-vue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Progressif</h3>
+                    <p class="text-slate-400">Adoptez-le progressivement, d'une simple page à une application complète</p>
+                </div>
+            </div>
+
+            <div class="bg-vue/10 border border-vue/30 p-4 rounded-2xl">
+                <p class="text-vue font-medium">💡 Pour ce cours</p>
+                <p class="text-slate-300 text-sm mt-2">Nous avons choisi Vue.js car sa syntaxe ressemble au HTML/CSS/JS que vous connaissez déjà. Les concepts appris sont ensuite transférables à React ou Angular.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 4: Virtual DOM -->
+    <section id="slide-4" class="slide items-center bg-slate-900 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">03 / Concept clé</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">Le <span class="text-vue">Virtual DOM</span></h2>
+
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <p class="text-lg text-slate-300 mb-6 leading-relaxed">
+                        Le <strong class="text-white">DOM</strong> (Document Object Model) est la représentation de votre page HTML en mémoire.
+                        Modifier le DOM directement est <strong class="text-red-400">lent</strong> car le navigateur doit recalculer les styles et réafficher la page.
+                    </p>
+                    <p class="text-lg text-slate-300 leading-relaxed">
+                        Vue.js utilise un <strong class="text-vue">Virtual DOM</strong> : une copie légère du DOM en JavaScript.
+                        Seules les <strong class="text-white">différences</strong> sont appliquées au vrai DOM.
+                    </p>
+                </div>
+
+                <div class="bg-slate-800/50 p-8 rounded-2xl border border-slate-700">
+                    <div class="flex items-center justify-between gap-4">
+                        <div class="text-center flex-1">
+                            <div class="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
+                                </svg>
+                            </div>
+                            <p class="font-medium text-sm">Données</p>
+                            <p class="text-xs text-slate-500">(state)</p>
+                        </div>
+
+                        <svg class="w-8 h-8 text-slate-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                        </svg>
+
+                        <div class="text-center flex-1">
+                            <div class="w-16 h-16 bg-vue/20 rounded-xl flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-8 h-8 text-vue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                </svg>
+                            </div>
+                            <p class="font-medium text-sm">Virtual DOM</p>
+                            <p class="text-xs text-slate-500">(diff)</p>
+                        </div>
+
+                        <svg class="w-8 h-8 text-slate-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                        </svg>
+
+                        <div class="text-center flex-1">
+                            <div class="w-16 h-16 bg-orange-500/20 rounded-xl flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-8 h-8 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <p class="font-medium text-sm">DOM réel</p>
+                            <p class="text-xs text-slate-500">(minimal)</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 space-y-3">
+                        <div class="flex items-center gap-3 text-sm">
+                            <span class="w-6 h-6 bg-vue rounded-full flex items-center justify-center text-xs font-bold">1</span>
+                            <span class="text-slate-300">Vue met à jour le Virtual DOM <span class="text-vue">(très rapide)</span></span>
+                        </div>
+                        <div class="flex items-center gap-3 text-sm">
+                            <span class="w-6 h-6 bg-vue rounded-full flex items-center justify-center text-xs font-bold">2</span>
+                            <span class="text-slate-300">Vue compare l'ancien et le nouveau Virtual DOM</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-sm">
+                            <span class="w-6 h-6 bg-vue rounded-full flex items-center justify-center text-xs font-bold">3</span>
+                            <span class="text-slate-300">Seules les <strong class="text-white">différences</strong> sont appliquées</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 5: Vuetify -->
+    <section id="slide-5" class="slide items-center gradient-vuetify py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <span class="font-mono text-sm mb-4 block text-white/70">04 / UI Framework</span>
+                    <h2 class="text-4xl md:text-5xl font-bold mb-6">Vuetify</h2>
+                    <p class="text-xl text-white/90 mb-8 leading-relaxed">
+                        Bibliothèque de composants basée sur <strong>Material Design</strong> de Google.
+                        Créez rapidement des interfaces élégantes et professionnelles.
+                    </p>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
+                            <p class="font-semibold mb-1">📖 Bien documenté</p>
+                            <p class="text-sm text-white/70">Exemples pour chaque composant</p>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
+                            <p class="font-semibold mb-1">🎨 Cohérent</p>
+                            <p class="text-sm text-white/70">Material Design garantit l'harmonie</p>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
+                            <p class="font-semibold mb-1">📱 Responsive</p>
+                            <p class="text-sm text-white/70">Adapté mobile par défaut</p>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
+                            <p class="font-semibold mb-1">♿ Accessible</p>
+                            <p class="text-sm text-white/70">Respect des normes ARIA</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
+                    <p class="text-sm text-white/70 mb-3 font-mono">Exemple : v-btn</p>
+                    <div class="code-block rounded-xl p-4 font-mono text-sm overflow-x-auto">
+                        <code>
+                            <span class="tag">&lt;v-btn</span> <span class="attr">color</span>=<span class="value">"primary"</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="attr">prepend-icon</span>=<span class="value">"mdi-check"</span><span class="tag">&gt;</span><br>
+                            &nbsp;&nbsp;Valider<br>
+                            <span class="tag">&lt;/v-btn&gt;</span>
+                        </code>
+                    </div>
+                    <div class="mt-4 flex gap-3">
+                        <button class="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-colors flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            Valider
+                        </button>
+                        <button class="px-6 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-medium transition-colors">
+                            Succès
+                        </button>
+                        <button class="px-6 py-3 bg-red-600 hover:bg-red-700 rounded-lg font-medium transition-colors">
+                            Erreur
+                        </button>
+                    </div>
+                    <div class="mt-4 flex flex-wrap gap-4">
+                        <a href="https://vuetifyjs.com/" target="_blank" class="inline-flex items-center gap-2 text-white/70 hover:text-white text-sm transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                            vuetifyjs.com →
+                        </a>
+                        <a href="https://vuetifyjs.com/en/components/buttons/" target="_blank" class="inline-flex items-center gap-2 text-white/70 hover:text-white text-sm transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                            Docs v-btn →
+                        </a>
+                        <a href="https://vuetifyjs.com/en/components/all/" target="_blank" class="inline-flex items-center gap-2 text-white/70 hover:text-white text-sm transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                            Tous les composants →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 6: C'est quoi un composant ? -->
+    <section id="slide-6" class="slide items-center bg-slate-900 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">05 / Concepts</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">C'est quoi un <span class="text-vue">composant</span> ?</h2>
+
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <p class="text-lg text-slate-300 mb-6 leading-relaxed">
+                        Un <strong class="text-white">composant</strong> est un bloc réutilisable de votre interface.
+                        Par exemple : un bouton, une carte, un menu, un formulaire...
+                    </p>
+                    <p class="text-lg text-slate-300 mb-6 leading-relaxed">
+                        L'idée centrale de Vue.js est de <strong class="text-vue">diviser l'interface en petits blocs réutilisables</strong>.
+                    </p>
+                    <p class="text-lg text-slate-300 leading-relaxed">
+                        Plutôt qu'un seul fichier HTML géant, on découpe la page en composants indépendants.
+                    </p>
+                </div>
+
+                <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
+                    <h3 class="text-lg font-semibold mb-4 text-slate-200">Découpage d'une page</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3 p-3 bg-blue-500/20 rounded-lg border border-blue-500/30">
+                            <span class="text-blue-400 font-mono text-sm">Header</span>
+                            <span class="text-slate-400 text-sm">— Logo et navigation</span>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="flex-1 p-3 bg-purple-500/20 rounded-lg border border-purple-500/30">
+                                <span class="text-purple-400 font-mono text-sm">Sidebar</span>
+                                <p class="text-slate-400 text-xs mt-1">Menu latéral</p>
+                            </div>
+                            <div class="flex-[2] p-3 bg-vue/20 rounded-lg border border-vue/30">
+                                <span class="text-vue font-mono text-sm">Content</span>
+                                <p class="text-slate-400 text-xs mt-1">Zone principale avec Cards</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-orange-500/20 rounded-lg border border-orange-500/30">
+                            <span class="text-orange-400 font-mono text-sm">Footer</span>
+                            <span class="text-slate-400 text-sm">— Pied de page</span>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-sm text-slate-400">Chaque bloc = un fichier <code class="text-vue">.vue</code></p>
+                </div>
+            </div>
+
+            <div class="mt-8 grid md:grid-cols-3 gap-4">
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                    <p class="font-semibold text-vue mb-1">♻️ Réutilisation</p>
+                    <p class="text-sm text-slate-400">Une Card utilisée 10 fois = 1 seul fichier</p>
+                </div>
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                    <p class="font-semibold text-vue mb-1">🔧 Maintenance</p>
+                    <p class="text-sm text-slate-400">Modifier le header ? Un seul fichier</p>
+                </div>
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                    <p class="font-semibold text-vue mb-1">📋 Clarté</p>
+                    <p class="text-sm text-slate-400">Chaque composant a une responsabilité</p>
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-center">
+                <a href="https://devjs.ch/vue/" target="_blank" class="inline-flex items-center gap-2 text-vue hover:underline">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                    </svg>
+                    Voir le chapitre complet sur devjs.ch →
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 7: Single File Components -->
+    <section id="slide-7" class="slide items-center bg-slate-800 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">06 / Architecture</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">Single File Components <span class="text-vue">.vue</span></h2>
+
+            <div class="grid md:grid-cols-2 gap-12">
+                <div class="code-block rounded-2xl p-6 font-mono text-sm overflow-x-auto border border-slate-700">
+                    <div class="flex items-center gap-2 mb-4 text-slate-400">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                        <span class="ml-2">MonComposant.vue</span>
+                    </div>
+                    <pre class="text-slate-300 leading-relaxed"><span class="tag">&lt;script setup&gt;</span>
+<span class="keyword">import</span> { ref } <span class="keyword">from</span> <span class="string">'vue'</span>
+
+<span class="keyword">const</span> message = <span class="function">ref</span>(<span class="string">'Bonjour !'</span>)
+<span class="tag">&lt;/script&gt;</span>
+
+<span class="tag">&lt;template&gt;</span>
+  <span class="tag">&lt;h1&gt;</span>{{ message }}<span class="tag">&lt;/h1&gt;</span>
+<span class="tag">&lt;/template&gt;</span>
+
+<span class="tag">&lt;style scoped&gt;</span>
+<span class="attr">h1</span> {
+  <span class="attr">color</span>: <span class="value">deeppink</span>;
+}
+<span class="tag">&lt;/style&gt;</span></pre>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="px-3 py-1 bg-yellow-500/20 text-yellow-400 rounded-lg text-sm font-mono">&lt;script setup&gt;</span>
+                        </div>
+                        <p class="text-slate-300">Logique JavaScript : données, fonctions, imports</p>
+                    </div>
+
+                    <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="px-3 py-1 bg-orange-500/20 text-orange-400 rounded-lg text-sm font-mono">&lt;template&gt;</span>
+                        </div>
+                        <p class="text-slate-300">Structure HTML du composant</p>
+                    </div>
+
+                    <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-lg text-sm font-mono">&lt;style scoped&gt;</span>
+                        </div>
+                        <p class="text-slate-300">Styles CSS isolés au composant</p>
+                    </div>
+
+                    <div class="bg-vue/10 border border-vue/30 p-4 rounded-xl">
+                        <p class="text-vue font-medium">✨ Avantages</p>
+                        <p class="text-slate-400 text-sm mt-2">Organisation • Isolation • Réutilisation • Maintenance facilitée</p>
+                    </div>
+
+                    <a href="https://play.vuejs.org/" target="_blank" class="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-vue/20 hover:bg-vue/30 rounded-lg text-vue transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Vue SFC Playground — Tester en ligne →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 8: Composition API -->
+    <section id="slide-8" class="slide items-center bg-slate-900 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">07 / Réactivité</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8"><span class="text-vue">ref</span> et <span class="text-vue">reactive</span></h2>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <span class="px-3 py-1 bg-vue/20 text-vue rounded-lg font-mono text-sm">ref()</span>
+                        <span class="text-slate-400 text-sm font-normal">Valeurs simples</span>
+                    </h3>
+                    <div class="code-block rounded-xl p-4 font-mono text-sm">
+                        <pre class="text-slate-300"><span class="keyword">const</span> compteur = <span class="function">ref</span>(<span class="value">0</span>)
+
+<span class="comment">// Modifier</span>
+compteur.<span class="attr">value</span>++
+
+<span class="comment">// Dans le template</span>
+{{ compteur }}</pre>
+                    </div>
+                    <p class="mt-4 text-slate-400 text-sm">⚠️ Utiliser <code class="text-vue">.value</code> dans le script</p>
+                </div>
+
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <span class="px-3 py-1 bg-vue/20 text-vue rounded-lg font-mono text-sm">reactive()</span>
+                        <span class="text-slate-400 text-sm font-normal">Objets</span>
+                    </h3>
+                    <div class="code-block rounded-xl p-4 font-mono text-sm">
+                        <pre class="text-slate-300"><span class="keyword">const</span> user = <span class="function">reactive</span>({
+  nom: <span class="string">'Alice'</span>,
+  age: <span class="value">25</span>
+})
+
+<span class="comment">// Modifier</span>
+user.age++</pre>
+                    </div>
+                    <p class="mt-4 text-slate-400 text-sm">✅ Pas besoin de <code>.value</code></p>
+                </div>
+            </div>
+
+            <div class="bg-vue/10 border border-vue/30 p-6 rounded-2xl">
+                <p class="text-vue font-bold text-lg mb-3">💡 Astuce</p>
+                <p class="text-slate-300">En cas de doute, utilisez <code class="bg-slate-800 px-2 py-1 rounded text-vue font-mono">ref()</code> — ça marche pour tout !</p>
+            </div>
+
+            <div class="mt-6 flex flex-wrap justify-center gap-4">
+                <a href="https://fr.vuejs.org/tutorial/#step-2" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-vue/20 hover:bg-vue/30 rounded-lg text-vue transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Tutoriel réactivité →
+                </a>
+                <a href="https://fr.vuejs.org/guide/essentials/reactivity-fundamentals.html" target="_blank" class="inline-flex items-center gap-2 text-slate-400 hover:text-vue transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                    </svg>
+                    Documentation complète →
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 9: Environnement -->
+    <section id="slide-9" class="slide items-center bg-slate-800 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">08 / Setup</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">Environnement de <span class="text-vue">développement</span></h2>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 hover:border-vue/50 transition-colors group">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-3xl font-bold text-vue">1</span>
+                        <span class="text-4xl">🦁</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Navigateur</h3>
+                    <p class="text-slate-400 mb-4">Brave ou Firefox pour les DevTools</p>
+                    <a href="https://brave.com" target="_blank" class="text-vue text-sm hover:underline">brave.com →</a>
+                </div>
+
+                <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 hover:border-vue/50 transition-colors group">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-3xl font-bold text-vue">2</span>
+                        <span class="text-4xl">📦</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Node.js + npm</h3>
+                    <p class="text-slate-400 mb-4">Runtime JavaScript et packages</p>
+                    <a href="https://nodejs.org" target="_blank" class="text-vue text-sm hover:underline">nodejs.org (LTS) →</a>
+                </div>
+
+                <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 hover:border-vue/50 transition-colors group">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-3xl font-bold text-vue">3</span>
+                        <span class="text-4xl">🔀</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Git</h3>
+                    <p class="text-slate-400 mb-4">Versionnement du code</p>
+                    <a href="https://git-scm.com" target="_blank" class="text-vue text-sm hover:underline">git-scm.com →</a>
+                </div>
+
+                <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 hover:border-vue/50 transition-colors group">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-3xl font-bold text-vue">4</span>
+                        <span class="text-4xl">🐙</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">GitHub</h3>
+                    <p class="text-slate-400 mb-4">Collaboration + Student Pack</p>
+                    <a href="https://github.com" target="_blank" class="text-vue text-sm hover:underline">github.com →</a>
+                </div>
+
+                <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 hover:border-vue/50 transition-colors group">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-3xl font-bold text-vue">5</span>
+                        <span class="text-4xl">💻</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">WebStorm</h3>
+                    <p class="text-slate-400 mb-4">IDE JetBrains (gratuit étudiants)</p>
+                    <a href="https://www.jetbrains.com/webstorm" target="_blank" class="text-vue text-sm hover:underline">jetbrains.com →</a>
+                </div>
+
+                <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 hover:border-vue/50 transition-colors group">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-3xl font-bold text-vue">6</span>
+                        <span class="text-4xl">🔧</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Vue DevTools</h3>
+                    <p class="text-slate-400 mb-4">Extension navigateur indispensable</p>
+                    <a href="https://devtools.vuejs.org" target="_blank" class="text-vue text-sm hover:underline">devtools.vuejs.org →</a>
+                </div>
+            </div>
+
+            <div class="mt-8 flex justify-center">
+                <a href="https://devjs.ch/vue/environnement.html" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 bg-vue/20 hover:bg-vue/30 rounded-xl text-vue transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                    Guide complet d'installation sur devjs.ch →
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 10: Vue DevTools -->
+    <section id="slide-10" class="slide items-center bg-slate-900 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">09 / Outil essentiel</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8"><span class="text-vue">Vue DevTools</span></h2>
+
+            <div class="grid md:grid-cols-2 gap-12 items-start">
+                <div>
+                    <p class="text-lg text-slate-300 mb-6 leading-relaxed">
+                        Extension navigateur <strong class="text-white">indispensable</strong> pour déboguer vos applications Vue.js.
+                        Elle permet d'inspecter les composants, leurs données et l'état de l'application.
+                    </p>
+
+                    <div class="space-y-4 mb-6">
+                        <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                            <p class="font-semibold text-vue mb-1">🔍 Inspecter les composants</p>
+                            <p class="text-sm text-slate-400">Voir la hiérarchie complète de vos composants Vue</p>
+                        </div>
+                        <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                            <p class="font-semibold text-vue mb-1">📊 Visualiser les données</p>
+                            <p class="text-sm text-slate-400">Voir et modifier les ref() et reactive() en temps réel</p>
+                        </div>
+                        <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                            <p class="font-semibold text-vue mb-1">🏪 Explorer Pinia</p>
+                            <p class="text-sm text-slate-400">Inspecter le state management de l'application</p>
+                        </div>
+                        <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                            <p class="font-semibold text-vue mb-1">⚡ Analyser les performances</p>
+                            <p class="text-sm text-slate-400">Identifier les goulots d'étranglement</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
+                    <h3 class="text-lg font-bold mb-4">Installation</h3>
+                    <div class="space-y-4">
+                        <a href="https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd" target="_blank" class="flex items-center gap-4 p-4 bg-slate-900/50 rounded-xl hover:bg-slate-900/70 transition-colors">
+                            <span class="text-3xl">🦁</span>
+                            <div>
+                                <p class="font-medium">Chrome / Brave</p>
+                                <p class="text-sm text-vue">Chrome Web Store →</p>
+                            </div>
+                        </a>
+                        <a href="https://addons.mozilla.org/fr/firefox/addon/vue-js-devtools/" target="_blank" class="flex items-center gap-4 p-4 bg-slate-900/50 rounded-xl hover:bg-slate-900/70 transition-colors">
+                            <span class="text-3xl">🦊</span>
+                            <div>
+                                <p class="font-medium">Firefox</p>
+                                <p class="text-sm text-vue">Firefox Add-ons →</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="mt-6 p-4 bg-vue/10 rounded-xl border border-vue/30">
+                        <p class="text-vue font-medium">💡 Comment l'utiliser ?</p>
+                        <ol class="text-slate-400 text-sm mt-2 space-y-1 list-decimal list-inside">
+                            <li>Ouvrez les DevTools du navigateur (<kbd class="px-2 py-0.5 bg-slate-700 rounded text-xs">F12</kbd>)</li>
+                            <li>Cherchez l'onglet <strong class="text-white">Vue</strong></li>
+                            <li>Sélectionnez un composant pour voir ses données</li>
+                        </ol>
+                    </div>
+
+                    <a href="https://devtools.vuejs.org/" target="_blank" class="mt-4 inline-flex items-center gap-2 text-vue hover:underline text-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                        </svg>
+                        Documentation Vue DevTools →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 11: Outils WebStorm -->
+    <section id="slide-11" class="slide items-center bg-slate-800 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">10 / IDE</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8"><span class="text-vue">WebStorm</span> — Configuration</h2>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Raccourcis essentiels</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between bg-slate-900/50 p-4 rounded-xl">
+                            <span class="text-slate-300">Commit</span>
+                            <kbd class="px-3 py-1 bg-slate-700 rounded text-sm font-mono">Ctrl + K</kbd>
+                        </div>
+                        <div class="flex items-center justify-between bg-slate-900/50 p-4 rounded-xl">
+                            <span class="text-slate-300">Push</span>
+                            <kbd class="px-3 py-1 bg-slate-700 rounded text-sm font-mono">Ctrl + Shift + K</kbd>
+                        </div>
+                        <div class="flex items-center justify-between bg-slate-900/50 p-4 rounded-xl">
+                            <span class="text-slate-300">Pull</span>
+                            <kbd class="px-3 py-1 bg-slate-700 rounded text-sm font-mono">Ctrl + T</kbd>
+                        </div>
+                        <div class="flex items-center justify-between bg-slate-900/50 p-4 rounded-xl">
+                            <span class="text-slate-300">Terminal</span>
+                            <kbd class="px-3 py-1 bg-slate-700 rounded text-sm font-mono">Alt + F12</kbd>
+                        </div>
+                        <div class="flex items-center justify-between bg-slate-900/50 p-4 rounded-xl">
+                            <span class="text-slate-300">Action rapide</span>
+                            <kbd class="px-3 py-1 bg-slate-700 rounded text-sm font-mono">Alt + Entrée</kbd>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Configuration ESLint</h3>
+                    <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                        <ol class="space-y-4 text-slate-300">
+                            <li class="flex items-start gap-3">
+                                <span class="w-6 h-6 bg-vue rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
+                                <span>File → Settings → JavaScript → ESLint</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-6 h-6 bg-vue rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
+                                <span>Automatic ESLint configuration</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-6 h-6 bg-vue rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">3</span>
+                                <span>Cocher <strong class="text-white">Run eslint --fix on save</strong></span>
+                            </li>
+                        </ol>
+                        <div class="mt-6 p-4 bg-vue/10 rounded-xl border border-vue/30">
+                            <p class="text-vue text-sm">✨ Le code se corrige automatiquement à la sauvegarde !</p>
+                        </div>
+
+                        <a href="https://devjs.ch/vue/environnement.html#webstorm" target="_blank" class="mt-4 inline-flex items-center gap-2 text-vue hover:underline text-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                            Guide WebStorm complet →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 12: Créer un projet -->
+    <section id="slide-12" class="slide items-center bg-slate-900 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">11 / Démarrage</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">Créer une <span class="text-vue">application Vuetify</span></h2>
+
+            <div class="grid md:grid-cols-2 gap-12 items-start">
+                <div class="space-y-6">
+                    <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="w-8 h-8 bg-vue rounded-lg flex items-center justify-center font-bold">1</span>
+                            <h3 class="text-lg font-bold">Créer le projet</h3>
+                        </div>
+                        <div class="code-block rounded-xl p-4 font-mono">
+                            <code class="text-vue">npm create vuetify</code>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="w-8 h-8 bg-vue rounded-lg flex items-center justify-center font-bold">2</span>
+                            <h3 class="text-lg font-bold">Accéder au dossier</h3>
+                        </div>
+                        <div class="code-block rounded-xl p-4 font-mono">
+                            <code class="text-slate-300">cd hello-world</code>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="w-8 h-8 bg-vue rounded-lg flex items-center justify-center font-bold">3</span>
+                            <h3 class="text-lg font-bold">Lancer le serveur</h3>
+                        </div>
+                        <div class="code-block rounded-xl p-4 font-mono">
+                            <code class="text-vue">npm run dev</code>
+                        </div>
+                    </div>
+
+                    <div class="bg-vue/10 border border-vue/30 p-4 rounded-xl">
+                        <p class="text-vue font-medium">🌐 http://localhost:3000</p>
+                    </div>
+
+                    <a href="https://vuetifyjs.com/en/getting-started/installation/" target="_blank" class="mt-4 inline-flex items-center gap-2 text-vue hover:underline text-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                        </svg>
+                        Vuetify - Getting Started →
+                    </a>
+                </div>
+
+                <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
+                    <h3 class="text-lg font-bold mb-4">Options de création</h3>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-slate-900/50 rounded-xl">
+                            <p class="text-slate-400 text-sm mb-1">Project name</p>
+                            <p class="font-medium">hello-world</p>
+                        </div>
+                        <div class="p-4 bg-slate-900/50 rounded-xl">
+                            <p class="text-slate-400 text-sm mb-1">Which preset?</p>
+                            <p class="font-medium text-vue">Recommended ✓</p>
+                        </div>
+                        <div class="p-4 bg-slate-900/50 rounded-xl">
+                            <p class="text-slate-400 text-sm mb-1">Use TypeScript?</p>
+                            <p class="font-medium">No</p>
+                        </div>
+                        <div class="p-4 bg-slate-900/50 rounded-xl">
+                            <p class="text-slate-400 text-sm mb-1">Package manager?</p>
+                            <p class="font-medium text-vue">npm ✓</p>
+                        </div>
+                        <div class="p-4 bg-slate-900/50 rounded-xl">
+                            <p class="text-slate-400 text-sm mb-1">Install dependencies?</p>
+                            <p class="font-medium text-vue">Yes ✓</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 13: Structure d'un projet -->
+    <section id="slide-13" class="slide items-center bg-slate-800 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">12 / Architecture</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">Structure d'un <span class="text-vue">projet Vuetify</span></h2>
+
+            <div class="grid md:grid-cols-2 gap-12 items-start">
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                    <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                        <span class="text-2xl">📁</span> Arborescence
+                    </h3>
+                    <div class="font-mono text-sm space-y-2">
+                        <div class="text-slate-300">
+                            <span class="text-yellow-400">mon-projet/</span>
+                        </div>
+                        <div class="pl-4 text-slate-400">├── <span class="text-blue-400">public/</span> <span class="text-slate-500">← Fichiers statiques (favicon, images)</span></div>
+                        <div class="pl-4 text-slate-400">├── <span class="text-vue">src/</span> <span class="text-slate-500">← Code source Vue.js</span></div>
+                        <div class="pl-8 text-slate-400">├── <span class="text-orange-400">App.vue</span> <span class="text-slate-500">← Composant racine</span></div>
+                        <div class="pl-8 text-slate-400">├── <span class="text-orange-400">main.js</span> <span class="text-slate-500">← Point d'entrée JS</span></div>
+                        <div class="pl-8 text-slate-400">├── components/</div>
+                        <div class="pl-8 text-slate-400">├── views/</div>
+                        <div class="pl-8 text-slate-400">└── plugins/</div>
+                        <div class="pl-4 text-slate-400">├── <span class="text-purple-400">index.html</span> <span class="text-slate-500">← Page HTML principale</span></div>
+                        <div class="pl-4 text-slate-400">├── package.json</div>
+                        <div class="pl-4 text-slate-400">└── vite.config.js</div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                        <h3 class="text-lg font-bold mb-4">Flux de démarrage</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-4">
+                                <span class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center font-bold text-purple-400">1</span>
+                                <div>
+                                    <p class="font-medium">index.html</p>
+                                    <p class="text-sm text-slate-400">Point d'entrée HTML (lang="fr")</p>
+                                </div>
+                            </div>
+                            <div class="flex justify-center">
+                                <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                                </svg>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <span class="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center font-bold text-orange-400">2</span>
+                                <div>
+                                    <p class="font-medium">main.js</p>
+                                    <p class="text-sm text-slate-400">Initialise Vue, Vuetify, plugins</p>
+                                </div>
+                            </div>
+                            <div class="flex justify-center">
+                                <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                                </svg>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <span class="w-10 h-10 bg-vue/20 rounded-lg flex items-center justify-center font-bold text-vue">3</span>
+                                <div>
+                                    <p class="font-medium">App.vue</p>
+                                    <p class="text-sm text-slate-400">Composant racine de l'application</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-vue/10 border border-vue/30 p-4 rounded-xl">
+                        <p class="text-vue font-medium">🔥 Hot Reload</p>
+                        <p class="text-slate-400 text-sm mt-1">
+                            Modifiez un fichier, sauvegardez (<kbd class="px-2 py-0.5 bg-slate-700 rounded text-xs">Ctrl+S</kbd>), et la page se met à jour automatiquement !
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide Vite: Build tool -->
+    <section id="slide-vite" class="slide items-center bg-slate-800 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">12b / Build Tool</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8"><span class="text-purple-400">Vite</span> — Le moteur de votre app</h2>
+
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <p class="text-lg text-slate-300 mb-6 leading-relaxed">
+                        <strong class="text-white">Vite</strong> (prononcé "vite" en français !) est l'outil qui <strong class="text-purple-400">compile et sert</strong> votre application Vue.js pendant le développement.
+                    </p>
+
+                    <div class="space-y-4">
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-2xl">⚡</span>
+                                <p class="font-semibold text-purple-400">Démarrage instantané</p>
+                            </div>
+                            <p class="text-slate-400 text-sm">Pas besoin d'attendre — le serveur démarre en millisecondes</p>
+                        </div>
+
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-2xl">🔥</span>
+                                <p class="font-semibold text-purple-400">Hot Module Replacement (HMR)</p>
+                            </div>
+                            <p class="text-slate-400 text-sm">Modifiez votre code → la page se met à jour <strong class="text-white">sans recharger</strong></p>
+                        </div>
+
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-2xl">📦</span>
+                                <p class="font-semibold text-purple-400">Build optimisé</p>
+                            </div>
+                            <p class="text-slate-400 text-sm">Génère des fichiers minifiés et optimisés pour la production</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                        <h3 class="text-lg font-bold mb-4 text-purple-400">Vite vs Webpack</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-3 bg-red-500/10 rounded-lg">
+                                <span class="text-slate-300">Webpack</span>
+                                <span class="text-red-400 text-sm">~30 secondes au démarrage</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-green-500/10 rounded-lg">
+                                <span class="text-slate-300">Vite</span>
+                                <span class="text-green-400 text-sm">~300 millisecondes ⚡</span>
+                            </div>
+                        </div>
+                        <p class="mt-4 text-slate-400 text-sm">Vite utilise les <strong class="text-white">ES modules</strong> natifs du navigateur — pas besoin de tout recompiler à chaque changement.</p>
+                    </div>
+
+                    <div class="bg-purple-500/10 border border-purple-500/30 p-4 rounded-xl">
+                        <p class="text-purple-400 font-medium">💡 Créé par Evan You</p>
+                        <p class="text-slate-400 text-sm mt-1">Le créateur de Vue.js a aussi créé Vite pour remplacer les outils lents comme Webpack.</p>
+                    </div>
+
+                    <a href="https://vitejs.dev/" target="_blank" class="inline-flex items-center gap-2 text-purple-400 hover:underline">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                        </svg>
+                        vitejs.dev →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 14: Commandes npm -->
+    <section id="slide-14" class="slide items-center bg-slate-900 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">13 / CLI</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">Commandes <span class="text-vue">npm</span> essentielles</h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 hover:border-vue/50 transition-colors">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <code class="text-vue font-mono">npm run dev</code>
+                            <p class="text-slate-400 text-sm mt-1">Serveur de développement</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 hover:border-vue/50 transition-colors">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <code class="text-vue font-mono">npm run build</code>
+                            <p class="text-slate-400 text-sm mt-1">Compiler pour la production</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 hover:border-vue/50 transition-colors">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <code class="text-vue font-mono">npm run preview</code>
+                            <p class="text-slate-400 text-sm mt-1">Prévisualiser le build</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 hover:border-vue/50 transition-colors">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-yellow-500/20 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <code class="text-vue font-mono">npm run lint</code>
+                            <p class="text-slate-400 text-sm mt-1">Vérifier la qualité du code</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 hover:border-vue/50 transition-colors">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-red-500/20 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <code class="text-vue font-mono">npm install &lt;package&gt;</code>
+                            <p class="text-slate-400 text-sm mt-1">Ajouter une dépendance</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 hover:border-vue/50 transition-colors">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-cyan-500/20 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <code class="text-vue font-mono">npm update</code>
+                            <p class="text-slate-400 text-sm mt-1">Mettre à jour les packages</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 flex flex-wrap gap-6 items-center justify-between">
+                <div class="bg-red-500/10 border border-red-500/30 p-4 rounded-xl">
+                    <p class="text-red-400 font-medium">⚠️ Arrêter le serveur</p>
+                    <p class="text-slate-400 text-sm mt-1">Utilisez <kbd class="px-2 py-1 bg-slate-700 rounded text-xs">Ctrl + C</kbd> dans le terminal</p>
+                </div>
+                <a href="https://docs.npmjs.com/cli/v10/commands" target="_blank" class="inline-flex items-center gap-2 text-vue hover:underline">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                    </svg>
+                    Documentation npm CLI →
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 15: Déploiement GitHub Pages -->
+    <section id="slide-15" class="slide items-center bg-slate-800 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">14 / Publication</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">Déployer sur <span class="text-vue">GitHub Pages</span></h2>
+
+            <div class="grid md:grid-cols-2 gap-12 items-start">
+                <div class="space-y-6">
+                    <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="w-8 h-8 bg-vue rounded-lg flex items-center justify-center font-bold">1</span>
+                            <h3 class="text-lg font-bold">Configurer vite.config.js</h3>
+                        </div>
+                        <div class="code-block rounded-xl p-4 font-mono text-sm">
+                            <pre class="text-slate-300"><span class="keyword">export default</span> <span class="function">defineConfig</span>({
+  <span class="attr">base</span>: <span class="string">'/nom-du-repo/'</span>,
+  <span class="comment">// ... autres options</span>
+})</pre>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="w-8 h-8 bg-vue rounded-lg flex items-center justify-center font-bold">2</span>
+                            <h3 class="text-lg font-bold">Créer le workflow</h3>
+                        </div>
+                        <p class="text-slate-400 text-sm">Créer <code class="text-vue">.github/workflows/deploy.yml</code></p>
+                    </div>
+
+                    <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="w-8 h-8 bg-vue rounded-lg flex items-center justify-center font-bold">3</span>
+                            <h3 class="text-lg font-bold">Activer GitHub Pages</h3>
+                        </div>
+                        <p class="text-slate-400 text-sm">Settings → Pages → Source: <strong class="text-white">GitHub Actions</strong></p>
+                    </div>
+
+                    <div class="bg-vue/10 border border-vue/30 p-4 rounded-xl">
+                        <p class="text-vue font-medium">🚀 Déploiement automatique à chaque push !</p>
+                    </div>
+
+                    <div class="bg-red-500/10 border border-red-500/30 p-4 rounded-xl">
+                        <p class="text-red-400 font-medium">⚠️ Ne jamais coder sur main !</p>
+                        <p class="text-slate-400 text-sm mt-1">Chaque push sur main = mise en production immédiate</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                    <h3 class="text-lg font-bold mb-4">Avantages de GitHub Pages</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg">
+                            <span class="text-2xl">💰</span>
+                            <div>
+                                <p class="font-medium">Gratuit</p>
+                                <p class="text-sm text-slate-400">Pour les dépôts publics</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg">
+                            <span class="text-2xl">⚡</span>
+                            <div>
+                                <p class="font-medium">Automatique</p>
+                                <p class="text-sm text-slate-400">Déploie à chaque commit</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg">
+                            <span class="text-2xl">🔒</span>
+                            <div>
+                                <p class="font-medium">HTTPS inclus</p>
+                                <p class="text-sm text-slate-400">Certificat SSL gratuit</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg">
+                            <span class="text-2xl">🌍</span>
+                            <div>
+                                <p class="font-medium">CDN mondial</p>
+                                <p class="text-sm text-slate-400">Chargement rapide partout</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="https://devjs.ch/vue/deploiement.html" target="_blank" class="mt-6 inline-flex items-center gap-2 text-vue hover:underline">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                        </svg>
+                        Guide complet sur devjs.ch →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 16: Déploiement Production (Infomaniak) -->
+    <section id="slide-16" class="slide items-center bg-slate-900 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">15 / Production</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">Déployer en <span class="text-vue">production</span></h2>
+
+            <div class="grid md:grid-cols-2 gap-12 items-start">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Philosophie : 2 environnements</h3>
+
+                    <div class="space-y-4 mb-6">
+                        <div class="bg-yellow-500/10 border border-yellow-500/30 p-4 rounded-xl">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-2xl">🧪</span>
+                                <div>
+                                    <p class="font-bold text-yellow-400">Staging (GitHub Pages)</p>
+                                    <p class="text-slate-400 text-sm">Chaque push sur main → Tests</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-center">
+                            <svg class="w-6 h-6 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                            </svg>
+                        </div>
+
+                        <div class="bg-green-500/10 border border-green-500/30 p-4 rounded-xl">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-2xl">🚀</span>
+                                <div>
+                                    <p class="font-bold text-green-400">Production (Infomaniak)</p>
+                                    <p class="text-slate-400 text-sm">Chaque release → Site public</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-vue/10 border border-vue/30 p-4 rounded-xl">
+                        <p class="text-vue font-medium">💡 Avantage</p>
+                        <p class="text-slate-400 text-sm mt-1">Tester sur staging avant de publier en production. Pas de surprise !</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
+                    <h3 class="text-lg font-bold mb-4">Déployer en production</h3>
+
+                    <div class="space-y-4">
+                        <div class="bg-slate-900/50 p-4 rounded-xl">
+                            <p class="text-slate-400 text-sm mb-2">1. Créer un tag de version</p>
+                            <div class="code-block rounded-lg p-3 font-mono text-sm">
+                                <code class="text-vue">git tag v1.0.0</code>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900/50 p-4 rounded-xl">
+                            <p class="text-slate-400 text-sm mb-2">2. Pousser le tag</p>
+                            <div class="code-block rounded-lg p-3 font-mono text-sm">
+                                <code class="text-slate-300">git push origin v1.0.0</code>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900/50 p-4 rounded-xl">
+                            <p class="text-slate-400 text-sm mb-2">Semantic Versioning</p>
+                            <div class="font-mono text-sm text-slate-300">
+                                v<span class="text-red-400">1</span>.<span class="text-yellow-400">2</span>.<span class="text-green-400">3</span>
+                            </div>
+                            <div class="text-xs text-slate-500 mt-2 space-y-1">
+                                <p><span class="text-red-400">MAJEUR</span> : breaking changes</p>
+                                <p><span class="text-yellow-400">MINEUR</span> : nouvelles fonctionnalités</p>
+                                <p><span class="text-green-400">PATCH</span> : corrections de bugs</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="https://devjs.ch/vue/deploiement-infomaniak.html" target="_blank" class="mt-4 inline-flex items-center gap-2 text-vue hover:underline text-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                        </svg>
+                        Guide complet FTP sur devjs.ch →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide Démo: Mise en pratique -->
+    <section id="slide-demo" class="slide items-center bg-slate-800 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">16b / Pratique</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">Démo : <span class="text-vue">Mini Pokédex</span></h2>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <p class="text-lg text-slate-300 mb-6 leading-relaxed">
+                        Mettons en pratique les concepts du <strong class="text-white">tutoriel Vue.js</strong> (étapes 1-7)
+                        en créant un mini Pokédex ensemble !
+                    </p>
+
+                    <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 mb-6">
+                        <h3 class="text-lg font-bold mb-4 text-vue">Concepts couverts</h3>
+                        <div class="grid grid-cols-2 gap-3 text-sm">
+                            <div class="flex items-center gap-2">
+                                <span class="text-vue">✓</span>
+                                <code class="text-slate-300">{{ }}</code>
+                                <span class="text-slate-400">Interpolation</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-vue">✓</span>
+                                <code class="text-slate-300">:attr</code>
+                                <span class="text-slate-400">Liaisons</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-vue">✓</span>
+                                <code class="text-slate-300">@click</code>
+                                <span class="text-slate-400">Événements</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-vue">✓</span>
+                                <code class="text-slate-300">v-model</code>
+                                <span class="text-slate-400">Formulaires</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-vue">✓</span>
+                                <code class="text-slate-300">v-if</code>
+                                <span class="text-slate-400">Conditionnel</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-vue">✓</span>
+                                <code class="text-slate-300">v-for</code>
+                                <span class="text-slate-400">Listes</span>
+                            </div>
+                            <div class="flex items-center gap-2 col-span-2">
+                                <span class="text-vue">✓</span>
+                                <code class="text-slate-300">computed()</code>
+                                <span class="text-slate-400">Propriétés calculées</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-4">
+                        <a href="/demos/vue-bases-start.vue" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-yellow-500/20 hover:bg-yellow-500/30 rounded-lg text-yellow-400 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                            </svg>
+                            Code de départ
+                        </a>
+                        <a href="/demos/vue-bases-final.vue" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-vue/20 hover:bg-vue/30 rounded-lg text-vue transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Solution complète
+                        </a>
+                    </div>
+                </div>
+
+                <div class="code-block rounded-2xl p-6 font-mono text-sm overflow-x-auto border border-slate-700">
+                    <div class="flex items-center gap-2 mb-4 text-slate-400">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                        <span class="ml-2">App.vue</span>
+                    </div>
+                    <pre class="text-slate-300 leading-relaxed text-xs"><span class="tag">&lt;script setup&gt;</span>
+<span class="keyword">import</span> { ref, computed } <span class="keyword">from</span> <span class="string">'vue'</span>
+
+<span class="keyword">const</span> pokemons = <span class="function">ref</span>([
+  { name: <span class="string">'Pikachu'</span>, type: <span class="string">'Electric'</span> },
+  { name: <span class="string">'Bulbasaur'</span>, type: <span class="string">'Grass'</span> },
+  { name: <span class="string">'Charmander'</span>, type: <span class="string">'Fire'</span> },
+  { name: <span class="string">'Squirtle'</span>, type: <span class="string">'Water'</span> },
+  { name: <span class="string">'Jolteon'</span>, type: <span class="string">'Electric'</span> },
+])
+
+<span class="comment">// TODO: ref pour le nom</span>
+<span class="comment">// TODO: ref pour le filtre</span>
+<span class="comment">// TODO: computed filteredPokemons</span>
+<span class="comment">// TODO: function addPokemon()</span>
+<span class="tag">&lt;/script&gt;</span>
+
+<span class="tag">&lt;template&gt;</span>
+  <span class="tag">&lt;h1&gt;</span>Mon Pokédex<span class="tag">&lt;/h1&gt;</span>
+  <span class="comment">&lt;!-- TODO: input + button --&gt;</span>
+  <span class="comment">&lt;!-- TODO: checkbox filtre --&gt;</span>
+  <span class="comment">&lt;!-- TODO: v-for liste --&gt;</span>
+<span class="tag">&lt;/template&gt;</span></pre>
+                </div>
+            </div>
+
+            <div class="mt-8 flex flex-wrap justify-center gap-4">
+                <a href="https://fr.vuejs.org/tutorial/" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-vue/20 hover:bg-vue/30 rounded-lg text-vue transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                    Tutoriel Vue.js (FR) →
+                </a>
+                <div class="bg-vue/10 border border-vue/30 px-4 py-2 rounded-xl">
+                    <p class="text-vue font-medium">📋 Copiez le code de départ dans <code class="bg-slate-800 px-2 py-1 rounded">src/App.vue</code></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 17: Ressources -->
+    <section id="slide-17" class="slide items-center gradient-vue py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full text-center">
+            <span class="font-mono text-sm mb-4 block text-white/70">16 / Pour aller plus loin</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-12">Ressources</h2>
+
+            <div class="grid md:grid-cols-3 gap-6 mb-12">
+                <a href="https://fr.vuejs.org/" target="_blank" class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl hover:bg-white/20 transition-colors block">
+                    <div class="text-4xl mb-4">📚</div>
+                    <h3 class="text-xl font-bold mb-2">Vue.js (FR)</h3>
+                    <p class="text-white/70 text-sm">Documentation officielle en français</p>
+                </a>
+
+                <a href="https://vuetifyjs.com/" target="_blank" class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl hover:bg-white/20 transition-colors block">
+                    <div class="text-4xl mb-4">🎨</div>
+                    <h3 class="text-xl font-bold mb-2">Vuetify</h3>
+                    <p class="text-white/70 text-sm">Composants Material Design</p>
+                </a>
+
+                <a href="https://fr.vuejs.org/tutorial/" target="_blank" class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl hover:bg-white/20 transition-colors block">
+                    <div class="text-4xl mb-4">🎮</div>
+                    <h3 class="text-xl font-bold mb-2">Tutoriel interactif</h3>
+                    <p class="text-white/70 text-sm">Apprendre en codant</p>
+                </a>
+            </div>
+
+            <div class="bg-white/10 backdrop-blur-sm p-8 rounded-2xl max-w-2xl mx-auto">
+                <h3 class="text-2xl font-bold mb-4">Prêt à coder ?</h3>
+                <p class="text-white/80 mb-6">Ouvrez votre terminal et lancez :</p>
+                <div class="bg-slate-900/50 rounded-xl p-4 font-mono text-xl">
+                    <code>npm create vuetify</code>
+                </div>
+            </div>
+
+            <div class="mt-12 flex justify-center gap-4">
+                <a href="https://devjs.ch/vue/" target="_blank" class="px-8 py-4 bg-white text-vueDark font-bold rounded-xl hover:bg-white/90 transition-colors">
+                    Voir le cours complet
+                </a>
+                <a href="https://kode.ch/vue-bases/" target="_blank" class="px-8 py-4 bg-white/20 font-bold rounded-xl hover:bg-white/30 transition-colors">
+                    Exercices pratiques
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const dotsContainer = document.getElementById('dots');
+        const badge = document.getElementById('contrast-badge');
+        let current = 0;
+
+        slides.forEach((_, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'nav-dot w-3 h-3 rounded-full bg-white/30 hover:bg-vue transition-all cursor-pointer border-0 p-0';
+            btn.addEventListener('click', () => go(i));
+            dotsContainer.appendChild(btn);
+        });
+        const dots = dotsContainer.querySelectorAll('.nav-dot');
+
+        function update() {
+            slides.forEach((s, i) => s.classList.toggle('active', i === current));
+            dots.forEach((d, i) => {
+                d.classList.toggle('bg-vue', i === current);
+                d.classList.toggle('bg-white/30', i !== current);
+                d.classList.toggle('active', i === current);
+            });
+        }
+        function next() { if (current < slides.length - 1) { current++; update(); } }
+        function prev() { if (current > 0) { current--; update(); } }
+        function go(i) { current = i; update(); }
+
+        document.addEventListener('keydown', (e) => {
+            if (['ArrowDown', 'ArrowRight', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); next(); }
+            else if (['ArrowUp', 'ArrowLeft'].includes(e.key)) { e.preventDefault(); prev(); }
+            else if (e.key.toLowerCase() === 'c') {
+                document.body.classList.toggle('high-contrast');
+                badge.style.display = document.body.classList.contains('high-contrast') ? 'block' : 'none';
+            }
+        });
+
+        update();
+    </script>
+</body>
+</html>

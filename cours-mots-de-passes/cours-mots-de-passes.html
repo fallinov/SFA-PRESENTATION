@@ -1,0 +1,1686 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProtonPass - Cours gestionnaire de mots de passe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        proton: {
+                            purple: '#6d4aff',
+                            dark: '#1a1a2e',
+                            light: '#f4f4f6',
+                            accent: '#8b5cf6'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .slide {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%);
+        }
+
+        .bg-theme {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .bg-abstract {
+            background-image: linear-gradient(rgba(26, 26, 46, 0.85), rgba(45, 45, 68, 0.9)), url('../assets/backgrounds/bg_abstract.png');
+        }
+
+        .bg-risk {
+            background-image: linear-gradient(rgba(45, 10, 20, 0.85), rgba(60, 20, 30, 0.9)), url('../assets/backgrounds/bg_risk.png');
+        }
+
+        .bg-proton {
+            background-image: linear-gradient(rgba(26, 26, 46, 0.7), rgba(45, 45, 68, 0.8)), url('../assets/backgrounds/bg_proton.png');
+        }
+
+        .bg-features {
+            background-image: linear-gradient(rgba(26, 26, 46, 0.85), rgba(45, 45, 68, 0.9)), url('../assets/backgrounds/bg_features.png');
+        }
+
+        .bg-security {
+            background-image: linear-gradient(rgba(20, 26, 50, 0.85), rgba(30, 40, 70, 0.9)), url('../assets/backgrounds/bg_security.png');
+        }
+
+        .bg-workshop {
+            background-image: linear-gradient(rgba(26, 26, 46, 0.8), rgba(45, 45, 68, 0.85)), url('../assets/backgrounds/bg_workshop.png');
+        }
+
+        .card-hover {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(109, 74, 255, 0.2);
+        }
+
+        /* Mobile-friendly scrollbar for tables */
+        .overflow-x-auto {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(109, 74, 255, 0.5) transparent;
+        }
+
+        .overflow-x-auto::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .overflow-x-auto::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .overflow-x-auto::-webkit-scrollbar-thumb {
+            background: rgba(109, 74, 255, 0.5);
+            border-radius: 3px;
+        }
+
+        /* Ensure slides don't clip content on mobile */
+        @media (max-width: 768px) {
+            .slide {
+                min-height: 100vh;
+                padding-bottom: 80px;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-proton-dark text-white overflow-hidden">
+    <!-- Progress Bar -->
+    <div class="fixed top-0 left-0 w-full h-1 bg-gray-800 z-50">
+        <div id="progress" class="progress-bar h-full bg-gradient-to-r from-proton-purple to-proton-accent"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed bottom-6 right-6 flex gap-3 z-50" aria-label="Navigation des slides">
+        <button onclick="prevSlide()" aria-label="Slide précédente"
+            class="p-3 bg-gray-800 hover:bg-proton-purple rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-proton-purple focus:ring-offset-2 focus:ring-offset-proton-dark">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
+        <button onclick="nextSlide()" aria-label="Slide suivante"
+            class="p-3 bg-gray-800 hover:bg-proton-purple rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-proton-purple focus:ring-offset-2 focus:ring-offset-proton-dark">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+        </button>
+    </nav>
+
+    <!-- Slide Counter -->
+    <div class="fixed bottom-6 left-6 text-sm text-gray-400 z-50" aria-live="polite" aria-atomic="true">
+        <span id="currentSlide">1</span> / <span id="totalSlides">31</span>
+    </div>
+
+    <main id="slides-container">
+        <!-- SLIDE 1: Titre -->
+        <section class="slide active bg-theme bg-abstract flex-col items-center justify-center p-8"
+            aria-label="Slide 1: Titre">
+            <div class="text-center fade-in">
+                <div class="mb-8">
+                    <img src="../assets/logos/proton.svg" alt="Proton Pass Logo" class="w-24 h-24 mx-auto"
+                        aria-hidden="true">
+                </div>
+                <h1
+                    class="text-6xl font-bold mb-4 bg-gradient-to-r from-proton-purple to-proton-accent bg-clip-text text-transparent">
+                    ProtonPass
+                </h1>
+                <p class="text-2xl text-gray-300 mb-8">Gestionnaire de mots de passe sécurisé</p>
+                <div class="border-t border-gray-700 pt-8 mt-8">
+                    <p class="text-lg text-gray-400">Formation enseignants</p>
+                    <p class="text-gray-400">CEJEF - Centre jurassien d'enseignement et de formation</p>
+                    <p class="text-gray-400 mt-4">Steve Fallet — <a href="mailto:steve.fallet@jura.ch"
+                            class="text-proton-purple hover:underline">steve.fallet@jura.ch</a></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 2: Objectifs -->
+        <section class="slide bg-theme bg-abstract flex-col items-center justify-center p-8">
+            <div class="max-w-4xl w-full fade-in">
+                <h2 class="text-4xl font-bold mb-12 text-center">Objectifs du cours</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-gray-800/50 p-6 rounded-2xl card-hover">
+                        <div class="w-12 h-12 bg-proton-purple/20 rounded-xl flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-proton-purple" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" stroke-width="2" />
+                                <circle cx="12" cy="12" r="6" stroke-width="2" />
+                                <circle cx="12" cy="12" r="2" fill="currentColor" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Comprendre</h3>
+                        <p class="text-gray-400">L'importance des gestionnaires de mots de passe</p>
+                    </div>
+                    <div class="bg-gray-800/50 p-6 rounded-2xl card-hover">
+                        <div class="w-12 h-12 bg-proton-purple/20 rounded-xl flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-proton-purple" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Installer</h3>
+                        <p class="text-gray-400">ProtonPass sur tous vos appareils</p>
+                    </div>
+                    <div class="bg-gray-800/50 p-6 rounded-2xl card-hover">
+                        <div class="w-12 h-12 bg-proton-purple/20 rounded-xl flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-proton-purple" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09zM12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
+                                <path
+                                    d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Maîtriser</h3>
+                        <p class="text-gray-400">Les fonctionnalités essentielles</p>
+                    </div>
+                    <div class="bg-gray-800/50 p-6 rounded-2xl card-hover">
+                        <div class="w-12 h-12 bg-proton-purple/20 rounded-xl flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-proton-purple" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 6c1.4 0 2.8 1.1 2.8 2.5V11c.6.3 1 .9 1 1.5v3c0 1-.8 1.5-1.8 1.5h-4c-1 0-1.8-.5-1.8-1.5v-3c0-.6.4-1.2 1-1.5V9.5C9.2 8.1 10.6 7 12 7zm0 1.2c-.8 0-1.5.7-1.5 1.3V11h3V9.5c0-.6-.7-1.3-1.5-1.3z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Sécuriser</h3>
+                        <p class="text-gray-400">Vos comptes avec le 2FA</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 3: Pourquoi un gestionnaire ? -->
+        <section class="slide bg-theme bg-risk flex-col items-center justify-center p-8">
+            <div class="max-w-4xl w-full fade-in">
+                <h2 class="text-4xl font-bold mb-4 text-center">Pourquoi un gestionnaire de mots de passe ?</h2>
+                <p class="text-xl text-gray-400 text-center mb-12">Les chiffres qui font réfléchir</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="text-center">
+                        <div class="text-6xl font-bold text-proton-purple mb-4">81%</div>
+                        <p class="text-gray-300">des violations de données sont dues à des mots de passe faibles ou
+                            réutilisés</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-6xl font-bold text-proton-accent mb-4">100+</div>
+                        <p class="text-gray-300">comptes en ligne en moyenne par utilisateur</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-6xl font-bold text-purple-400 mb-4">65%</div>
+                        <p class="text-gray-300">des personnes réutilisent le même mot de passe</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 4: Le problème -->
+        <section class="slide bg-theme bg-risk flex-col items-center justify-center p-8">
+            <div class="max-w-4xl w-full fade-in">
+                <h2 class="text-4xl font-bold mb-12 text-center text-white">Ce qu'il ne faut PAS faire</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-red-900/20 border border-red-800 p-6 rounded-2xl">
+                        <div class="mb-4"><svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor"
+                                stroke-width="2" viewBox="0 0 24 24">
+                                <path
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg></div>
+                        <h3 class="text-xl font-semibold mb-2 text-white">Post-it sur l'écran</h3>
+                        <p class="text-white">Visible par tous, aucune sécurité</p>
+                    </div>
+                    <div class="bg-red-900/20 border border-red-800 p-6 rounded-2xl">
+                        <div class="mb-4"><svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor"
+                                stroke-width="2" viewBox="0 0 24 24">
+                                <path
+                                    d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg></div>
+                        <h3 class="text-xl font-semibold mb-2 text-white">Fichier Excel</h3>
+                        <p class="text-white">Non chiffré, facilement accessible</p>
+                    </div>
+                    <div class="bg-red-900/20 border border-red-800 p-6 rounded-2xl">
+                        <div class="mb-4"><svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor"
+                                stroke-width="2" viewBox="0 0 24 24">
+                                <path
+                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg></div>
+                        <h3 class="text-xl font-semibold mb-2 text-white">Même mot de passe partout</h3>
+                        <p class="text-white">Un compte piraté = tous piratés</p>
+                    </div>
+                    <div class="bg-red-900/20 border border-red-800 p-6 rounded-2xl">
+                        <div class="mb-4"><svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor"
+                                stroke-width="2" viewBox="0 0 24 24">
+                                <path
+                                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                            </svg></div>
+                        <h3 class="text-xl font-semibold mb-2 text-white">Tout mémoriser</h3>
+                        <p class="text-white">Impossible avec 100+ comptes</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 5: Comparaison des méthodes de stockage -->
+        <section class="slide bg-theme bg-risk flex-col items-center justify-center p-4 md:p-8">
+            <div class="max-w-5xl w-full fade-in">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 md:mb-8 text-center">Comment stockez-vous vos mots de passe ?</h2>
+                <p class="text-sm text-gray-500 text-center mb-2 md:hidden">Glissez pour voir plus</p>
+                <div class="overflow-x-auto bg-black/40 backdrop-blur-md rounded-xl p-3 md:p-6 shadow-2xl">
+                    <table class="min-w-[700px] w-full text-left text-sm md:text-base">
+                        <thead>
+                            <tr class="border-b border-gray-700">
+                                <th class="p-3 text-gray-400">Methode</th>
+                                <th class="p-3 text-gray-400">Avantages</th>
+                                <th class="p-3 text-gray-400">Risques</th>
+                                <th class="p-3 text-gray-400 text-center">Score</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-gray-300">
+                            <tr class="border-b border-gray-800 bg-red-900/20">
+                                <td class="p-3 font-semibold flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    Post-it / carnet
+                                </td>
+                                <td class="p-3 text-sm">Simple, pas de technologie</td>
+                                <td class="p-3 text-sm text-red-300">Visible, volable, perdable</td>
+                                <td class="p-3 text-center text-red-400 font-bold">1/5</td>
+                            </tr>
+                            <tr class="border-b border-gray-800 bg-red-900/20">
+                                <td class="p-3 font-semibold flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                    </svg>
+                                    Dates / noms
+                                </td>
+                                <td class="p-3 text-sm">Facile a retenir</td>
+                                <td class="p-3 text-sm text-red-300">Devinable via reseaux sociaux</td>
+                                <td class="p-3 text-center text-red-400 font-bold">1/5</td>
+                            </tr>
+                            <tr class="border-b border-gray-800 bg-yellow-900/20">
+                                <td class="p-3 font-semibold flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-yellow-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9"/>
+                                    </svg>
+                                    Trousseaux navigateur
+                                </td>
+                                <td class="p-3 text-sm">Integre, pratique</td>
+                                <td class="p-3 text-sm text-yellow-300">Lie a un navigateur, sync limitee</td>
+                                <td class="p-3 text-center text-yellow-400 font-bold">3/5</td>
+                            </tr>
+                            <tr class="border-b border-gray-800 bg-green-900/20">
+                                <td class="p-3 font-semibold flex items-center gap-2">
+                                    <img src="../assets/logos/keepassxc.svg" alt="KeePassXC" class="w-5 h-5 flex-shrink-0">
+                                    Gestionnaire local
+                                </td>
+                                <td class="p-3 text-sm">Controle total, hors-ligne</td>
+                                <td class="p-3 text-sm text-yellow-300">Pas de sync auto, risque perte</td>
+                                <td class="p-3 text-center text-green-400 font-bold">4/5</td>
+                            </tr>
+                            <tr class="bg-proton-purple/20">
+                                <td class="p-3 font-semibold flex items-center gap-2">
+                                    <img src="../assets/logos/proton.svg" alt="ProtonPass" class="w-5 h-5 flex-shrink-0 brightness-0 invert">
+                                    Gestionnaire cloud
+                                </td>
+                                <td class="p-3 text-sm">Sync multi-appareils, securise</td>
+                                <td class="p-3 text-sm text-gray-400">Dependance service tiers</td>
+                                <td class="p-3 text-center text-green-400 font-bold">5/5</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 6: La solution -->
+        <section class="slide bg-theme bg-proton flex-col items-center justify-center p-8">
+            <div class="max-w-4xl w-full fade-in text-center">
+                <h2 class="text-4xl font-bold mb-8 text-green-400">La solution : le gestionnaire de mots de passe</h2>
+                <div class="bg-gray-800/50 p-8 rounded-3xl max-w-2xl mx-auto">
+                    <div class="flex justify-center mb-6">
+                        <svg class="w-16 h-16 text-green-400" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 6c1.4 0 2.8 1.1 2.8 2.5V11c.6.3 1 .9 1 1.5v3c0 1-.8 1.5-1.8 1.5h-4c-1 0-1.8-.5-1.8-1.5v-3c0-.6.4-1.2 1-1.5V9.5C9.2 8.1 10.6 7 12 7zm0 1.2c-.8 0-1.5.7-1.5 1.3V11h3V9.5c0-.6-.7-1.3-1.5-1.3z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-4">Un coffre-fort numérique</h3>
+                    <ul class="text-left text-lg text-gray-300 space-y-4">
+                        <li class="flex items-start gap-3">
+                            <svg class="w-5 h-5 text-green-400 mt-1 flex-shrink-0" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span><strong>Un seul mot de passe</strong> à retenir (le maître)</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <svg class="w-5 h-5 text-green-400 mt-1 flex-shrink-0" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span><strong>Chiffrement</strong> de bout en bout</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <svg class="w-5 h-5 text-green-400 mt-1 flex-shrink-0" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span><strong>Synchronisation</strong> sur tous vos appareils</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <svg class="w-5 h-5 text-green-400 mt-1 flex-shrink-0" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span><strong>Génération</strong> de mots de passe forts</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 6: Comparatif -->
+        <section class="slide bg-theme bg-proton flex-col items-center justify-center p-4 md:p-8">
+            <div class="max-w-5xl w-full fade-in">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 md:mb-8 text-center">Comparatif des solutions</h2>
+                <!-- Mobile scroll hint -->
+                <p class="text-sm text-gray-500 text-center mb-2 md:hidden">← Glissez pour voir plus →</p>
+                <div class="overflow-x-auto bg-black/40 backdrop-blur-md rounded-xl p-3 md:p-6 shadow-2xl">
+                    <table class="min-w-[600px] w-full text-left text-sm md:text-base">
+                        <thead>
+                            <tr class="border-b border-gray-700">
+                                <th class="p-4 text-gray-400">Solution</th>
+                                <th class="p-4 text-gray-400">Prix</th>
+                                <th class="p-4 text-gray-400">Open Source</th>
+                                <th class="p-4 text-gray-400">Localisation</th>
+                                <th class="p-4 text-gray-400">Note</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-gray-300">
+                            <tr class="border-b border-gray-800">
+                                <td class="p-4 font-semibold flex items-center gap-3">
+                                    <img src="../assets/logos/1password.svg" alt="1Password"
+                                        class="w-6 h-6 brightness-0 invert opacity-70 hover:opacity-100 transition-opacity">
+                                    1Password
+                                </td>
+                                <td class="p-4">~36 CHF/an</td>
+                                <td class="p-4 text-red-400">Non</td>
+                                <td class="p-4">Canada/USA</td>
+                                <td class="p-4 text-sm">Interface soignée</td>
+                            </tr>
+                            <tr class="border-b border-gray-800">
+                                <td class="p-4 font-semibold flex items-center gap-3">
+                                    <img src="../assets/logos/bitwarden.svg" alt="Bitwarden"
+                                        class="w-6 h-6 brightness-0 invert opacity-70 hover:opacity-100 transition-opacity">
+                                    Bitwarden
+                                </td>
+                                <td class="p-4 text-green-400">Gratuit</td>
+                                <td class="p-4 text-green-400">Oui</td>
+                                <td class="p-4">USA</td>
+                                <td class="p-4 text-sm">Auto-hébergeable</td>
+                            </tr>
+                            <tr class="border-b border-gray-800">
+                                <td class="p-4 font-semibold flex items-center gap-3">
+                                    <img src="../assets/logos/lastpass.svg" alt="LastPass"
+                                        class="w-6 h-6 brightness-0 invert opacity-70 hover:opacity-100 transition-opacity">
+                                    LastPass
+                                </td>
+                                <td class="p-4">~36 CHF/an</td>
+                                <td class="p-4 text-red-400">Non</td>
+                                <td class="p-4">USA</td>
+                                <td class="p-4 text-sm text-red-400">Failles de sécurité</td>
+                            </tr>
+                            <tr class="border-b border-gray-800">
+                                <td class="p-4 font-semibold flex items-center gap-3">
+                                    <img src="../assets/logos/dashlane.svg" alt="Dashlane"
+                                        class="w-6 h-6 brightness-0 invert opacity-70 hover:opacity-100 transition-opacity">
+                                    Dashlane
+                                </td>
+                                <td class="p-4">~60 CHF/an</td>
+                                <td class="p-4 text-red-400">Non</td>
+                                <td class="p-4">USA/France</td>
+                                <td class="p-4 text-sm">VPN inclus</td>
+                            </tr>
+                            <tr class="border-b border-gray-800 bg-green-900/10">
+                                <td class="p-4 font-semibold flex items-center gap-3">
+                                    <img src="../assets/logos/keepassxc.svg" alt="KeePassXC"
+                                        class="w-6 h-6 opacity-70 hover:opacity-100 transition-opacity">
+                                    KeePassXC
+                                </td>
+                                <td class="p-4 text-green-400">Gratuit</td>
+                                <td class="p-4 text-green-400">Oui</td>
+                                <td class="p-4 text-green-400 font-semibold">Local</td>
+                                <td class="p-4 text-sm">100% hors-ligne</td>
+                            </tr>
+                            <tr class="bg-proton-purple/20 rounded-lg">
+                                <td class="p-4 font-bold text-proton-purple flex items-center gap-3">
+                                    <img src="../assets/logos/proton.svg" alt="ProtonPass"
+                                        class="w-6 h-6 brightness-0 invert opacity-70 hover:opacity-100 transition-opacity">
+                                    ProtonPass
+                                </td>
+                                <td class="p-4 text-green-400">Gratuit</td>
+                                <td class="p-4 text-green-400">Oui</td>
+                                <td class="p-4 text-green-400 font-semibold">Suisse</td>
+                                <td class="p-4 text-sm">Écosystème complet</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 7: Pourquoi Proton -->
+        <section class="slide bg-theme bg-proton flex-col items-center justify-center p-8">
+            <div class="max-w-4xl w-full fade-in">
+                <h2 class="text-4xl font-bold mb-4 text-center">Pourquoi choisir Proton ?</h2>
+                <p class="text-xl text-gray-400 text-center mb-12">Une entreprise suisse de confiance</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-gray-800/50 p-6 rounded-2xl card-hover">
+                        <div class="flex items-center gap-4 mb-4">
+                            <svg class="w-10 h-10" viewBox="0 0 32 32">
+                                <rect fill="#D52B1E" width="32" height="32" />
+                                <rect fill="#fff" x="13" y="6" width="6" height="20" />
+                                <rect fill="#fff" x="6" y="13" width="20" height="6" />
+                            </svg>
+                            <h3 class="text-xl font-semibold">Basé en Suisse</h3>
+                        </div>
+                        <p class="text-gray-400">Lois strictes sur la protection des données, hors juridiction USA/EU
+                        </p>
+                    </div>
+                    <div class="bg-gray-800/50 p-6 rounded-2xl card-hover">
+                        <div class="flex items-center gap-4 mb-4">
+                            <svg class="w-10 h-10 text-proton-purple" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+                            </svg>
+                            <h3 class="text-xl font-semibold">Open Source</h3>
+                        </div>
+                        <p class="text-gray-400">Code vérifiable par tous, audits de sécurité indépendants</p>
+                    </div>
+                    <div class="bg-gray-800/50 p-6 rounded-2xl card-hover">
+                        <div class="flex items-center gap-4 mb-4">
+                            <svg class="w-10 h-10 text-proton-purple" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M4.93 4.93l14.14 14.14" />
+                            </svg>
+                            <h3 class="text-xl font-semibold">Pas de publicité</h3>
+                        </div>
+                        <p class="text-gray-400">Modèle économique basé sur les abonnements premium</p>
+                    </div>
+                    <div class="bg-gray-800/50 p-6 rounded-2xl card-hover">
+                        <div class="flex items-center gap-4 mb-4">
+                            <svg class="w-10 h-10 text-proton-purple" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
+                            </svg>
+                            <h3 class="text-xl font-semibold">Zero-Knowledge</h3>
+                        </div>
+                        <p class="text-gray-400">Même Proton ne peut pas voir vos données</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 8: L'écosystème Proton -->
+        <section class="slide bg-theme bg-proton flex-col items-center justify-center p-8">
+            <div class="max-w-5xl w-full fade-in">
+                <h2 class="text-4xl font-bold mb-4 text-center">L'écosystème Proton</h2>
+                <p class="text-xl text-gray-400 text-center mb-12">Une suite complète pour votre vie privée</p>
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
+                    <div class="bg-gray-800/50 p-6 rounded-2xl text-center card-hover">
+                        <div class="flex justify-center mb-4">
+                            <img src="../assets/logos/protonmail.svg" alt="Proton Mail" class="w-12 h-12">
+                        </div>
+                        <h3 class="font-semibold mb-2">Proton Mail</h3>
+                        <p class="text-sm text-gray-400">Email chiffré</p>
+                    </div>
+                    <div class="bg-gray-800/50 p-6 rounded-2xl text-center card-hover">
+                        <div class="flex justify-center mb-4">
+                            <img src="../assets/logos/protonvpn.svg" alt="Proton VPN" class="w-12 h-12">
+                        </div>
+                        <h3 class="font-semibold mb-2">Proton VPN</h3>
+                        <p class="text-sm text-gray-400">Navigation privée</p>
+                    </div>
+                    <div class="bg-gray-800/50 p-6 rounded-2xl text-center card-hover">
+                        <div class="flex justify-center mb-4">
+                            <img src="../assets/logos/protondrive.svg" alt="Proton Drive" class="w-12 h-12">
+                        </div>
+                        <h3 class="font-semibold mb-2">Proton Drive</h3>
+                        <p class="text-sm text-gray-400">Stockage cloud</p>
+                    </div>
+                    <div class="bg-gray-800/50 p-6 rounded-2xl text-center card-hover">
+                        <div class="flex justify-center mb-4">
+                            <img src="../assets/logos/proton.svg" alt="Proton Calendar" class="w-12 h-12">
+                        </div>
+                        <h3 class="font-semibold mb-2">Proton Calendar</h3>
+                        <p class="text-sm text-gray-400">Agenda privé</p>
+                    </div>
+                    <div
+                        class="bg-proton-purple/30 border-2 border-proton-purple p-6 rounded-2xl text-center card-hover">
+                        <div class="flex justify-center mb-4">
+                            <img src="../assets/logos/proton.svg" alt="Proton Pass" class="w-12 h-12">
+                        </div>
+                        <h3 class="font-semibold mb-2">Proton Pass</h3>
+                        <p class="text-sm text-gray-300">Mots de passe</p>
+                    </div>
+                </div>
+                <p class="text-center mt-8 text-gray-400">Un seul compte Proton = accès à tous les services</p>
+            </div>
+        </section>
+
+        <!-- SLIDE 9: Histoire de Proton -->
+        <section class="slide bg-theme bg-proton flex-col items-center justify-center p-8">
+            <div class="max-w-4xl w-full fade-in">
+                <h2 class="text-4xl font-bold mb-12 text-center">L'histoire de Proton</h2>
+                <div class="relative">
+                    <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-proton-purple/30"></div>
+                    <div class="space-y-12">
+                        <div class="flex items-center gap-8">
+                            <div class="w-1/2 text-right">
+                                <h3 class="text-2xl font-bold text-proton-purple">2014</h3>
+                                <p class="text-gray-300">Fondation par des scientifiques du CERN</p>
+                            </div>
+                            <div class="w-4 h-4 bg-proton-purple rounded-full z-10"></div>
+                            <div class="w-1/2"></div>
+                        </div>
+                        <div class="flex items-center gap-8">
+                            <div class="w-1/2"></div>
+                            <div class="w-4 h-4 bg-proton-purple rounded-full z-10"></div>
+                            <div class="w-1/2">
+                                <h3 class="text-2xl font-bold text-proton-purple">2016</h3>
+                                <p class="text-gray-300">Lancement de Proton VPN</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-8">
+                            <div class="w-1/2 text-right">
+                                <h3 class="text-2xl font-bold text-proton-purple">2022</h3>
+                                <p class="text-gray-300">Proton Drive & Calendar</p>
+                            </div>
+                            <div class="w-4 h-4 bg-proton-purple rounded-full z-10"></div>
+                            <div class="w-1/2"></div>
+                        </div>
+                        <div class="flex items-center gap-8">
+                            <div class="w-1/2"></div>
+                            <div class="w-4 h-4 bg-proton-purple rounded-full z-10"></div>
+                            <div class="w-1/2">
+                                <h3 class="text-2xl font-bold text-proton-purple">2023</h3>
+                                <p class="text-gray-300">Lancement de Proton Pass</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 10: Prise en main - Titre -->
+        <section class="slide bg-theme bg-features flex-col items-center justify-center p-8">
+            <div class="text-center fade-in">
+                <div class="flex justify-center mb-8">
+                    <svg class="w-24 h-24 text-proton-purple" fill="none" stroke="currentColor" stroke-width="1.5"
+                        viewBox="0 0 24 24">
+                        <path
+                            d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09zM12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
+                        <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+                    </svg>
+                </div>
+                <h2 class="text-5xl font-bold mb-4">Prise en main</h2>
+                <p class="text-2xl text-gray-400">de ProtonPass</p>
+            </div>
+        </section>
+
+        <!-- SLIDE 11: Création de compte -->
+        <section class="slide bg-theme bg-features flex-col items-center justify-center p-8">
+            <div class="max-w-4xl w-full fade-in">
+                <h2 class="text-4xl font-bold mb-8 text-center">Création de compte</h2>
+                <div class="bg-gray-800/50 p-8 rounded-3xl">
+                    <ol class="space-y-6 text-lg">
+                        <li class="flex items-start gap-4">
+                            <span
+                                class="flex-shrink-0 w-8 h-8 bg-proton-purple rounded-full flex items-center justify-center font-bold">1</span>
+                            <div>
+                                <p class="font-semibold">Aller sur <span class="text-proton-purple">proton.me</span></p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <span
+                                class="flex-shrink-0 w-8 h-8 bg-proton-purple rounded-full flex items-center justify-center font-bold">2</span>
+                            <div>
+                                <p class="font-semibold">Cliquer sur "Créer un compte"</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <span
+                                class="flex-shrink-0 w-8 h-8 bg-proton-purple rounded-full flex items-center justify-center font-bold">3</span>
+                            <div>
+                                <p class="font-semibold">Choisir un nom d'utilisateur</p>
+                                <p class="text-gray-400 text-sm">Devient votre adresse @proton.me</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <span
+                                class="flex-shrink-0 w-8 h-8 bg-proton-purple rounded-full flex items-center justify-center font-bold">4</span>
+                            <div>
+                                <p class="font-semibold">Définir un mot de passe maître FORT</p>
+                                <p class="text-gray-400 text-sm">Minimum 12 caractères, phrase de passe recommandée</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <span
+                                class="flex-shrink-0 w-8 h-8 bg-proton-purple rounded-full flex items-center justify-center font-bold">5</span>
+                            <div>
+                                <p class="font-semibold">Ajouter un email de récupération</p>
+                                <p class="text-gray-400 text-sm">Important en cas d'oubli du mot de passe</p>
+                            </div>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 12: Mot de passe maître -->
+        <section class="slide bg-theme bg-features flex-col items-center justify-center p-8">
+            <div class="max-w-4xl w-full fade-in">
+                <h2 class="text-4xl font-bold mb-8 text-center">Le mot de passe maître</h2>
+                <p class="text-xl text-gray-400 text-center mb-8">Le seul que vous devez retenir !</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-red-900/20 border border-red-800 p-6 rounded-2xl">
+                        <h3 class="text-xl font-semibold mb-4 text-red-400">Mauvais exemples</h3>
+                        <ul class="space-y-2 text-gray-300">
+                            <li class="line-through">123456</li>
+                            <li class="line-through">password</li>
+                            <li class="line-through">MonChat</li>
+                            <li class="line-through">Jean1985</li>
+                        </ul>
+                    </div>
+                    <div class="bg-green-900/20 border border-green-800 p-6 rounded-2xl">
+                        <h3 class="text-xl font-semibold mb-4 text-green-400">Bons exemples</h3>
+                        <ul class="space-y-2 text-gray-300">
+                            <li>MonChienAdore3Croquettes!</li>
+                            <li>J'habite@Delémont-2800</li>
+                            <li>LeJura=50communes+1</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt-8 p-4 bg-yellow-900/20 border border-yellow-700 rounded-xl">
+                    <p class="text-yellow-400 text-center">
+                        <strong>Astuce :</strong> Une phrase de passe est plus facile à retenir et plus sécurisée qu'un
+                        mot de passe complexe
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 13: Plateformes disponibles -->
+        <section class="slide bg-theme bg-features flex-col items-center justify-center p-8">
+            <div class="max-w-5xl w-full fade-in">
+                <h2 class="text-4xl font-bold mb-4 text-center">Plateformes disponibles</h2>
+                <p class="text-xl text-gray-400 text-center mb-12">ProtonPass est partout</p>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="bg-gray-800/50 p-6 rounded-2xl text-center card-hover group">
+                        <div class="flex justify-center mb-4">
+                            <svg class="w-12 h-12 text-white opacity-70 group-hover:opacity-100 transition-opacity"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold mb-2">Web</h3>
+                        <p class="text-sm text-gray-400">pass.proton.me</p>
+                    </div>
+                    <div class="bg-gray-800/50 p-6 rounded-2xl text-center card-hover">
+                        <div class="flex justify-center gap-2 mb-4">
+                            <img src="../assets/logos/chrome.svg" alt="Chrome"
+                                class="w-10 h-10 brightness-0 invert opacity-70 hover:opacity-100 transition-opacity">
+                            <img src="../assets/logos/firefox.svg" alt="Firefox"
+                                class="w-10 h-10 brightness-0 invert opacity-70 hover:opacity-100 transition-opacity">
+                            <img src="../assets/logos/edge.svg" alt="Edge"
+                                class="w-10 h-10 brightness-0 invert opacity-70 hover:opacity-100 transition-opacity">
+                        </div>
+                        <h3 class="font-semibold mb-2">Extensions</h3>
+                        <p class="text-sm text-gray-400">Chrome, Firefox, Edge</p>
+                    </div>
+                    <div class="bg-gray-800/50 p-6 rounded-2xl text-center card-hover">
+                        <div class="flex justify-center gap-2 mb-4">
+                            <img src="../assets/logos/apple.svg" alt="iOS"
+                                class="w-10 h-10 brightness-0 invert opacity-70 hover:opacity-100 transition-opacity">
+                            <img src="../assets/logos/android.svg" alt="Android"
+                                class="w-10 h-10 brightness-0 invert opacity-70 hover:opacity-100 transition-opacity">
+                        </div>
+                        <h3 class="font-semibold mb-2">Mobile</h3>
+                        <p class="text-sm text-gray-400">iOS & Android</p>
+                    </div>
+                    <div class="bg-gray-800/50 p-6 rounded-2xl text-center card-hover">
+                        <div class="flex justify-center gap-2 mb-4">
+                            <img src="../assets/logos/windows.svg" alt="Windows"
+                                class="w-10 h-10 brightness-0 invert opacity-70 hover:opacity-100 transition-opacity">
+                            <img src="../assets/logos/apple.svg" alt="Mac"
+                                class="w-10 h-10 brightness-0 invert opacity-70 hover:opacity-100 transition-opacity">
+                            <img src="../assets/logos/linux.svg" alt="Linux"
+                                class="w-10 h-10 brightness-0 invert opacity-70 hover:opacity-100 transition-opacity">
+                        </div>
+                        <h3 class="font-semibold mb-2">Desktop</h3>
+                        <p class="text-sm text-gray-400">Windows, Mac, Linux</p>
+                    </div>
+                </div>
+                <div class="mt-8 text-center">
+                    <p class="text-gray-400">Synchronisation automatique entre tous les appareils</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 14: Interface web -->
+        <section class="slide bg-theme bg-features flex-col items-center justify-center p-8">
+            <div class="max-w-4xl w-full fade-in">
+                <h2 class="text-4xl font-bold mb-8 text-center">Interface web</h2>
+                <p class="text-xl text-gray-400 text-center mb-8">pass.proton.me</p>
+                <div class="bg-gray-800/50 p-6 rounded-2xl">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="text-center p-4">
+                            <div class="flex justify-center mb-4"><svg class="w-10 h-10 text-proton-purple" fill="none"
+                                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path
+                                        d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                                </svg></div>
+                            <h3 class="font-semibold mb-2">Coffres</h3>
+                            <p class="text-sm text-gray-400">Organisez vos identifiants par catégorie (Perso, Travail,
+                                etc.)</p>
+                        </div>
+                        <div class="text-center p-4">
+                            <div class="flex justify-center mb-4"><svg class="w-10 h-10 text-proton-purple" fill="none"
+                                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path
+                                        d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                                </svg></div>
+                            <h3 class="font-semibold mb-2">Identifiants</h3>
+                            <p class="text-sm text-gray-400">Site, nom d'utilisateur, mot de passe</p>
+                        </div>
+                        <div class="text-center p-4">
+                            <div class="flex justify-center mb-4"><svg class="w-10 h-10 text-proton-purple" fill="none"
+                                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path
+                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg></div>
+                            <h3 class="font-semibold mb-2">Notes sécurisées</h3>
+                            <p class="text-sm text-gray-400">Informations sensibles chiffrées</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 15: Extension navigateur -->
+        <section class="slide bg-theme bg-features flex-col items-center justify-center p-8">
+            <div class="max-w-4xl w-full fade-in">
+                <h2 class="text-4xl font-bold mb-8 text-center">Extension navigateur</h2>
+                <p class="text-xl text-gray-400 text-center mb-8">L'outil du quotidien</p>
+                <div class="bg-gray-800/50 p-8 rounded-3xl">
+                    <div class="space-y-6">
+                        <div class="flex items-center gap-6">
+                            <div
+                                class="w-16 h-16 bg-proton-purple/20 rounded-xl flex items-center justify-center text-3xl">
+                                1</div>
+                            <div>
+                                <h3 class="font-semibold text-xl">Installation</h3>
+                                <p class="text-gray-400">Depuis le store de votre navigateur (Chrome Web Store, Firefox
+                                    Add-ons)</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-6">
+                            <div
+                                class="w-16 h-16 bg-proton-purple/20 rounded-xl flex items-center justify-center text-3xl">
+                                2</div>
+                            <div>
+                                <h3 class="font-semibold text-xl">Connexion</h3>
+                                <p class="text-gray-400">Avec votre compte Proton</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-6">
+                            <div
+                                class="w-16 h-16 bg-proton-purple/20 rounded-xl flex items-center justify-center text-3xl">
+                                3</div>
+                            <div>
+                                <h3 class="font-semibold text-xl">Remplissage automatique</h3>
+                                <p class="text-gray-400">Cliquez sur l'icône ou utilisez Ctrl+Shift+L</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 16: Application mobile -->
+        <section class="slide bg-theme bg-features flex-col items-center justify-center p-8">
+            <div class="max-w-4xl w-full fade-in">
+                <h2 class="text-4xl font-bold mb-8 text-center">Application mobile</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-gray-800/50 p-6 rounded-2xl">
+                        <h3 class="text-xl font-semibold mb-4 flex items-center gap-3">
+                            <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701" />
+                            </svg>
+                            iOS
+                        </h3>
+                        <ol class="space-y-3 text-gray-300">
+                            <li class="flex items-center gap-2">1. Télécharger sur <svg
+                                    class="w-5 h-5 inline text-[#0D96F6]" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M8.809 14.92l6.11-11.037c.084-.152.076-.332-.016-.475A.454.454 0 0 0 14.522 3H8.094a.608.608 0 0 0-.529.313L1.204 14.927a.496.496 0 0 0-.003.498c.09.154.256.25.434.25h6.467a.608.608 0 0 0 .529-.312l.178-.322V14.92zM14.86 11.9l-4.382 7.916a.497.497 0 0 0 0 .498c.089.154.256.25.433.25h6.467a.608.608 0 0 0 .53-.312l4.382-7.916a.497.497 0 0 0 0-.497.454.454 0 0 0-.434-.25h-6.466a.608.608 0 0 0-.53.311z" />
+                                </svg> App Store</li>
+                            <li>2. Se connecter avec Proton</li>
+                            <li>3. Réglages > Mots de passe > Remplissage auto</li>
+                            <li>4. Activer ProtonPass</li>
+                        </ol>
+                    </div>
+                    <div class="bg-gray-800/50 p-6 rounded-2xl">
+                        <h3 class="text-xl font-semibold mb-4 flex items-center gap-3">
+                            <img src="../assets/logos/android.svg" alt="Android" class="w-8 h-8">
+                            Android
+                        </h3>
+                        <ol class="space-y-3 text-gray-300">
+                            <li class="flex items-center gap-2">1. Télécharger sur <svg
+                                    class="w-5 h-5 inline text-[#414141]" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M22.018 13.298l-3.919 2.218-3.515-3.493 3.543-3.521 3.891 2.202a1.49 1.49 0 0 1 0 2.594zM1.337.924a1.486 1.486 0 0 0-.112.568v21.017c0 .217.045.419.124.6l11.155-11.087L1.337.924zm12.207 10.065l3.258-3.238L3.45.195a1.466 1.466 0 0 0-.946-.179l11.04 10.973zm0 2.067l-11 10.933c.298.036.612-.016.906-.183l13.324-7.54-3.23-3.21z" />
+                                </svg> Google Play</li>
+                            <li>2. Se connecter avec Proton</li>
+                            <li>3. Paramètres > Système > Saisie auto</li>
+                            <li>4. Sélectionner ProtonPass</li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="mt-8 p-4 bg-proton-purple/20 rounded-xl text-center">
+                    <p class="text-proton-accent">Activez le déverrouillage biométrique (Face ID / empreinte) pour plus
+                        de confort</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 17: Fonctionnalités - Titre -->
+        <section class="slide bg-theme bg-features flex-col items-center justify-center p-8">
+            <div class="text-center fade-in">
+                <div class="mb-8">
+                    <svg class="w-24 h-24 text-proton-purple mx-auto" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                        </path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                </div>
+                <h2 class="text-5xl font-bold mb-4">Fonctionnalités</h2>
+                <p class="text-2xl text-gray-400">essentielles</p>
+            </div>
+        </section>
+
+        <!-- SLIDE 18: Générateur de mots de passe -->
+        <section class="slide bg-theme bg-features flex-col items-center justify-center p-8">
+            <div class="max-w-4xl w-full fade-in">
+                <h2 class="text-4xl font-bold mb-8 text-center">Générateur de mots de passe</h2>
+                <div class="bg-gray-800/50 p-8 rounded-3xl mb-8">
+                    <div class="bg-gray-900 p-4 rounded-xl mb-6 text-center">
+                        <code class="text-2xl text-proton-purple font-mono">xK9#mP2$vL7@nQ4&amp;bR</code>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                        <div>
+                            <p class="text-gray-400 text-sm">Longueur</p>
+                            <p class="text-xl font-semibold">16+</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-400 text-sm">Majuscules</p>
+                            <p class="text-xl font-semibold text-green-400">Oui</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-400 text-sm">Chiffres</p>
+                            <p class="text-xl font-semibold text-green-400">Oui</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-400 text-sm">Symboles</p>
+                            <p class="text-xl font-semibold text-green-400">Oui</p>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-center text-gray-400">
+                    Générez un mot de passe unique pour chaque compte.<br>
+                    Vous n'avez pas besoin de le retenir, ProtonPass s'en charge !
+                </p>
+            </div>
+        </section>
+
+        <!-- SLIDE 19: Alias email -->
+        <section class="slide bg-theme bg-features flex-col items-center justify-center p-8">
+            <div class="max-w-4xl w-full fade-in">
+                <h2 class="text-4xl font-bold mb-8 text-center">Alias email (hide-my-email)</h2>
+                <div class="bg-gray-800/50 p-8 rounded-3xl">
+                    <div class="flex items-center justify-center gap-4 mb-8">
+                        <div class="bg-gray-900 p-4 rounded-xl">
+                            <p class="text-gray-400 text-sm">Votre vraie adresse</p>
+                            <p class="text-lg">jean.dupont@proton.me</p>
+                        </div>
+                        <svg class="w-10 h-10 text-proton-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                        <div class="bg-proton-purple/20 p-4 rounded-xl border border-proton-purple">
+                            <p class="text-proton-accent text-sm">Alias généré</p>
+                            <p class="text-lg">abc123.xyz@proton.me</p>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4 text-center">Cas d'usage</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="text-center p-4 bg-gray-900 rounded-xl">
+                            <div class="flex justify-center"><svg class="w-8 h-8 text-proton-purple" fill="none"
+                                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path
+                                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg></div>
+                            <p class="mt-2 text-gray-300">Sites e-commerce</p>
+                        </div>
+                        <div class="text-center p-4 bg-gray-900 rounded-xl">
+                            <div class="flex justify-center"><svg class="w-8 h-8 text-proton-purple" fill="none"
+                                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path
+                                        d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                                </svg></div>
+                            <p class="mt-2 text-gray-300">Newsletters</p>
+                        </div>
+                        <div class="text-center p-4 bg-gray-900 rounded-xl">
+                            <div class="flex justify-center"><svg class="w-8 h-8 text-proton-purple" fill="none"
+                                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path
+                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg></div>
+                            <p class="mt-2 text-gray-300">Services douteux</p>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-center mt-6 text-gray-400">
+                    Si un alias est compromis, désactivez-le sans affecter votre adresse principale
+                </p>
+            </div>
+        </section>
+
+        <!-- SLIDE 20: 2FA - Titre -->
+        <section class="slide bg-theme bg-security flex-col items-center justify-center p-8">
+            <div class="text-center fade-in">
+                <div class="flex justify-center mb-8">
+                    <svg class="w-24 h-24 text-proton-purple" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 6c1.4 0 2.8 1.1 2.8 2.5V11c.6.3 1 .9 1 1.5v3c0 1-.8 1.5-1.8 1.5h-4c-1 0-1.8-.5-1.8-1.5v-3c0-.6.4-1.2 1-1.5V9.5C9.2 8.1 10.6 7 12 7zm0 1.2c-.8 0-1.5.7-1.5 1.3V11h3V9.5c0-.6-.7-1.3-1.5-1.3z" />
+                    </svg>
+                </div>
+                <h2 class="text-5xl font-bold mb-4">Authentification</h2>
+                <p class="text-2xl text-gray-400">à deux facteurs (2FA)</p>
+            </div>
+        </section>
+
+        <!-- SLIDE 21: Qu'est-ce que le 2FA -->
+        <section class="slide bg-theme bg-security flex-col items-center justify-center p-8">
+            <div class="max-w-4xl w-full fade-in">
+                <h2 class="text-4xl font-bold mb-8 text-center">Qu'est-ce que le 2FA ?</h2>
+                <div class="flex items-center justify-center gap-8 mb-12">
+                    <div class="text-center">
+                        <div
+                            class="w-24 h-24 bg-proton-purple/20 rounded-full flex items-center justify-center mb-4 mx-auto">
+                            <svg class="w-10 h-10 text-proton-purple" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                            </svg>
+                        </div>
+                        <p class="font-semibold">Ce que vous savez</p>
+                        <p class="text-sm text-gray-400">Mot de passe</p>
+                    </div>
+                    <div class="text-4xl text-proton-purple">+</div>
+                    <div class="text-center">
+                        <div
+                            class="w-24 h-24 bg-proton-purple/20 rounded-full flex items-center justify-center mb-4 mx-auto">
+                            <svg class="w-10 h-10 text-proton-purple" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <p class="font-semibold">Ce que vous avez</p>
+                        <p class="text-sm text-gray-400">Téléphone</p>
+                    </div>
+                    <div class="text-4xl text-green-400">=</div>
+                    <div class="text-center">
+                        <div
+                            class="w-24 h-24 bg-green-900/30 rounded-full flex items-center justify-center mb-4 mx-auto border-2 border-green-500">
+                            <svg class="w-12 h-12 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                        <p class="font-semibold text-green-400">Sécurité renforcée</p>
+                        <p class="text-sm text-gray-400">Double protection</p>
+                    </div>
+                </div>
+                <div class="bg-yellow-900/20 border border-yellow-700 p-4 rounded-xl text-center">
+                    <p class="text-yellow-400">
+                        Même si votre mot de passe est volé, l'attaquant ne peut pas se connecter sans votre téléphone
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 22: Les différentes méthodes 2FA -->
+        <section class="slide bg-theme bg-security flex-col items-center justify-center p-8">
+            <div class="max-w-5xl w-full fade-in">
+                <h2 class="text-4xl font-bold mb-8 text-center">Les differentes methodes 2FA</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="bg-yellow-900/20 border border-yellow-700 p-5 rounded-2xl">
+                        <div class="flex items-center gap-3 mb-3">
+                            <svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                            </svg>
+                            <h3 class="font-semibold text-yellow-400">SMS</h3>
+                        </div>
+                        <p class="text-sm text-gray-300 mb-2">Code envoye par message texte</p>
+                        <p class="text-xs text-yellow-300">Pratique mais vulnerable aux attaques SIM swap</p>
+                    </div>
+                    <div class="bg-yellow-900/20 border border-yellow-700 p-5 rounded-2xl">
+                        <div class="flex items-center gap-3 mb-3">
+                            <svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                            <h3 class="font-semibold text-yellow-400">Email</h3>
+                        </div>
+                        <p class="text-sm text-gray-300 mb-2">Code envoye par email</p>
+                        <p class="text-xs text-yellow-300">Depend de la securite de votre boite mail</p>
+                    </div>
+                    <div class="bg-green-900/20 border border-green-700 p-5 rounded-2xl">
+                        <div class="flex items-center gap-3 mb-3">
+                            <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <h3 class="font-semibold text-green-400">TOTP (code temporaire)</h3>
+                        </div>
+                        <p class="text-sm text-gray-300 mb-2">Code a 6 chiffres qui change toutes les 30s</p>
+                        <p class="text-xs text-green-300">Genere par une app authenticator - recommande !</p>
+                    </div>
+                    <div class="bg-green-900/20 border border-green-700 p-5 rounded-2xl">
+                        <div class="flex items-center gap-3 mb-3">
+                            <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                            </svg>
+                            <h3 class="font-semibold text-green-400">Application Push</h3>
+                        </div>
+                        <p class="text-sm text-gray-300 mb-2">Notification sur votre telephone</p>
+                        <p class="text-xs text-green-300">Un tap pour approuver - tres pratique</p>
+                    </div>
+                    <div class="bg-proton-purple/20 border border-proton-purple p-5 rounded-2xl">
+                        <div class="flex items-center gap-3 mb-3">
+                            <svg class="w-8 h-8 text-proton-purple" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                            </svg>
+                            <h3 class="font-semibold text-proton-purple">Cle physique</h3>
+                        </div>
+                        <p class="text-sm text-gray-300 mb-2">YubiKey, Google Titan, etc.</p>
+                        <p class="text-xs text-proton-accent">Le plus securise - impossible a phisher</p>
+                    </div>
+                    <div class="bg-gray-800/50 border border-gray-700 p-5 rounded-2xl">
+                        <div class="flex items-center gap-3 mb-3">
+                            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <h3 class="font-semibold text-gray-300">Codes de secours</h3>
+                        </div>
+                        <p class="text-sm text-gray-300 mb-2">Codes a usage unique a conserver</p>
+                        <p class="text-xs text-yellow-300">Indispensable en cas de perte du telephone !</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 23: Applications 2FA -->
+        <section class="slide bg-theme bg-security flex-col items-center justify-center p-8">
+            <div class="max-w-4xl w-full fade-in">
+                <h2 class="text-4xl font-bold mb-8 text-center">Applications 2FA recommandées</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="bg-gray-800/50 p-6 rounded-2xl text-center card-hover border-2 border-proton-purple">
+                        <div class="flex justify-center mb-4">
+                            <img src="../assets/logos/duo.svg" alt="Duo Mobile"
+                                class="w-12 h-12 brightness-0 invert opacity-70 hover:opacity-100 transition-opacity">
+                        </div>
+                        <h3 class="font-semibold mb-2">Duo Mobile</h3>
+                        <p class="text-xs text-gray-400">Recommandé éducation</p>
+                    </div>
+                    <div class="bg-gray-800/50 p-6 rounded-2xl text-center card-hover">
+                        <div class="flex justify-center mb-4">
+                            <img src="../assets/logos/google.svg" alt="Google Authenticator"
+                                class="w-12 h-12 brightness-0 invert opacity-70 hover:opacity-100 transition-opacity">
+                        </div>
+                        <h3 class="font-semibold mb-2">Google Auth</h3>
+                        <p class="text-xs text-gray-400">Simple et efficace</p>
+                    </div>
+                    <div class="bg-gray-800/50 p-6 rounded-2xl text-center card-hover">
+                        <div class="flex justify-center mb-4">
+                            <img src="../assets/logos/microsoft.svg" alt="Microsoft Authenticator"
+                                class="w-12 h-12 brightness-0 invert opacity-70 hover:opacity-100 transition-opacity">
+                        </div>
+                        <h3 class="font-semibold mb-2">Microsoft Auth</h3>
+                        <p class="text-xs text-gray-400">Intégration Office</p>
+                    </div>
+                    <div class="bg-gray-800/50 p-6 rounded-2xl text-center card-hover">
+                        <div class="flex justify-center mb-4">
+                            <img src="../assets/logos/authy.svg" alt="Authy"
+                                class="w-12 h-12 brightness-0 invert opacity-70 hover:opacity-100 transition-opacity">
+                        </div>
+                        <h3 class="font-semibold mb-2">Authy</h3>
+                        <p class="text-xs text-gray-400">Sauvegarde cloud</p>
+                    </div>
+                </div>
+                <div class="mt-8 bg-gray-800/50 p-6 rounded-2xl">
+                    <h3 class="font-semibold mb-4 text-center">Configuration</h3>
+                    <ol class="space-y-2 text-gray-300 max-w-md mx-auto">
+                        <li>1. Paramètres Proton <svg class="w-4 h-4 inline-block mx-1" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5l7 7-7 7" />
+                            </svg> Sécurité</li>
+                        <li>2. Activer l'authentification à deux facteurs</li>
+                        <li>3. Scanner le QR code avec l'app</li>
+                        <li>4. Entrer le code de vérification</li>
+                        <li class="text-yellow-400">5. Sauvegarder les codes de récupération !</li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 23: Passkeys - L'avenir de l'authentification -->
+        <section class="slide bg-theme bg-security flex-col items-center justify-center p-8">
+            <div class="max-w-4xl w-full fade-in">
+                <h2 class="text-4xl font-bold mb-4 text-center">Passkeys : l'avenir sans mot de passe</h2>
+                <p class="text-xl text-gray-400 text-center mb-8">La methode moderne qui remplace login/password</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                    <div class="bg-gray-800/50 p-6 rounded-2xl">
+                        <h3 class="text-xl font-semibold mb-4 flex items-center gap-3">
+                            <svg class="w-8 h-8 text-proton-purple" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                            </svg>
+                            Comment ca marche ?
+                        </h3>
+                        <ul class="space-y-3 text-gray-300">
+                            <li class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                Cle cryptographique unique par site
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                Deverrouillage biometrique (Face ID, empreinte)
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                Impossible a phisher ou voler
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-800/50 p-6 rounded-2xl">
+                        <h3 class="text-xl font-semibold mb-4 flex items-center gap-3">
+                            <svg class="w-8 h-8 text-proton-purple" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                            </svg>
+                            Sites compatibles
+                        </h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-gray-900 p-3 rounded-lg text-center">
+                                <img src="../assets/logos/google.svg" alt="Google" class="w-8 h-8 mx-auto mb-2 brightness-0 invert opacity-70">
+                                <p class="text-sm">Google</p>
+                            </div>
+                            <div class="bg-gray-900 p-3 rounded-lg text-center">
+                                <img src="../assets/logos/microsoft.svg" alt="Microsoft" class="w-8 h-8 mx-auto mb-2 brightness-0 invert opacity-70">
+                                <p class="text-sm">Microsoft</p>
+                            </div>
+                            <div class="bg-gray-900 p-3 rounded-lg text-center">
+                                <img src="../assets/logos/apple.svg" alt="Apple" class="w-8 h-8 mx-auto mb-2 brightness-0 invert opacity-70">
+                                <p class="text-sm">Apple</p>
+                            </div>
+                            <div class="bg-gray-900 p-3 rounded-lg text-center">
+                                <svg class="w-8 h-8 mx-auto mb-2 text-white opacity-70" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                </svg>
+                                <p class="text-sm">GitHub</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-proton-purple/20 border border-proton-purple p-4 rounded-xl text-center">
+                    <p class="text-proton-accent">
+                        <strong>ProtonPass supporte les Passkeys !</strong> Creez et stockez vos passkeys directement dans votre coffre.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE: Changer vos mots de passe professionnels -->
+        <section class="slide bg-theme bg-security flex-col items-center justify-center p-8">
+            <div class="max-w-4xl w-full fade-in">
+                <h2 class="text-4xl font-bold mb-4 text-center">Changer vos mots de passe</h2>
+                <p class="text-xl text-gray-400 text-center mb-8">Procédures Windows et Microsoft 365</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-gray-800/50 p-6 rounded-2xl">
+                        <div class="flex items-center gap-3 mb-4">
+                            <svg class="w-10 h-10 text-blue-400" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/>
+                            </svg>
+                            <h3 class="text-xl font-semibold">Windows</h3>
+                        </div>
+                        <div class="space-y-3 text-sm">
+                            <div class="bg-gray-900/50 p-3 rounded-lg">
+                                <p class="text-gray-300 font-medium mb-1">Raccourci clavier</p>
+                                <p class="text-proton-accent font-mono">Ctrl + Alt + Suppr</p>
+                            </div>
+                            <div class="bg-gray-900/50 p-3 rounded-lg">
+                                <p class="text-gray-400">Sélectionner "Modifier un mot de passe"</p>
+                            </div>
+                            <div class="bg-yellow-500/10 border border-yellow-500/30 p-3 rounded-lg">
+                                <p class="text-yellow-300 text-xs flex items-start gap-2">
+                                    <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                    </svg>
+                                    À faire sur l'ordinateur du CEJEF
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800/50 p-6 rounded-2xl">
+                        <div class="flex items-center gap-3 mb-4">
+                            <svg class="w-10 h-10 text-orange-400" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"/>
+                            </svg>
+                            <h3 class="text-xl font-semibold">Microsoft 365</h3>
+                        </div>
+                        <div class="space-y-3 text-sm">
+                            <div class="bg-gray-900/50 p-3 rounded-lg">
+                                <p class="text-gray-300 font-medium mb-1">Accès</p>
+                                <p class="text-proton-accent">portal.office.com → Mon compte</p>
+                            </div>
+                            <div class="bg-gray-900/50 p-3 rounded-lg">
+                                <p class="text-gray-400">Sécurité → Modifier le mot de passe</p>
+                            </div>
+                            <div class="bg-yellow-500/10 border border-yellow-500/30 p-3 rounded-lg">
+                                <p class="text-yellow-300 text-xs flex items-start gap-2">
+                                    <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                    </svg>
+                                    Reconnecter tous les appareils après
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 bg-proton-purple/20 border border-proton-purple p-4 rounded-xl text-center">
+                    <p class="text-proton-accent flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <strong>Procédures détaillées</strong> disponibles sur le CNS (Folguet/GLPI)
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 24: Atelier pratique -->
+        <section class="slide bg-theme bg-workshop flex-col items-center justify-center p-8">
+            <div class="max-w-4xl w-full fade-in">
+                <h2 class="text-4xl font-bold mb-4 text-center">Atelier pratique</h2>
+                <p class="text-xl text-gray-400 text-center mb-8">C'est à vous !</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-gray-800/50 p-6 rounded-2xl">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span
+                                class="w-8 h-8 bg-proton-purple rounded-full flex items-center justify-center font-bold">1</span>
+                            <h3 class="font-semibold">Créer un compte Proton</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Allez sur proton.me et créez votre compte gratuit</p>
+                    </div>
+                    <div class="bg-gray-800/50 p-6 rounded-2xl">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span
+                                class="w-8 h-8 bg-proton-purple rounded-full flex items-center justify-center font-bold">2</span>
+                            <h3 class="font-semibold">Installer l'extension</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Ajoutez ProtonPass à votre navigateur</p>
+                    </div>
+                    <div class="bg-gray-800/50 p-6 rounded-2xl">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span
+                                class="w-8 h-8 bg-proton-purple rounded-full flex items-center justify-center font-bold">3</span>
+                            <h3 class="font-semibold">Ajouter un identifiant</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Créez un identifiant test avec le générateur</p>
+                    </div>
+                    <div class="bg-gray-800/50 p-6 rounded-2xl">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span
+                                class="w-8 h-8 bg-proton-purple rounded-full flex items-center justify-center font-bold">4</span>
+                            <h3 class="font-semibold">Tester sur mobile</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Installez l'app et verifiez la synchronisation</p>
+                    </div>
+                    <div class="bg-gray-800/50 p-6 rounded-2xl">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span
+                                class="w-8 h-8 bg-proton-purple rounded-full flex items-center justify-center font-bold">5</span>
+                            <h3 class="font-semibold">Configurer le code PIN</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Activez le verrouillage par PIN pour plus de securite</p>
+                    </div>
+                    <div class="bg-yellow-900/20 border border-yellow-700 p-6 rounded-2xl">
+                        <div class="flex items-center gap-3 mb-4">
+                            <svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <h3 class="font-semibold text-yellow-400">Site de test</h3>
+                        </div>
+                        <p class="text-gray-300 text-sm">Testez vos identifiants sur :</p>
+                        <a href="https://practicetestautomation.com/practice-test-login/" target="_blank" class="text-proton-purple hover:underline text-sm break-all">practicetestautomation.com/practice-test-login</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE: Bonnes pratiques -->
+        <section class="slide bg-theme bg-workshop flex-col items-center justify-center p-8">
+            <div class="max-w-4xl w-full fade-in">
+                <h2 class="text-4xl font-bold mb-8 text-center">Bonnes pratiques</h2>
+                <div class="space-y-4">
+                    <div class="bg-gray-800/50 p-4 rounded-xl flex items-center gap-4">
+                        <svg class="w-8 h-8 text-green-400 flex-shrink-0" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <p>Ne <strong>jamais</strong> réutiliser un mot de passe</p>
+                    </div>
+                    <div class="bg-gray-800/50 p-4 rounded-xl flex items-center gap-4">
+                        <svg class="w-8 h-8 text-green-400 flex-shrink-0" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <p>Utiliser le <strong>générateur</strong> pour chaque nouveau compte</p>
+                    </div>
+                    <div class="bg-gray-800/50 p-4 rounded-xl flex items-center gap-4">
+                        <svg class="w-8 h-8 text-green-400 flex-shrink-0" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <p>Activer le <strong>2FA</strong> sur tous les comptes importants</p>
+                    </div>
+                    <div class="bg-gray-800/50 p-4 rounded-xl flex items-center gap-4">
+                        <svg class="w-8 h-8 text-green-400 flex-shrink-0" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <p><strong>Sauvegarder</strong> les codes de récupération en lieu sûr</p>
+                    </div>
+                    <div class="bg-gray-800/50 p-4 rounded-xl flex items-center gap-4">
+                        <svg class="w-8 h-8 text-green-400 flex-shrink-0" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <p><strong>Mettre à jour</strong> régulièrement les applications</p>
+                    </div>
+                    <div class="bg-gray-800/50 p-4 rounded-xl flex items-center gap-4">
+                        <svg class="w-8 h-8 text-green-400 flex-shrink-0" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <p>Vérifier ses fuites sur <strong>haveibeenpwned.com</strong></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 25: Ressources -->
+        <section class="slide bg-theme bg-workshop flex-col items-center justify-center p-8">
+            <div class="max-w-4xl w-full fade-in">
+                <h2 class="text-4xl font-bold mb-8 text-center">Ressources utiles</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <a href="https://proton.me/pass" target="_blank"
+                        class="bg-gray-800/50 p-6 rounded-2xl card-hover block">
+                        <h3 class="font-semibold mb-2 text-proton-purple">proton.me/pass</h3>
+                        <p class="text-gray-400">Site officiel ProtonPass</p>
+                    </a>
+                    <a href="https://proton.me/support/pass" target="_blank"
+                        class="bg-gray-800/50 p-6 rounded-2xl card-hover block">
+                        <h3 class="font-semibold mb-2 text-proton-purple">proton.me/support/pass</h3>
+                        <p class="text-gray-400">Documentation et aide</p>
+                    </a>
+                    <a href="https://haveibeenpwned.com" target="_blank"
+                        class="bg-gray-800/50 p-6 rounded-2xl card-hover block">
+                        <h3 class="font-semibold mb-2 text-proton-purple">haveibeenpwned.com</h3>
+                        <p class="text-gray-400">Vérifier si vos données ont fuité</p>
+                    </a>
+                    <a href="https://proton.me/blog/dark-web-monitoring" target="_blank"
+                        class="bg-gray-800/50 p-6 rounded-2xl card-hover block">
+                        <h3 class="font-semibold mb-2 text-proton-purple">Dark Web Monitoring</h3>
+                        <p class="text-gray-400">Surveillez vos données sur le dark web</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 26: Questions -->
+        <section class="slide bg-theme bg-abstract flex-col items-center justify-center p-8">
+            <div class="text-center fade-in">
+                <div class="flex justify-center mb-8">
+                    <svg class="w-24 h-24 text-proton-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <h2 class="text-5xl font-bold mb-4">Questions ?</h2>
+                <p class="text-2xl text-gray-400 mb-12">Je suis à votre disposition</p>
+                <div class="bg-gray-800/50 p-8 rounded-3xl max-w-2xl mx-auto">
+                    <h3 class="text-xl font-semibold mb-6">Récapitulatif</h3>
+                    <ul class="text-left space-y-3 text-gray-300">
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-proton-purple flex-shrink-0" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5l7 7-7 7" />
+                            </svg>
+                            Un gestionnaire de mots de passe est <strong>indispensable</strong>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-proton-purple flex-shrink-0" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5l7 7-7 7" />
+                            </svg>
+                            ProtonPass : <strong>suisse, gratuit, sécurisé</strong>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-proton-purple flex-shrink-0" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5l7 7-7 7" />
+                            </svg>
+                            Utilisez-le sur <strong>tous vos appareils</strong>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-proton-purple flex-shrink-0" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5l7 7-7 7" />
+                            </svg>
+                            Activez le <strong>2FA</strong> partout où c'est possible
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 27: Merci -->
+        <section class="slide bg-theme bg-abstract flex-col items-center justify-center p-8">
+            <div class="text-center fade-in">
+                <h2
+                    class="text-6xl font-bold mb-8 bg-gradient-to-r from-proton-purple to-proton-accent bg-clip-text text-transparent">
+                    Merci !
+                </h2>
+                <p class="text-2xl text-gray-400 mb-12">Protégez vos mots de passe, protégez votre vie numérique</p>
+                <div class="flex justify-center gap-8 text-gray-400">
+                    <div class="text-center">
+                        <div class="flex justify-center mb-2">
+                            <img src="../assets/logos/proton.svg" alt="Proton Pass" class="w-10 h-10">
+                            </svg>
+                        </div>
+                        <p class="text-sm">ProtonPass</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="flex justify-center mb-2">
+                            <svg class="w-10 h-10" viewBox="0 0 32 32">
+                                <rect fill="#D52B1E" width="32" height="32" rx="4" />
+                                <rect fill="#fff" x="13" y="6" width="6" height="20" />
+                                <rect fill="#fff" x="6" y="13" width="20" height="6" />
+                            </svg>
+                        </div>
+                        <p class="text-sm">Made in Switzerland</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="flex justify-center mb-2">
+                            <svg class="w-10 h-10 text-proton-purple" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                            </svg>
+                        </div>
+                        <p class="text-sm">Open Source</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        document.getElementById('totalSlides').textContent = totalSlides;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if (i === index) {
+                    slide.classList.add('active');
+                }
+            });
+
+            document.getElementById('currentSlide').textContent = index + 1;
+            document.getElementById('progress').style.width = ((index + 1) / totalSlides * 100) + '%';
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                currentSlide = 0;
+                showSlide(currentSlide);
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                currentSlide = totalSlides - 1;
+                showSlide(currentSlide);
+            }
+        });
+
+        // Touch/swipe support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            if (touchStartX - touchEndX > 50) {
+                nextSlide();
+            } else if (touchEndX - touchStartX > 50) {
+                prevSlide();
+            }
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+
+</html>

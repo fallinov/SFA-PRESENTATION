@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Référentiel Logiciels - GCN 22.01.2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .slide { display: none; }
+        .slide.active { display: flex; }
+        .gradient-text {
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        .glow {
+            box-shadow: 0 0 40px rgba(59, 130, 246, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen">
+
+    <!-- Slide 1: Titre -->
+    <div class="slide active min-h-screen flex-col justify-center items-center p-12 relative overflow-hidden" data-slide="1">
+        <!-- Background decoration -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl"></div>
+        </div>
+
+        <div class="text-center max-w-4xl relative z-10">
+            <div class="inline-block mb-6 px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-full">
+                <span class="text-blue-400 text-sm font-medium">GCN • Séance de validation</span>
+            </div>
+            <h1 class="text-6xl font-bold mb-6 gradient-text leading-tight pb-2">Référentiel Logiciels</h1>
+            <p class="text-3xl text-slate-300 mb-4 font-light">CEJEF</p>
+            <p class="text-xl text-slate-400 mb-12">Maquette fonctionnelle</p>
+            <div class="flex justify-center items-center gap-6 text-slate-400">
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <span>22 janvier 2026</span>
+                </div>
+                <span class="text-slate-600">•</span>
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    <span>Steve Fallet</span>
+                </div>
+                <span class="text-slate-600">•</span>
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    <span>steve.fallet@jura.ch</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 2: Objectif -->
+    <div class="slide min-h-screen flex-col justify-center items-center p-12" data-slide="2">
+        <div class="max-w-4xl w-full">
+            <h2 class="text-4xl font-bold mb-10 text-center">
+                <span class="gradient-text">Objectif de la séance</span>
+            </h2>
+
+            <div class="bg-gradient-to-br from-slate-800 to-slate-800/50 p-8 rounded-2xl mb-10 border border-slate-700/50 glow">
+                <p class="text-xl text-slate-200 mb-4 leading-relaxed">Valider les <strong class="text-blue-400">choix structurants</strong> du référentiel logiciels avant développement final.</p>
+                <p class="text-slate-400 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Mise en production prévue : <strong class="text-green-400">juin 2026</strong>
+                </p>
+            </div>
+
+            <div class="grid grid-cols-3 gap-6">
+                <div class="card-hover bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-500/20 p-6 rounded-xl text-center">
+                    <div class="w-14 h-14 bg-blue-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-7 h-7 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                    </div>
+                    <p class="text-blue-400 font-semibold text-lg">Filtres</p>
+                    <p class="text-slate-400 text-sm mt-2">Quels critères afficher ?</p>
+                </div>
+                <div class="card-hover bg-gradient-to-br from-amber-500/10 to-transparent border border-amber-500/20 p-6 rounded-xl text-center">
+                    <div class="w-14 h-14 bg-amber-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-7 h-7 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    </div>
+                    <p class="text-amber-400 font-semibold text-lg">Classification LGPD</p>
+                    <p class="text-slate-400 text-sm mt-2">Définir les règles</p>
+                </div>
+                <div class="card-hover bg-gradient-to-br from-green-500/10 to-transparent border border-green-500/20 p-6 rounded-xl text-center">
+                    <div class="w-14 h-14 bg-green-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-7 h-7 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                    </div>
+                    <p class="text-green-400 font-semibold text-lg">5 décisions</p>
+                    <p class="text-slate-400 text-sm mt-2">À trancher ensemble</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 3: Démo -->
+    <div class="slide min-h-screen flex-col justify-center items-center p-12" data-slide="3">
+        <div class="text-center max-w-4xl">
+            <h2 class="text-4xl font-bold mb-10">
+                <span class="gradient-text">Démonstration</span>
+            </h2>
+
+            <a href="https://fallinov.github.io/2025-cns-sfa-referentiel-logiciels-cejef/"
+               target="_blank"
+               class="group inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white text-xl px-10 py-5 rounded-xl mb-12 transition-all duration-300 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:scale-105">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                <span>Ouvrir l'application</span>
+                <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+            </a>
+
+            <div class="grid grid-cols-3 gap-6 text-left">
+                <div class="card-hover bg-slate-800/80 backdrop-blur p-6 rounded-xl border border-slate-700/50">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        </div>
+                        <p class="text-2xl font-bold text-white">127</p>
+                    </div>
+                    <p class="text-blue-400 font-medium mb-1">Logiciels référencés</p>
+                    <p class="text-slate-400 text-sm">Données Excel + classification IA</p>
+                </div>
+                <div class="card-hover bg-slate-800/80 backdrop-blur p-6 rounded-xl border border-slate-700/50">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+                        <p class="text-slate-300 font-medium">Recherche</p>
+                    </div>
+                    <p class="text-purple-400 font-medium mb-1">Recherche + Filtres</p>
+                    <p class="text-slate-400 text-sm">Essayer : "quiz", "vidéo", "Word"</p>
+                </div>
+                <div class="card-hover bg-slate-800/80 backdrop-blur p-6 rounded-xl border border-slate-700/50">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        </div>
+                        <p class="text-slate-300 font-medium">Fiches</p>
+                    </div>
+                    <p class="text-green-400 font-medium mb-1">Fiches détaillées</p>
+                    <p class="text-slate-400 text-sm">Classification, coût, alternatives</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 4: Filtres -->
+    <div class="slide min-h-screen flex-col justify-center p-12" data-slide="4">
+        <div class="max-w-5xl mx-auto w-full">
+            <h2 class="text-4xl font-bold mb-10">
+                <span class="gradient-text">Filtres</span>
+                <span class="text-slate-400 font-normal text-2xl ml-4">— Vos avis ?</span>
+            </h2>
+
+            <div class="grid grid-cols-2 gap-8">
+                <div class="space-y-6">
+                    <div class="bg-slate-800/50 backdrop-blur p-6 rounded-xl border border-slate-700/50">
+                        <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Filtres actuels</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-center gap-3">
+                                <span class="bg-gradient-to-r from-blue-600 to-blue-500 text-sm px-4 py-1.5 rounded-full font-medium shadow-lg shadow-blue-500/20">Coup de cœur CEJEF</span>
+                                <span class="text-orange-400 text-sm flex items-center gap-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                    À renommer
+                                </span>
+                            </li>
+                            <li><span class="bg-slate-700/80 text-sm px-4 py-1.5 rounded-full">Données élèves OK</span></li>
+                            <li><span class="bg-slate-700/80 text-sm px-4 py-1.5 rounded-full">Support CEJEF</span></li>
+                            <li><span class="bg-slate-700/80 text-sm px-4 py-1.5 rounded-full">Formations Campus</span></li>
+                            <li><span class="bg-slate-700/80 text-sm px-4 py-1.5 rounded-full">100% gratuit</span></li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-blue-500/5 border border-blue-500/20 p-6 rounded-xl">
+                        <h3 class="text-sm font-semibold text-blue-400 uppercase tracking-wider mb-4">Alternatives proposées</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-blue-500/20 border border-blue-400/30 text-blue-300 text-sm px-4 py-1.5 rounded-full">Recommandé CNS</span>
+                            <span class="bg-blue-500/20 border border-blue-400/30 text-blue-300 text-sm px-4 py-1.5 rounded-full">Validé CEJEF</span>
+                            <span class="bg-blue-500/20 border border-blue-400/30 text-blue-300 text-sm px-4 py-1.5 rounded-full">Choix prioritaire</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-slate-800 to-slate-800/50 p-8 rounded-xl border border-slate-700/50">
+                    <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-6">Questions ouvertes</h3>
+                    <ul class="space-y-5">
+                        <li class="flex items-start gap-3">
+                            <span class="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                            </span>
+                            <div>
+                                <p class="text-slate-200 font-medium">Filtres à ajouter ?</p>
+                                <p class="text-slate-400 text-sm mt-1">Division, langue, open source, type...</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-8 h-8 bg-amber-500/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                            </span>
+                            <p class="text-slate-200 font-medium">Filtres à renommer ?</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="w-8 h-8 bg-red-500/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </span>
+                            <p class="text-slate-200 font-medium">Filtres à supprimer ?</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 5: Classification -->
+    <div class="slide min-h-screen flex-col justify-center p-12" data-slide="5">
+        <div class="max-w-6xl mx-auto w-full">
+            <h2 class="text-4xl font-bold mb-8">
+                <span class="gradient-text">Classification LGPD</span>
+            </h2>
+
+            <div class="grid grid-cols-3 gap-5 mb-8">
+                <div class="card-hover bg-gradient-to-br from-green-500/20 to-green-500/5 border border-green-500/30 p-5 rounded-xl text-center">
+                    <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg shadow-green-500/30">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    </div>
+                    <span class="inline-block bg-green-500 px-4 py-1 rounded-full text-sm font-bold mb-2">VERT</span>
+                    <p class="text-green-300 font-medium">Nominatif OK</p>
+                </div>
+                <div class="card-hover bg-gradient-to-br from-orange-500/20 to-orange-500/5 border border-orange-500/30 p-5 rounded-xl text-center">
+                    <div class="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg shadow-orange-500/30">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    </div>
+                    <span class="inline-block bg-orange-500 px-4 py-1 rounded-full text-sm font-bold mb-2">ORANGE</span>
+                    <p class="text-orange-300 font-medium">Anonymat requis</p>
+                </div>
+                <div class="card-hover bg-gradient-to-br from-red-500/20 to-red-500/5 border border-red-500/30 p-5 rounded-xl text-center">
+                    <div class="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg shadow-red-500/30">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </div>
+                    <span class="inline-block bg-red-500 px-4 py-1 rounded-full text-sm font-bold mb-2">ROUGE</span>
+                    <p class="text-red-300 font-medium">Interdit</p>
+                </div>
+            </div>
+
+            <div class="bg-slate-800/80 backdrop-blur rounded-xl overflow-hidden border border-slate-700/50 mb-8">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-700/50">
+                        <tr>
+                            <th class="p-4 font-semibold text-slate-300">Critère</th>
+                            <th class="p-4 font-semibold text-green-400">Vert</th>
+                            <th class="p-4 font-semibold text-orange-400">Orange</th>
+                            <th class="p-4 font-semibold text-red-400">Rouge</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-slate-300">
+                        <tr class="border-t border-slate-700/50 hover:bg-slate-700/30 transition">
+                            <td class="p-4 font-medium">Hébergement</td>
+                            <td class="p-4"><span class="text-green-400">Suisse / Europe</span></td>
+                            <td class="p-4"><span class="text-orange-400">USA</span></td>
+                            <td class="p-4"><span class="text-red-400">Chine, Russie...</span></td>
+                        </tr>
+                        <tr class="border-t border-slate-700/50 hover:bg-slate-700/30 transition">
+                            <td class="p-4 font-medium">Entreprise US</td>
+                            <td class="p-4"><span class="text-green-400">Avec contrat CEJEF</span></td>
+                            <td class="p-4"><span class="text-orange-400">Sans contrat</span></td>
+                            <td class="p-4 text-slate-600">—</td>
+                        </tr>
+                        <tr class="border-t border-slate-700/50 hover:bg-slate-700/30 transition">
+                            <td class="p-4 font-medium">Tracking</td>
+                            <td class="p-4"><span class="text-green-400">Logs anonymes</span></td>
+                            <td class="p-4"><span class="text-orange-400">Analytics tiers</span></td>
+                            <td class="p-4"><span class="text-red-400">Scan intrusif</span></td>
+                        </tr>
+                        <tr class="border-t border-slate-700/50 hover:bg-slate-700/30 transition">
+                            <td class="p-4 font-medium">RGPD</td>
+                            <td class="p-4"><span class="text-green-400">Conforme</span></td>
+                            <td class="p-4 text-slate-600">—</td>
+                            <td class="p-4"><span class="text-red-400">Non conforme</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Exemples concrets</h3>
+            <div class="grid grid-cols-5 gap-3">
+                <div class="card-hover bg-green-500/10 border border-green-500/30 p-4 rounded-xl">
+                    <p class="font-semibold text-green-400">Moodle</p>
+                    <p class="text-xs text-slate-400 mt-1">Open source · hébergé CEJEF</p>
+                </div>
+                <div class="card-hover bg-green-500/10 border border-green-500/30 p-4 rounded-xl">
+                    <p class="font-semibold text-green-400">Microsoft 365</p>
+                    <p class="text-xs text-slate-400 mt-1">CH + Contrat CEJEF</p>
+                </div>
+                <div class="card-hover bg-orange-500/10 border border-orange-500/30 p-4 rounded-xl">
+                    <p class="font-semibold text-orange-400">Canva</p>
+                    <p class="text-xs text-slate-400 mt-1">US sans contrat</p>
+                </div>
+                <div class="card-hover bg-orange-500/10 border border-orange-500/30 p-4 rounded-xl">
+                    <p class="font-semibold text-orange-400">ChatGPT</p>
+                    <p class="text-xs text-slate-400 mt-1">US · entraînement IA</p>
+                </div>
+                <div class="card-hover bg-red-500/10 border border-red-500/30 p-4 rounded-xl">
+                    <p class="font-semibold text-red-400">TikTok</p>
+                    <p class="text-xs text-slate-400 mt-1">CN · scan intrusif</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 6: Questions -->
+    <div class="slide min-h-screen flex-col justify-center p-12" data-slide="6">
+        <div class="max-w-4xl mx-auto w-full">
+            <h2 class="text-4xl font-bold mb-8">
+                <span class="gradient-text">Questions à trancher</span>
+            </h2>
+
+            <div class="space-y-4" id="questions">
+                <div class="bg-slate-800/80 backdrop-blur p-5 rounded-xl border border-slate-700/50 flex justify-between items-center hover:border-slate-600 transition">
+                    <div class="flex items-center gap-4">
+                        <span class="w-8 h-8 bg-slate-700 rounded-lg flex items-center justify-center text-sm font-bold text-slate-400">1</span>
+                        <span class="text-slate-200">Hébergement <span class="text-blue-400 font-medium">Europe</span> = vert ?</span>
+                    </div>
+                    <div class="flex gap-2 vote-group" data-q="1">
+                        <button onclick="vote(this, 'oui')" class="vote-btn px-4 py-2 rounded-lg text-sm font-medium bg-slate-700 hover:bg-green-600 transition-all hover:scale-105">OUI</button>
+                        <button onclick="vote(this, 'non')" class="vote-btn px-4 py-2 rounded-lg text-sm font-medium bg-slate-700 hover:bg-red-500 transition-all hover:scale-105">NON</button>
+                    </div>
+                </div>
+                <div class="bg-slate-800/80 backdrop-blur p-5 rounded-xl border border-slate-700/50 flex justify-between items-center hover:border-slate-600 transition">
+                    <div class="flex items-center gap-4">
+                        <span class="w-8 h-8 bg-slate-700 rounded-lg flex items-center justify-center text-sm font-bold text-slate-400">2</span>
+                        <span class="text-slate-200">Hébergement <span class="text-blue-400 font-medium">USA</span> par défaut ?</span>
+                    </div>
+                    <div class="flex gap-2 vote-group" data-q="2">
+                        <button onclick="vote(this, 'orange')" class="vote-btn px-4 py-2 rounded-lg text-sm font-medium bg-slate-700 hover:bg-orange-500 transition-all hover:scale-105">ORANGE</button>
+                        <button onclick="vote(this, 'rouge')" class="vote-btn px-4 py-2 rounded-lg text-sm font-medium bg-slate-700 hover:bg-red-500 transition-all hover:scale-105">ROUGE</button>
+                    </div>
+                </div>
+                <div class="bg-slate-800/80 backdrop-blur p-5 rounded-xl border border-slate-700/50 flex justify-between items-center hover:border-slate-600 transition">
+                    <div class="flex items-center gap-4">
+                        <span class="w-8 h-8 bg-slate-700 rounded-lg flex items-center justify-center text-sm font-bold text-slate-400">3</span>
+                        <span class="text-slate-200">Contrat US suffit pour passer <span class="text-green-400 font-medium">vert</span> ?</span>
+                    </div>
+                    <div class="flex gap-2 vote-group" data-q="3">
+                        <button onclick="vote(this, 'oui')" class="vote-btn px-4 py-2 rounded-lg text-sm font-medium bg-slate-700 hover:bg-green-600 transition-all hover:scale-105">OUI</button>
+                        <button onclick="vote(this, 'non')" class="vote-btn px-4 py-2 rounded-lg text-sm font-medium bg-slate-700 hover:bg-red-500 transition-all hover:scale-105">NON</button>
+                    </div>
+                </div>
+                <div class="bg-slate-800/80 backdrop-blur p-5 rounded-xl border border-slate-700/50 flex justify-between items-center hover:border-slate-600 transition">
+                    <div class="flex items-center gap-4">
+                        <span class="w-8 h-8 bg-slate-700 rounded-lg flex items-center justify-center text-sm font-bold text-slate-400">4</span>
+                        <span class="text-slate-200">Outil <span class="text-orange-400 font-medium">ORANGE</span> = enseignants uniquement ?</span>
+                    </div>
+                    <div class="flex gap-2 vote-group" data-q="4">
+                        <button onclick="vote(this, 'oui')" class="vote-btn px-4 py-2 rounded-lg text-sm font-medium bg-slate-700 hover:bg-green-600 transition-all hover:scale-105">OUI</button>
+                        <button onclick="vote(this, 'non')" class="vote-btn px-4 py-2 rounded-lg text-sm font-medium bg-slate-700 hover:bg-red-500 transition-all hover:scale-105">NON</button>
+                    </div>
+                </div>
+                <div class="bg-slate-800/80 backdrop-blur p-5 rounded-xl border border-slate-700/50 flex justify-between items-center hover:border-slate-600 transition">
+                    <div class="flex items-center gap-4">
+                        <span class="w-8 h-8 bg-slate-700 rounded-lg flex items-center justify-center text-sm font-bold text-slate-400">5</span>
+                        <span class="text-slate-200">Afficher les logiciels interdits <span class="text-red-400 font-medium">(liste noire)</span> ?</span>
+                    </div>
+                    <div class="flex gap-2 vote-group" data-q="5">
+                        <button onclick="vote(this, 'oui')" class="vote-btn px-4 py-2 rounded-lg text-sm font-medium bg-slate-700 hover:bg-green-600 transition-all hover:scale-105">OUI</button>
+                        <button onclick="vote(this, 'non')" class="vote-btn px-4 py-2 rounded-lg text-sm font-medium bg-slate-700 hover:bg-red-500 transition-all hover:scale-105">NON</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 p-5 bg-gradient-to-r from-green-500/10 to-transparent border border-green-500/30 rounded-xl flex items-center gap-4">
+                <div class="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <p class="text-slate-300"><strong class="text-green-400">Exemple Microsoft 365 :</strong> Hébergement CH ✓ · RGPD ✓ · Entreprise US ⚠ · Contrat CEJEF ✓ → <span class="text-green-400 font-bold">VERT</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 7: Suite -->
+    <div class="slide min-h-screen flex-col justify-center items-center p-12 relative overflow-hidden" data-slide="7">
+        <!-- Background decoration -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute -top-40 -left-40 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-40 -right-40 w-80 h-80 bg-green-500/10 rounded-full blur-3xl"></div>
+        </div>
+
+        <div class="text-center max-w-5xl w-full relative z-10 px-8">
+            <h2 class="text-4xl font-bold mb-16">
+                <span class="gradient-text">Prochaines étapes</span>
+            </h2>
+
+            <!-- Timeline horizontale -->
+            <div class="relative mb-8">
+                <!-- Timeline line -->
+                <div class="absolute top-6 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-blue-500 to-green-500 rounded-full"></div>
+
+                <div class="flex justify-between items-start">
+                    <!-- Feb -->
+                    <div class="flex flex-col items-center">
+                        <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center shadow-lg shadow-blue-500/30 z-10 mb-4">
+                            <span class="text-xs font-bold text-white">FÉV</span>
+                        </div>
+                        <div class="bg-slate-800/80 backdrop-blur py-3 px-5 rounded-xl border border-slate-700/50 text-center">
+                            <p class="text-slate-200 text-sm">Intégration</p>
+                            <p class="text-slate-400 text-xs">décisions GCN</p>
+                        </div>
+                    </div>
+
+                    <!-- Mars -->
+                    <div class="flex flex-col items-center">
+                        <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center shadow-lg shadow-blue-500/30 z-10 mb-4">
+                            <span class="text-xs font-bold text-white">MAR</span>
+                        </div>
+                        <div class="bg-slate-800/80 backdrop-blur py-3 px-5 rounded-xl border border-slate-700/50 text-center">
+                            <p class="text-slate-200 text-sm">Validation</p>
+                            <p class="text-slate-400 text-xs">LGPD par logiciel</p>
+                        </div>
+                    </div>
+
+                    <!-- Avril -->
+                    <div class="flex flex-col items-center">
+                        <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center shadow-lg shadow-blue-500/30 z-10 mb-4">
+                            <span class="text-xs font-bold text-white">AVR</span>
+                        </div>
+                        <div class="bg-slate-800/80 backdrop-blur py-3 px-5 rounded-xl border border-slate-700/50 text-center">
+                            <p class="text-slate-200 text-sm">Migration</p>
+                            <p class="text-slate-400 text-xs">vers Directus</p>
+                        </div>
+                    </div>
+
+                    <!-- Juin -->
+                    <div class="flex flex-col items-center">
+                        <div class="w-14 h-14 bg-gradient-to-br from-green-500 to-green-400 rounded-full flex items-center justify-center shadow-lg shadow-green-500/40 z-10 mb-4 ring-4 ring-green-500/20 -mt-1">
+                            <span class="text-xs font-bold text-white">JUIN</span>
+                        </div>
+                        <div class="bg-gradient-to-b from-green-500/20 to-transparent py-3 px-5 rounded-xl border border-green-500/30 text-center">
+                            <p class="text-green-300 text-sm font-semibold flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                Production
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Navigation - Dots verticaux à droite -->
+    <div class="fixed right-6 top-1/2 transform -translate-y-1/2 flex flex-col gap-3 z-50" id="dots"></div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.getElementById('dots');
+        let current = 0;
+
+        // Créer les dots verticaux
+        slides.forEach((_, i) => {
+            const dot = document.createElement('button');
+            dot.className = `w-3 h-3 rounded-full transition-all duration-300 ${i === 0 ? 'bg-blue-400 scale-125' : 'bg-white/30 hover:bg-white/50'}`;
+            dot.onclick = () => go(i);
+            dots.appendChild(dot);
+        });
+
+        function update() {
+            slides.forEach((s, i) => s.classList.toggle('active', i === current));
+            dots.querySelectorAll('button').forEach((d, i) => {
+                d.className = `w-3 h-3 rounded-full transition-all duration-300 ${i === current ? 'bg-blue-400 scale-125' : 'bg-white/30 hover:bg-white/50'}`;
+            });
+        }
+
+        function next() { if (current < slides.length - 1) { current++; update(); } }
+        function prev() { if (current > 0) { current--; update(); } }
+        function go(i) { current = i; update(); }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+            if (e.key === 'ArrowLeft') prev();
+        });
+
+        // Système de vote interactif
+        function vote(btn, choice) {
+            const group = btn.parentElement;
+            group.querySelectorAll('.vote-btn').forEach(b => {
+                b.classList.remove('bg-green-600', 'bg-red-500', 'bg-orange-500', 'ring-2', 'ring-white');
+                b.classList.add('bg-slate-700');
+            });
+            btn.classList.remove('bg-slate-700');
+            if (choice === 'oui') btn.classList.add('bg-green-600', 'ring-2', 'ring-white');
+            else if (choice === 'non' || choice === 'rouge') btn.classList.add('bg-red-500', 'ring-2', 'ring-white');
+            else if (choice === 'orange') btn.classList.add('bg-orange-500', 'ring-2', 'ring-white');
+        }
+    </script>
+</body>
+</html>

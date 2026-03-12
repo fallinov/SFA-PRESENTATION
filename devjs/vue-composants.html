@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Composants Vue.js — Props, Emits & Slots</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        vue: '#42b883',
+                        vueDark: '#35495e',
+                        vuetify: '#1867C0',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html, body { margin: 0; overflow: hidden; height: 100vh; }
+        .slide { display: none; min-height: 100vh; flex-direction: column; justify-content: center; overflow-y: auto; }
+        .slide.active { display: flex; }
+        .code-block { background: #1e1e1e; }
+        .gradient-vue { background: linear-gradient(135deg, #42b883 0%, #35495e 100%); }
+        .gradient-vuetify { background: linear-gradient(135deg, #1867C0 0%, #5CBBF6 100%); }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
+        .animate-fade-in-left { animation: fadeInLeft 0.6s ease-out forwards; }
+        .animate-pulse-slow { animation: pulse-slow 3s ease-in-out infinite; }
+
+        /* Delay classes */
+        .delay-100 { animation-delay: 0.1s; opacity: 0; }
+        .delay-200 { animation-delay: 0.2s; opacity: 0; }
+        .delay-300 { animation-delay: 0.3s; opacity: 0; }
+        .delay-400 { animation-delay: 0.4s; opacity: 0; }
+        .delay-500 { animation-delay: 0.5s; opacity: 0; }
+        .delay-600 { animation-delay: 0.6s; opacity: 0; }
+
+        /* Navigation dots */
+        .nav-dot { transition: all 0.3s ease; }
+        .nav-dot.active { transform: scale(1.3); }
+
+        /* Code highlighting */
+        .keyword { color: #c586c0; }
+        .string { color: #ce9178; }
+        .function { color: #dcdcaa; }
+        .comment { color: #6a9955; }
+        .tag { color: #569cd6; }
+        .attr { color: #9cdcfe; }
+        .value { color: #ce9178; }
+        .type { color: #4ec9b0; }
+        .variable { color: #9cdcfe; }
+
+        /* Component diagram */
+        .component-box {
+            border: 2px solid #42b883;
+            border-radius: 12px;
+            background: rgba(66, 184, 131, 0.08);
+            transition: all 0.3s ease;
+        }
+        .component-box:hover {
+            background: rgba(66, 184, 131, 0.15);
+            transform: scale(1.02);
+        }
+
+        /* Arrow animation */
+        @keyframes flowDown {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+        .arrow-flow { animation: flowDown 2s ease-in-out infinite; }
+        .arrow-flow-delay { animation: flowDown 2s ease-in-out infinite 1s; }
+
+        /* High contrast */
+        body.high-contrast { background: #000 !important; }
+        body.high-contrast .bg-slate-900,
+        body.high-contrast .bg-slate-800 { background: #000 !important; }
+        body.high-contrast .bg-slate-800\/50 { background: rgba(0,0,0,0.8) !important; }
+        body.high-contrast .text-slate-300,
+        body.high-contrast .text-slate-400,
+        body.high-contrast .text-slate-500 { color: #fff !important; }
+        body.high-contrast .text-vue { color: #5fffb0 !important; }
+        body.high-contrast .border-slate-700 { border-color: #888 !important; }
+        body.high-contrast .gradient-vue,
+        body.high-contrast .gradient-vuetify { background: #000 !important; }
+        #contrast-badge { position: fixed; top: 1rem; left: 1rem; z-index: 100; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); backdrop-filter: blur(4px); pointer-events: none; }
+    </style>
+</head>
+<body class="font-sans bg-slate-900 text-white">
+
+    <!-- Navigation latérale (générée en JS) -->
+    <nav id="dots" class="fixed right-6 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col gap-3"></nav>
+    <div id="contrast-badge" style="display:none">Contraste élevé (C)</div>
+
+    <!-- Slide 1: Titre -->
+    <section id="slide-1" class="slide active items-center justify-center gradient-vue relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-20 left-20 w-64 h-64 bg-white rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 right-20 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+        </div>
+        <div class="text-center px-6 relative z-10">
+            <div class="mb-8 animate-fade-in-up">
+                <svg class="w-32 h-32 mx-auto" viewBox="0 0 261.76 226.69" xmlns="http://www.w3.org/2000/svg">
+                    <path d="m161.096.001-30.224 52.35L100.647.002H0L130.872 226.69 261.76 0z" fill="#41b883"/>
+                    <path d="m161.096.001-30.224 52.35L100.647.002H52.33l78.542 136.01L209.398.001z" fill="#35495e"/>
+                </svg>
+            </div>
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-6 animate-fade-in-up delay-100">
+                Composants Vue.js
+            </h1>
+            <p class="text-xl md:text-2xl text-white/80 mb-4 animate-fade-in-up delay-200">
+                Props, Emits & Slots
+            </p>
+            <p class="text-lg text-white/60 animate-fade-in-up delay-300">
+                C141 — Séance 6 — 5 mars 2026
+            </p>
+            <div class="mt-12 animate-fade-in-up delay-400">
+                <span class="text-white/40 text-sm">Flèches pour naviguer</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 2: Code de départ -->
+    <section id="slide-2" class="slide items-center bg-slate-900 relative">
+        <div class="max-w-4xl mx-auto px-6 py-20 w-full text-center">
+            <h2 class="text-4xl font-bold mb-6 animate-fade-in-up">
+                <span class="text-vue">Code de départ</span>
+            </h2>
+            <p class="text-xl text-slate-300 mb-10 animate-fade-in-up delay-100">
+                Ouvrez le playground Vue.js et codez avec moi !
+            </p>
+            <a href="https://play.vuejs.org/#eNqlVs1y4zYMfhVEPTg7E8u27KSJms3M/uTQnWmzs9n25IssQTazEsmSlOM043fprePn8IsVpH4s2ck2mb14bAAEPoDg9/nReyelvyzQC71LHSsmDWg0hbyacgCWS6EMPILCFNaQKpFDj4J7LeeHBcuSDyKXldsfNBabl0Jt8GAAv6HW0Rxh+w/ISGtUgBykEtL6Y8G1gbwKeWsLHvduo6wwkKAsmIYM6ZhCbuCo9+YgqcLtvwWFQtZDnkbcHCS9duY69TWHyBjKhr7v23wAl4Oyf+rc/TSYyywy6CZBvxO2hDgj5G+nXiTl1Ksc5FqMrj5uN7kA27XQVEfDnwX6d/pyQL4yoYs86vdh5MMfhmXMjqDghLI6A/3+LqXG2DDBG4OtElzR0aYEpQ7a7t1FDHZpBrs8HQyBD59p9BrC+jIS1JAIzrcb+hIVLVjlQF+Ark66j8wW/Hrz8aaplUXu4iHX826pVo3XdjT24TpnNPiQbjjGpWBuutvNcrvhmNvFaa3HC7qpE+53I5stsHXYEhNahS9u/0J4fNzbt/X6clA+poNhbDexKIwdR6+NsqdQ0uJi70emMfHhNhNuGozfUYy9YTtp2nhevKD7OsH/3mUraxJx9041HXwl+PI3PTH3/XLQenzOoM2DTRwLiYkL8ekJwmN5MI9W/XuWmEUIZ8OhXP1Sm9Wc8RCGtGNGVMaUsPbTKGfZQwj6QVOhfsFOgNZP96kfllaBsciECuGnIB7j6dAZ1yWYxaguXMdMgtn5+bg6OBMqQdWfCWNEHsJYrkCLjCV7YTJKEsbnTdz5Hu7GEUwqT1W+GlqNYRbF3+ZKFDwhIOl5GqWzLhAVJazQIYx2k6lqk+2M0AX7I2tKW3en86Cu6sao2d9IQf4I872hjU8nF6d4cA9DGAVUsDNNv35FTzaE5+kpXuzDtqhtpqcbrUF3UA79iwOUAf6cjIOnW6+vg1C6TbX7d+WdeIZ2kKdsTtwuOImmAz31LIWxDNWNtHejpx5RQZmXxCLLxP0nZzOqwJPaHi8w/vaE/U6vrG3qfVZIG7nEqdf4DKFEU7qvb3/HFX1vnLlIioyiv+P8grSLhcVYhr2nMRPsVpxD+6vTdpr1V329oret66YsUDcWFz/1SOHtq36u9R3csT+pxrmmKXb+Ijz514O03dIMBCGQtBLjKkuUJE1WOEiglhgTn6eMo5Oc491fAndsvH8MnTa0jjlut8dep/yxRd7W/krRG1m2KjOLNHY4Vl59Ivaq/sYcKOtRKRGdlHXz79KU0aJ0NdOlPgynpt+TohA3/FUwkpcczb4EPnNyEjq2BykK1dB5KRzbza6T1zG0G1Xzqt0bJTb7Ph0SnRDdwWjHhs+zWJso7hfM1HwzE6u+XkSJuLecYwtSNlDzWXR8dnZCuSf0MR6dECeMTt90uKiE3BKWirmep7cuP6z/A2fmheY=" target="_blank"
+               class="inline-block bg-vue hover:bg-vue/80 text-white font-bold text-xl px-10 py-5 rounded-2xl transition-all hover:scale-105 shadow-lg shadow-vue/25 animate-fade-in-up delay-200">
+                Ouvrir le Playground Vue.js
+            </a>
+            <p class="text-slate-500 text-sm mt-6 animate-fade-in-up delay-300">
+                play.vuejs.org — aucun compte requis
+            </p>
+        </div>
+    </section>
+
+    <!-- Slide 3: Objectifs -->
+    <section id="slide-3" class="slide items-center bg-slate-900 relative">
+        <div class="max-w-5xl mx-auto px-6 py-20 w-full">
+            <h2 class="text-4xl font-bold mb-12 animate-fade-in-up">
+                <span class="text-vue">Objectifs</span> de la séance
+            </h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-slate-800/50 rounded-2xl p-8 border border-slate-700 animate-fade-in-up delay-100">
+                    <div class="text-vue text-3xl mb-4">&#x1F9E9;</div>
+                    <h3 class="text-xl font-bold mb-3">Composants</h3>
+                    <p class="text-slate-300">Découper une application en morceaux réutilisables et indépendants</p>
+                </div>
+                <div class="bg-slate-800/50 rounded-2xl p-8 border border-slate-700 animate-fade-in-up delay-200">
+                    <div class="text-vue text-3xl mb-4">&#x2B07;&#xFE0F;</div>
+                    <h3 class="text-xl font-bold mb-3">Props</h3>
+                    <p class="text-slate-300">Passer des données du parent vers l'enfant avec <code class="font-mono text-vue">defineProps()</code></p>
+                </div>
+                <div class="bg-slate-800/50 rounded-2xl p-8 border border-slate-700 animate-fade-in-up delay-300">
+                    <div class="text-vue text-3xl mb-4">&#x2B06;&#xFE0F;</div>
+                    <h3 class="text-xl font-bold mb-3">Emits</h3>
+                    <p class="text-slate-300">Communiquer de l'enfant vers le parent avec <code class="font-mono text-vue">defineEmits()</code></p>
+                </div>
+                <div class="bg-slate-800/50 rounded-2xl p-8 border border-slate-700 animate-fade-in-up delay-400">
+                    <div class="text-vue text-3xl mb-4">&#x1F4E6;</div>
+                    <h3 class="text-xl font-bold mb-3">Slots</h3>
+                    <p class="text-slate-300">Injecter du contenu HTML dans un composant enfant</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 4: Pourquoi des composants ? -->
+    <section id="slide-4" class="slide items-center bg-slate-900 relative">
+        <div class="max-w-6xl mx-auto px-6 py-20 w-full">
+            <h2 class="text-4xl font-bold mb-12 animate-fade-in-up">
+                Pourquoi des <span class="text-vue">composants</span> ?
+            </h2>
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <!-- Schéma page monolithique vs composants -->
+                <div class="animate-fade-in-up delay-100">
+                    <p class="text-slate-300 text-lg mb-6">
+                        Une application Vue.js est un <strong class="text-white">arbre de composants</strong> imbriqués, comme des poupées russes.
+                    </p>
+                    <p class="text-slate-300 text-lg mb-6">
+                        Chaque composant est un fichier <code class="font-mono text-vue">.vue</code> autonome avec son propre <strong class="text-white">template</strong>, <strong class="text-white">script</strong> et <strong class="text-white">style</strong>.
+                    </p>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-3 text-slate-300">
+                            <span class="text-vue font-bold text-xl">&#x2713;</span>
+                            <span><strong class="text-white">Réutilisable</strong> — un composant peut être utilisé partout</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-slate-300">
+                            <span class="text-vue font-bold text-xl">&#x2713;</span>
+                            <span><strong class="text-white">Maintenable</strong> — chaque fichier a une responsabilité</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-slate-300">
+                            <span class="text-vue font-bold text-xl">&#x2713;</span>
+                            <span><strong class="text-white">Testable</strong> — on peut tester chaque composant seul</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Diagramme d'arbre -->
+                <div class="animate-fade-in-up delay-300">
+                    <div class="flex flex-col items-center gap-4">
+                        <div class="component-box px-8 py-4 text-center">
+                            <span class="font-mono font-bold text-vue text-lg">App.vue</span>
+                        </div>
+                        <div class="text-vue text-2xl arrow-flow">&#x25BC;</div>
+                        <div class="flex gap-6">
+                            <div class="component-box px-6 py-3 text-center">
+                                <span class="font-mono font-bold text-vue">Header.vue</span>
+                            </div>
+                            <div class="component-box px-6 py-3 text-center">
+                                <span class="font-mono font-bold text-vue">Main.vue</span>
+                            </div>
+                            <div class="component-box px-6 py-3 text-center">
+                                <span class="font-mono font-bold text-vue">Footer.vue</span>
+                            </div>
+                        </div>
+                        <div class="text-vue text-2xl arrow-flow-delay">&#x25BC;</div>
+                        <div class="flex gap-4">
+                            <div class="component-box px-4 py-2 text-center text-sm">
+                                <span class="font-mono text-vue">NavBar.vue</span>
+                            </div>
+                            <div class="component-box px-4 py-2 text-center text-sm">
+                                <span class="font-mono text-vue">Card.vue</span>
+                            </div>
+                            <div class="component-box px-4 py-2 text-center text-sm">
+                                <span class="font-mono text-vue">Button.vue</span>
+                            </div>
+                            <div class="component-box px-4 py-2 text-center text-sm">
+                                <span class="font-mono text-vue">Logo.vue</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 5: Créer et utiliser un composant -->
+    <section id="slide-5" class="slide items-center bg-slate-900 relative">
+        <div class="max-w-6xl mx-auto px-6 py-20 w-full">
+            <h2 class="text-4xl font-bold mb-12 animate-fade-in-up">
+                <span class="text-vue">Créer</span> et utiliser un composant
+            </h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Composant enfant -->
+                <div class="animate-fade-in-up delay-100">
+                    <h3 class="text-lg font-semibold text-slate-400 mb-4 font-mono">ChildComp.vue</h3>
+                    <div class="code-block rounded-xl p-6 font-mono text-sm leading-relaxed">
+                        <div><span class="tag">&lt;template&gt;</span></div>
+                        <div class="pl-4"><span class="tag">&lt;p&gt;</span>Un composant enfant !<span class="tag">&lt;/p&gt;</span></div>
+                        <div><span class="tag">&lt;/template&gt;</span></div>
+                    </div>
+                    <p class="text-slate-400 text-sm mt-4">
+                        Un fichier <code class="font-mono text-vue">.vue</code> = un composant autonome
+                    </p>
+                </div>
+                <!-- Composant parent -->
+                <div class="animate-fade-in-up delay-200">
+                    <h3 class="text-lg font-semibold text-slate-400 mb-4 font-mono">App.vue</h3>
+                    <div class="code-block rounded-xl p-6 font-mono text-sm leading-relaxed">
+                        <div><span class="tag">&lt;script setup&gt;</span></div>
+                        <div class="pl-4"><span class="comment">// 1. Importer le composant</span></div>
+                        <div class="pl-4"><span class="keyword">import</span> <span class="type">ChildComp</span> <span class="keyword">from</span> <span class="string">'./ChildComp.vue'</span></div>
+                        <div><span class="tag">&lt;/script&gt;</span></div>
+                        <div class="mt-3"><span class="tag">&lt;template&gt;</span></div>
+                        <div class="pl-4"><span class="comment">&lt;!-- 2. Utiliser comme une balise HTML --&gt;</span></div>
+                        <div class="pl-4"><span class="tag">&lt;<span class="type">ChildComp</span> /&gt;</span></div>
+                        <div><span class="tag">&lt;/template&gt;</span></div>
+                    </div>
+                    <div class="mt-6 bg-vue/10 border border-vue/30 rounded-xl p-4">
+                        <p class="text-vue font-semibold mb-2">Avec <code class="font-mono">&lt;script setup&gt;</code></p>
+                        <p class="text-slate-300 text-sm">Le composant importé est automatiquement disponible dans le template. Pas besoin de l'enregistrer !</p>
+                    </div>
+                    <div class="mt-4 bg-slate-800/50 border border-slate-700 rounded-xl p-4">
+                        <p class="text-slate-400 text-sm"><strong class="text-white">Rendu :</strong> <span class="text-vue">&lt;p&gt;Un composant enfant !&lt;/p&gt;</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 6: Props - Concept -->
+    <section id="slide-6" class="slide items-center bg-slate-900 relative">
+        <div class="max-w-6xl mx-auto px-6 py-20 w-full">
+            <h2 class="text-4xl font-bold mb-4 animate-fade-in-up">
+                <span class="text-vue">Props</span> — Parent &#x2192; Enfant
+            </h2>
+            <p class="text-xl text-slate-400 mb-12 animate-fade-in-up delay-100">
+                Les props permettent de passer des données du composant parent vers le composant enfant
+            </p>
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <!-- Schéma -->
+                <div class="animate-fade-in-up delay-200">
+                    <div class="flex flex-col items-center gap-6">
+                        <div class="component-box px-10 py-6 text-center w-72">
+                            <span class="font-mono font-bold text-vue text-lg">Parent</span>
+                            <div class="mt-3 text-sm text-slate-300">
+                                <code class="font-mono">const msg = ref(<span class="string">"Salut"</span>)</code>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="text-vue text-3xl arrow-flow">&#x25BC;</div>
+                            <span class="bg-vue/20 text-vue font-mono text-sm px-4 py-1 rounded-full border border-vue/40">
+                                :msg="msg"
+                            </span>
+                            <div class="text-vue text-3xl arrow-flow">&#x25BC;</div>
+                        </div>
+                        <div class="component-box px-10 py-6 text-center w-72">
+                            <span class="font-mono font-bold text-vue text-lg">Enfant</span>
+                            <div class="mt-3 text-sm text-slate-300">
+                                <code class="font-mono">defineProps({ <span class="attr">msg</span>: <span class="type">String</span> })</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Points clés -->
+                <div class="space-y-6 animate-fade-in-up delay-300">
+                    <div class="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+                        <h3 class="font-bold text-lg mb-2">Déclarer les props dans l'enfant</h3>
+                        <p class="text-slate-300"><code class="font-mono text-vue">defineProps()</code> est une macro — pas besoin de l'importer</p>
+                    </div>
+                    <div class="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+                        <h3 class="font-bold text-lg mb-2">Passer les props depuis le parent</h3>
+                        <p class="text-slate-300">Valeur statique : <code class="font-mono text-vue">msg="Salut"</code></p>
+                        <p class="text-slate-300">Valeur dynamique : <code class="font-mono text-vue">:msg="variable"</code></p>
+                    </div>
+                    <div class="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+                        <h3 class="font-bold text-lg mb-2">Lecture seule</h3>
+                        <p class="text-slate-300">Les props sont <strong class="text-white">en lecture seule</strong>. L'enfant ne peut pas modifier une prop !</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 7: Props - Code -->
+    <section id="slide-7" class="slide items-center bg-slate-900 relative">
+        <div class="max-w-6xl mx-auto px-6 py-20 w-full">
+            <h2 class="text-4xl font-bold mb-12 animate-fade-in-up">
+                Props — <span class="text-vue">Exemple complet</span>
+            </h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Parent -->
+                <div class="animate-fade-in-up delay-100">
+                    <h3 class="text-lg font-semibold text-slate-400 mb-4 font-mono">App.vue <span class="text-xs text-slate-600">(parent)</span></h3>
+                    <div class="code-block rounded-xl p-6 font-mono text-sm leading-relaxed">
+                        <div><span class="tag">&lt;script setup&gt;</span></div>
+                        <div class="pl-4"><span class="keyword">import</span> { <span class="function">ref</span> } <span class="keyword">from</span> <span class="string">'vue'</span></div>
+                        <div class="pl-4"><span class="keyword">import</span> <span class="type">ChildComp</span> <span class="keyword">from</span> <span class="string">'./ChildComp.vue'</span></div>
+                        <div class="pl-4 mt-2"><span class="keyword">const</span> <span class="variable">greeting</span> = <span class="function">ref</span>(<span class="string">'Hello du parent'</span>)</div>
+                        <div><span class="tag">&lt;/script&gt;</span></div>
+                        <div class="mt-3"><span class="tag">&lt;template&gt;</span></div>
+                        <div class="pl-4 bg-vue/10 rounded px-2 py-1"><span class="tag">&lt;<span class="type">ChildComp</span></span> <span class="attr">:msg</span>=<span class="string">"greeting"</span> <span class="tag">/&gt;</span></div>
+                        <div><span class="tag">&lt;/template&gt;</span></div>
+                    </div>
+                </div>
+                <!-- Enfant -->
+                <div class="animate-fade-in-up delay-200">
+                    <h3 class="text-lg font-semibold text-slate-400 mb-4 font-mono">ChildComp.vue <span class="text-xs text-slate-600">(enfant)</span></h3>
+                    <div class="code-block rounded-xl p-6 font-mono text-sm leading-relaxed">
+                        <div><span class="tag">&lt;script setup&gt;</span></div>
+                        <div class="pl-4 bg-vue/10 rounded px-2 py-1"><span class="function">defineProps</span>({</div>
+                        <div class="pl-8 bg-vue/10 rounded px-2 py-1"><span class="attr">msg</span>: <span class="type">String</span></div>
+                        <div class="pl-4 bg-vue/10 rounded px-2 py-1">})</div>
+                        <div><span class="tag">&lt;/script&gt;</span></div>
+                        <div class="mt-3"><span class="tag">&lt;template&gt;</span></div>
+                        <div class="pl-4"><span class="tag">&lt;p&gt;</span>{{ <span class="variable">msg</span> }}<span class="tag">&lt;/p&gt;</span></div>
+                        <div><span class="tag">&lt;/template&gt;</span></div>
+                    </div>
+                    <div class="mt-6 bg-slate-800/50 border border-slate-700 rounded-xl p-4">
+                        <p class="text-slate-400 text-sm"><strong class="text-white">Rendu :</strong> <span class="text-vue">&lt;p&gt;Hello du parent&lt;/p&gt;</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 8: Emits - Concept -->
+    <section id="slide-8" class="slide items-center bg-slate-900 relative">
+        <div class="max-w-6xl mx-auto px-6 py-20 w-full">
+            <h2 class="text-4xl font-bold mb-4 animate-fade-in-up">
+                <span class="text-vue">Emits</span> — Enfant &#x2192; Parent
+            </h2>
+            <p class="text-xl text-slate-400 mb-12 animate-fade-in-up delay-100">
+                Les emits permettent à l'enfant d'envoyer des événements au parent
+            </p>
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <!-- Schéma -->
+                <div class="animate-fade-in-up delay-200">
+                    <div class="flex flex-col items-center gap-6">
+                        <div class="component-box px-10 py-6 text-center w-80">
+                            <span class="font-mono font-bold text-vue text-lg">Parent</span>
+                            <div class="mt-3 text-sm text-slate-300">
+                                <code class="font-mono">@response="(msg) => childMsg = msg"</code>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="text-orange-400 text-3xl arrow-flow" style="transform: rotate(180deg);">&#x25BC;</div>
+                            <span class="bg-orange-400/20 text-orange-400 font-mono text-sm px-4 py-1 rounded-full border border-orange-400/40">
+                                emit('response', data)
+                            </span>
+                            <div class="text-orange-400 text-3xl arrow-flow" style="transform: rotate(180deg);">&#x25BC;</div>
+                        </div>
+                        <div class="component-box px-10 py-6 text-center w-80" style="border-color: #fb923c;">
+                            <span class="font-mono font-bold text-orange-400 text-lg">Enfant</span>
+                            <div class="mt-3 text-sm text-slate-300">
+                                <code class="font-mono">defineEmits([<span class="string">'response'</span>])</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Points clés -->
+                <div class="space-y-6 animate-fade-in-up delay-300">
+                    <div class="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+                        <h3 class="font-bold text-lg mb-2">1. L'enfant déclare ses événements</h3>
+                        <div class="code-block rounded-lg p-3 font-mono text-sm mt-2">
+                            <span class="keyword">const</span> <span class="variable">emit</span> = <span class="function">defineEmits</span>([<span class="string">'response'</span>])
+                        </div>
+                    </div>
+                    <div class="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+                        <h3 class="font-bold text-lg mb-2">2. L'enfant émet un événement</h3>
+                        <div class="code-block rounded-lg p-3 font-mono text-sm mt-2">
+                            <span class="function">emit</span>(<span class="string">'response'</span>, <span class="string">"hello de l'enfant"</span>)
+                        </div>
+                    </div>
+                    <div class="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+                        <h3 class="font-bold text-lg mb-2">3. Le parent écoute l'événement</h3>
+                        <div class="code-block rounded-lg p-3 font-mono text-sm mt-2">
+                            <span class="tag">&lt;<span class="type">ChildComp</span></span> <span class="attr">@response</span>=<span class="string">"handleResponse"</span> <span class="tag">/&gt;</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 9: Emits - Code -->
+    <section id="slide-9" class="slide items-center bg-slate-900 relative">
+        <div class="max-w-6xl mx-auto px-6 py-20 w-full">
+            <h2 class="text-4xl font-bold mb-12 animate-fade-in-up">
+                Emits — <span class="text-vue">Exemple complet</span>
+            </h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Enfant -->
+                <div class="animate-fade-in-up delay-100">
+                    <h3 class="text-lg font-semibold text-slate-400 mb-4 font-mono">ChildComp.vue <span class="text-xs text-slate-600">(enfant)</span></h3>
+                    <div class="code-block rounded-xl p-6 font-mono text-sm leading-relaxed">
+                        <div><span class="tag">&lt;script setup&gt;</span></div>
+                        <div class="pl-4 bg-orange-400/10 rounded px-2 py-1"><span class="keyword">const</span> <span class="variable">emit</span> = <span class="function">defineEmits</span>([<span class="string">'response'</span>])</div>
+                        <div class="pl-4 mt-2"><span class="comment">// Émettre l'événement</span></div>
+                        <div class="pl-4 bg-orange-400/10 rounded px-2 py-1"><span class="function">emit</span>(<span class="string">'response'</span>, <span class="string">"hello de l'enfant"</span>)</div>
+                        <div><span class="tag">&lt;/script&gt;</span></div>
+                        <div class="mt-3"><span class="tag">&lt;template&gt;</span></div>
+                        <div class="pl-4"><span class="tag">&lt;p&gt;</span>Composant enfant<span class="tag">&lt;/p&gt;</span></div>
+                        <div><span class="tag">&lt;/template&gt;</span></div>
+                    </div>
+                </div>
+                <!-- Parent -->
+                <div class="animate-fade-in-up delay-200">
+                    <h3 class="text-lg font-semibold text-slate-400 mb-4 font-mono">App.vue <span class="text-xs text-slate-600">(parent)</span></h3>
+                    <div class="code-block rounded-xl p-6 font-mono text-sm leading-relaxed">
+                        <div><span class="tag">&lt;script setup&gt;</span></div>
+                        <div class="pl-4"><span class="keyword">import</span> { <span class="function">ref</span> } <span class="keyword">from</span> <span class="string">'vue'</span></div>
+                        <div class="pl-4"><span class="keyword">import</span> <span class="type">ChildComp</span> <span class="keyword">from</span> <span class="string">'./ChildComp.vue'</span></div>
+                        <div class="pl-4 mt-2"><span class="keyword">const</span> <span class="variable">childMsg</span> = <span class="function">ref</span>(<span class="string">"Pas encore de message"</span>)</div>
+                        <div><span class="tag">&lt;/script&gt;</span></div>
+                        <div class="mt-3"><span class="tag">&lt;template&gt;</span></div>
+                        <div class="pl-4 bg-orange-400/10 rounded px-2 py-1"><span class="tag">&lt;<span class="type">ChildComp</span></span> <span class="attr">@response</span>=<span class="string">"(msg) => childMsg = msg"</span> <span class="tag">/&gt;</span></div>
+                        <div class="pl-4"><span class="tag">&lt;p&gt;</span>{{ <span class="variable">childMsg</span> }}<span class="tag">&lt;/p&gt;</span></div>
+                        <div><span class="tag">&lt;/template&gt;</span></div>
+                    </div>
+                    <div class="mt-6 bg-slate-800/50 border border-slate-700 rounded-xl p-4">
+                        <p class="text-slate-400 text-sm"><strong class="text-white">Rendu :</strong> <span class="text-orange-400">&lt;p&gt;hello de l'enfant&lt;/p&gt;</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 10: Slots - Concept -->
+    <section id="slide-10" class="slide items-center bg-slate-900 relative">
+        <div class="max-w-6xl mx-auto px-6 py-20 w-full">
+            <h2 class="text-4xl font-bold mb-4 animate-fade-in-up">
+                <span class="text-vue">Slots</span> — Injection de contenu
+            </h2>
+            <p class="text-xl text-slate-400 mb-12 animate-fade-in-up delay-100">
+                Les slots permettent au parent d'injecter du HTML dans le template de l'enfant
+            </p>
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <!-- Analogie -->
+                <div class="animate-fade-in-up delay-200">
+                    <div class="bg-slate-800/50 rounded-2xl p-8 border border-slate-700 mb-8">
+                        <h3 class="text-xl font-bold mb-4 text-vue">Analogie : le cadre photo</h3>
+                        <p class="text-slate-300 text-lg">
+                            Un composant avec un slot, c'est comme un <strong class="text-white">cadre photo</strong> : le cadre est toujours le même, mais on peut y mettre <strong class="text-white">n'importe quelle photo</strong>.
+                        </p>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-slate-800/50 rounded-xl p-5 border border-slate-700">
+                            <h4 class="font-bold mb-2">Slot par défaut</h4>
+                            <p class="text-slate-300 text-sm">Le contenu principal injecté dans <code class="font-mono text-vue">&lt;slot /&gt;</code></p>
+                        </div>
+                        <div class="bg-slate-800/50 rounded-xl p-5 border border-slate-700">
+                            <h4 class="font-bold mb-2">Slots nommés</h4>
+                            <p class="text-slate-300 text-sm">Plusieurs emplacements : <code class="font-mono text-vue">&lt;slot name="header" /&gt;</code></p>
+                        </div>
+                        <div class="bg-slate-800/50 rounded-xl p-5 border border-slate-700">
+                            <h4 class="font-bold mb-2">Contenu de secours</h4>
+                            <p class="text-slate-300 text-sm">Affiché si aucun contenu n'est fourni : <code class="font-mono text-vue">&lt;slot&gt;Fallback&lt;/slot&gt;</code></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Schéma visuel -->
+                <div class="animate-fade-in-up delay-300">
+                    <div class="flex flex-col items-center gap-6">
+                        <div class="component-box px-8 py-6 text-center w-80" style="border-color: #a78bfa;">
+                            <span class="font-mono font-bold text-purple-400 text-lg">Parent</span>
+                            <div class="mt-3 bg-slate-800 rounded-lg p-3 font-mono text-sm text-left">
+                                <div><span class="tag">&lt;<span class="type">Card</span>&gt;</span></div>
+                                <div class="pl-4 text-white">Mon contenu ici</div>
+                                <div><span class="tag">&lt;/<span class="type">Card</span>&gt;</span></div>
+                            </div>
+                        </div>
+                        <div class="text-purple-400 text-3xl arrow-flow">&#x25BC;</div>
+                        <div class="component-box px-8 py-6 text-center w-80" style="border-color: #a78bfa;">
+                            <span class="font-mono font-bold text-purple-400 text-lg">Card.vue</span>
+                            <div class="mt-3 bg-slate-800 rounded-lg p-3 font-mono text-sm text-left">
+                                <div><span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="string">"card"</span><span class="tag">&gt;</span></div>
+                                <div class="pl-4 bg-purple-400/10 border border-dashed border-purple-400/40 rounded px-2 py-1"><span class="tag">&lt;slot /&gt;</span> <span class="comment">&#x2190; "Mon contenu ici"</span></div>
+                                <div><span class="tag">&lt;/div&gt;</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 11: Slots - Code -->
+    <section id="slide-11" class="slide items-center bg-slate-900 relative">
+        <div class="max-w-6xl mx-auto px-6 py-20 w-full">
+            <h2 class="text-4xl font-bold mb-12 animate-fade-in-up">
+                Slots — <span class="text-vue">Exemple complet</span>
+            </h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Enfant -->
+                <div class="animate-fade-in-up delay-100">
+                    <h3 class="text-lg font-semibold text-slate-400 mb-4 font-mono">ChildComp.vue <span class="text-xs text-slate-600">(enfant)</span></h3>
+                    <div class="code-block rounded-xl p-6 font-mono text-sm leading-relaxed">
+                        <div><span class="tag">&lt;template&gt;</span></div>
+                        <div class="pl-4"><span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="string">"card"</span><span class="tag">&gt;</span></div>
+                        <div class="pl-8 bg-purple-400/10 rounded px-2 py-1"><span class="tag">&lt;slot&gt;</span>Contenu de secours<span class="tag">&lt;/slot&gt;</span></div>
+                        <div class="pl-4"><span class="tag">&lt;/div&gt;</span></div>
+                        <div><span class="tag">&lt;/template&gt;</span></div>
+                    </div>
+                    <p class="text-slate-400 text-sm mt-4">
+                        Si le parent ne fournit pas de contenu, <span class="text-purple-400">"Contenu de secours"</span> est affiché
+                    </p>
+                </div>
+                <!-- Parent -->
+                <div class="animate-fade-in-up delay-200">
+                    <h3 class="text-lg font-semibold text-slate-400 mb-4 font-mono">App.vue <span class="text-xs text-slate-600">(parent)</span></h3>
+                    <div class="code-block rounded-xl p-6 font-mono text-sm leading-relaxed">
+                        <div><span class="tag">&lt;script setup&gt;</span></div>
+                        <div class="pl-4"><span class="keyword">import</span> { <span class="function">ref</span> } <span class="keyword">from</span> <span class="string">'vue'</span></div>
+                        <div class="pl-4"><span class="keyword">import</span> <span class="type">ChildComp</span> <span class="keyword">from</span> <span class="string">'./ChildComp.vue'</span></div>
+                        <div class="pl-4 mt-2"><span class="keyword">const</span> <span class="variable">msg</span> = <span class="function">ref</span>(<span class="string">'depuis le parent'</span>)</div>
+                        <div><span class="tag">&lt;/script&gt;</span></div>
+                        <div class="mt-3"><span class="tag">&lt;template&gt;</span></div>
+                        <div class="pl-4 bg-purple-400/10 rounded px-2 py-1"><span class="tag">&lt;<span class="type">ChildComp</span>&gt;</span></div>
+                        <div class="pl-8 bg-purple-400/10 rounded px-2 py-1">Message: {{ <span class="variable">msg</span> }}</div>
+                        <div class="pl-4 bg-purple-400/10 rounded px-2 py-1"><span class="tag">&lt;/<span class="type">ChildComp</span>&gt;</span></div>
+                        <div><span class="tag">&lt;/template&gt;</span></div>
+                    </div>
+                    <div class="mt-6 bg-slate-800/50 border border-slate-700 rounded-xl p-4">
+                        <p class="text-slate-400 text-sm"><strong class="text-white">Rendu :</strong> <span class="text-purple-400">&lt;div class="card"&gt;Message: depuis le parent&lt;/div&gt;</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 12: Récapitulatif -->
+    <section id="slide-12" class="slide items-center bg-slate-900 relative">
+        <div class="max-w-6xl mx-auto px-6 py-20 w-full">
+            <h2 class="text-4xl font-bold mb-12 animate-fade-in-up">
+                <span class="text-vue">Récapitulatif</span> — Communication entre composants
+            </h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Props -->
+                <div class="bg-slate-800/50 rounded-2xl p-8 border border-vue/30 animate-fade-in-up delay-100">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-vue/20 rounded-xl flex items-center justify-center text-vue text-2xl">&#x2B07;&#xFE0F;</div>
+                        <h3 class="text-xl font-bold">Props</h3>
+                    </div>
+                    <p class="text-slate-300 mb-4">Parent &#x2192; Enfant</p>
+                    <div class="code-block rounded-lg p-3 font-mono text-xs">
+                        <div><span class="function">defineProps</span>({</div>
+                        <div class="pl-2"><span class="attr">msg</span>: <span class="type">String</span></div>
+                        <div>})</div>
+                    </div>
+                    <p class="text-slate-400 text-sm mt-4">Données en <strong class="text-white">lecture seule</strong></p>
+                </div>
+                <!-- Emits -->
+                <div class="bg-slate-800/50 rounded-2xl p-8 border border-orange-400/30 animate-fade-in-up delay-200">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-orange-400/20 rounded-xl flex items-center justify-center text-orange-400 text-2xl">&#x2B06;&#xFE0F;</div>
+                        <h3 class="text-xl font-bold">Emits</h3>
+                    </div>
+                    <p class="text-slate-300 mb-4">Enfant &#x2192; Parent</p>
+                    <div class="code-block rounded-lg p-3 font-mono text-xs">
+                        <div><span class="keyword">const</span> <span class="variable">emit</span> =</div>
+                        <div class="pl-2"><span class="function">defineEmits</span>([<span class="string">'event'</span>])</div>
+                        <div class="mt-1"><span class="function">emit</span>(<span class="string">'event'</span>, data)</div>
+                    </div>
+                    <p class="text-slate-400 text-sm mt-4">Événements <strong class="text-white">personnalisés</strong></p>
+                </div>
+                <!-- Slots -->
+                <div class="bg-slate-800/50 rounded-2xl p-8 border border-purple-400/30 animate-fade-in-up delay-300">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-purple-400/20 rounded-xl flex items-center justify-center text-purple-400 text-2xl">&#x1F4E6;</div>
+                        <h3 class="text-xl font-bold">Slots</h3>
+                    </div>
+                    <p class="text-slate-300 mb-4">Injection de contenu</p>
+                    <div class="code-block rounded-lg p-3 font-mono text-xs">
+                        <div><span class="tag">&lt;slot&gt;</span></div>
+                        <div class="pl-2">Fallback</div>
+                        <div><span class="tag">&lt;/slot&gt;</span></div>
+                    </div>
+                    <p class="text-slate-400 text-sm mt-4">HTML <strong class="text-white">flexible</strong> et réutilisable</p>
+                </div>
+            </div>
+            <!-- Tableau comparatif -->
+            <div class="mt-12 animate-fade-in-up delay-400">
+                <div class="bg-slate-800/30 rounded-xl border border-slate-700 overflow-hidden">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="border-b border-slate-700">
+                                <th class="px-6 py-4 text-slate-400 font-semibold">Mécanisme</th>
+                                <th class="px-6 py-4 text-slate-400 font-semibold">Direction</th>
+                                <th class="px-6 py-4 text-slate-400 font-semibold">Type de données</th>
+                                <th class="px-6 py-4 text-slate-400 font-semibold">Cas d'usage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-slate-700/50">
+                                <td class="px-6 py-4 font-mono text-vue">Props</td>
+                                <td class="px-6 py-4">Parent &#x2192; Enfant</td>
+                                <td class="px-6 py-4 text-slate-300">String, Number, Object, Array...</td>
+                                <td class="px-6 py-4 text-slate-300">Configurer un composant</td>
+                            </tr>
+                            <tr class="border-b border-slate-700/50">
+                                <td class="px-6 py-4 font-mono text-orange-400">Emits</td>
+                                <td class="px-6 py-4">Enfant &#x2192; Parent</td>
+                                <td class="px-6 py-4 text-slate-300">Événements + arguments</td>
+                                <td class="px-6 py-4 text-slate-300">Notifier le parent d'une action</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 font-mono text-purple-400">Slots</td>
+                                <td class="px-6 py-4">Parent &#x2192; Enfant</td>
+                                <td class="px-6 py-4 text-slate-300">HTML / Composants</td>
+                                <td class="px-6 py-4 text-slate-300">Personnaliser le rendu</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 13: Exercices -->
+    <section id="slide-13" class="slide items-center bg-slate-900 relative">
+        <div class="max-w-6xl mx-auto px-6 py-20 w-full">
+            <h2 class="text-4xl font-bold mb-12 animate-fade-in-up">
+                <span class="text-vue">Exercices</span> pratiques
+            </h2>
+            <div class="space-y-8">
+                <!-- Étape 1: Tutoriel -->
+                <div class="bg-slate-800/50 rounded-2xl p-8 border border-vue/30 animate-fade-in-up delay-100">
+                    <div class="flex items-start gap-6">
+                        <div class="w-14 h-14 bg-vue/20 rounded-2xl flex items-center justify-center text-vue text-2xl font-bold shrink-0">1</div>
+                        <div>
+                            <h3 class="text-xl font-bold mb-3">Tutoriel Vue.js — Étapes 11 à 14</h3>
+                            <p class="text-slate-300 mb-4">Complétez les 4 étapes du tutoriel officiel pour pratiquer les concepts</p>
+                            <div class="grid md:grid-cols-2 gap-3">
+                                <div class="bg-slate-700/50 rounded-lg px-4 py-2 text-sm">
+                                    <span class="text-vue font-mono font-bold">11</span> <span class="text-slate-300">— Composants</span>
+                                </div>
+                                <div class="bg-slate-700/50 rounded-lg px-4 py-2 text-sm">
+                                    <span class="text-vue font-mono font-bold">12</span> <span class="text-slate-300">— Props</span>
+                                </div>
+                                <div class="bg-slate-700/50 rounded-lg px-4 py-2 text-sm">
+                                    <span class="text-vue font-mono font-bold">13</span> <span class="text-slate-300">— Emits</span>
+                                </div>
+                                <div class="bg-slate-700/50 rounded-lg px-4 py-2 text-sm">
+                                    <span class="text-vue font-mono font-bold">14</span> <span class="text-slate-300">— Slots</span>
+                                </div>
+                            </div>
+                            <a href="https://fr.vuejs.org/tutorial/#step-11" target="_blank" class="inline-block mt-4 text-vue hover:underline font-mono text-sm">
+                                &#x2192; fr.vuejs.org/tutorial/#step-11
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Étape 2: Exercice 8 -->
+                <div class="bg-slate-800/50 rounded-2xl p-8 border border-orange-400/30 animate-fade-in-up delay-200">
+                    <div class="flex items-start gap-6">
+                        <div class="w-14 h-14 bg-orange-400/20 rounded-2xl flex items-center justify-center text-orange-400 text-2xl font-bold shrink-0">2</div>
+                        <div>
+                            <h3 class="text-xl font-bold mb-3">Exercice 8 — Liste de Pokémon avec composants</h3>
+                            <p class="text-slate-300 mb-3">Créez un composant <code class="font-mono text-vue">PokemonCard.vue</code> qui :</p>
+                            <ul class="space-y-2 text-slate-300">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-vue mt-1">&#x25B8;</span>
+                                    Reçoit le nom du Pokémon en <strong class="text-white">prop</strong>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-vue mt-1">&#x25B8;</span>
+                                    Affiche le Pokémon avec <code class="font-mono text-vue">v-for</code>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-vue mt-1">&#x25B8;</span>
+                                    Émet un événement <strong class="text-white">emit</strong> pour supprimer un Pokémon
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Étape 3: Exercice 9 -->
+                <div class="bg-slate-800/50 rounded-2xl p-8 border border-purple-400/30 animate-fade-in-up delay-300">
+                    <div class="flex items-start gap-6">
+                        <div class="w-14 h-14 bg-purple-400/20 rounded-2xl flex items-center justify-center text-purple-400 text-2xl font-bold shrink-0">3</div>
+                        <div>
+                            <h3 class="text-xl font-bold mb-3">Exercice 9 — Slots nommés et par défaut</h3>
+                            <p class="text-slate-300 mb-3">Créez un composant <code class="font-mono text-vue">CarteAvecSlots.vue</code> avec :</p>
+                            <ul class="space-y-2 text-slate-300">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-purple-400 mt-1">&#x25B8;</span>
+                                    Un <strong class="text-white">slot nommé</strong> <code class="font-mono text-purple-400">header</code> pour le titre
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-purple-400 mt-1">&#x25B8;</span>
+                                    Un <strong class="text-white">slot par défaut</strong> pour le contenu principal
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-purple-400 mt-1">&#x25B8;</span>
+                                    Un <strong class="text-white">slot nommé</strong> <code class="font-mono text-purple-400">footer</code> pour les actions
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-purple-400 mt-1">&#x25B8;</span>
+                                    Du contenu de <strong class="text-white">secours</strong> (fallback) si le slot est vide
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 14: Ressources -->
+    <section id="slide-14" class="slide items-center bg-slate-900 relative">
+        <div class="max-w-5xl mx-auto px-6 py-20 w-full">
+            <h2 class="text-4xl font-bold mb-12 animate-fade-in-up">
+                <span class="text-vue">Ressources</span>
+            </h2>
+            <div class="space-y-6">
+                <a href="https://fr.vuejs.org/tutorial/#step-11" target="_blank"
+                   class="block bg-slate-800/50 rounded-xl p-6 border border-slate-700 hover:border-vue/50 transition-all animate-fade-in-up delay-100">
+                    <div class="flex items-center gap-4">
+                        <span class="text-vue text-2xl">&#x1F4DA;</span>
+                        <div>
+                            <h3 class="font-bold text-lg">Tutoriel Vue.js — Étapes 11 à 14</h3>
+                            <p class="text-slate-400 text-sm font-mono">fr.vuejs.org/tutorial/#step-11</p>
+                        </div>
+                    </div>
+                </a>
+                <a href="https://fr.vuejs.org/guide/essentials/component-basics.html" target="_blank"
+                   class="block bg-slate-800/50 rounded-xl p-6 border border-slate-700 hover:border-vue/50 transition-all animate-fade-in-up delay-200">
+                    <div class="flex items-center gap-4">
+                        <span class="text-vue text-2xl">&#x1F4D6;</span>
+                        <div>
+                            <h3 class="font-bold text-lg">Guide Vue.js — Les bases des composants</h3>
+                            <p class="text-slate-400 text-sm font-mono">fr.vuejs.org/guide/essentials/component-basics.html</p>
+                        </div>
+                    </div>
+                </a>
+                <a href="https://kode.ch/vue-bases/" target="_blank"
+                   class="block bg-slate-800/50 rounded-xl p-6 border border-slate-700 hover:border-vue/50 transition-all animate-fade-in-up delay-300">
+                    <div class="flex items-center gap-4">
+                        <span class="text-vue text-2xl">&#x1F4DD;</span>
+                        <div>
+                            <h3 class="font-bold text-lg">Exercices "Bases de Vue.js" — Solutions</h3>
+                            <p class="text-slate-400 text-sm font-mono">kode.ch/vue-bases/</p>
+                        </div>
+                    </div>
+                </a>
+                <a href="https://devjs.ch/vue/" target="_blank"
+                   class="block bg-slate-800/50 rounded-xl p-6 border border-slate-700 hover:border-vue/50 transition-all animate-fade-in-up delay-400">
+                    <div class="flex items-center gap-4">
+                        <span class="text-vue text-2xl">&#x1F310;</span>
+                        <div>
+                            <h3 class="font-bold text-lg">devjs.ch — Support de cours Vue.js</h3>
+                            <p class="text-slate-400 text-sm font-mono">devjs.ch/vue/</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const dotsContainer = document.getElementById('dots');
+        const badge = document.getElementById('contrast-badge');
+        let current = 0;
+
+        slides.forEach((_, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'nav-dot w-3 h-3 rounded-full bg-white/30 hover:bg-vue transition-all cursor-pointer border-0 p-0';
+            btn.addEventListener('click', () => go(i));
+            dotsContainer.appendChild(btn);
+        });
+        const dots = dotsContainer.querySelectorAll('.nav-dot');
+
+        function update() {
+            slides.forEach((s, i) => s.classList.toggle('active', i === current));
+            dots.forEach((d, i) => {
+                d.classList.toggle('bg-vue', i === current);
+                d.classList.toggle('bg-white/30', i !== current);
+                d.classList.toggle('active', i === current);
+            });
+        }
+        function next() { if (current < slides.length - 1) { current++; update(); } }
+        function prev() { if (current > 0) { current--; update(); } }
+        function go(i) { current = i; update(); }
+
+        document.addEventListener('keydown', (e) => {
+            if (['ArrowDown', 'ArrowRight', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); next(); }
+            else if (['ArrowUp', 'ArrowLeft'].includes(e.key)) { e.preventDefault(); prev(); }
+            else if (e.key.toLowerCase() === 'c') {
+                document.body.classList.toggle('high-contrast');
+                badge.style.display = document.body.classList.contains('high-contrast') ? 'block' : 'none';
+            }
+        });
+
+        update();
+    </script>
+</body>
+</html>

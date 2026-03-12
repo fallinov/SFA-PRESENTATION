@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction à JavaScript</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        js: '#f7df1e',
+                        jsDark: '#323330',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html, body { margin: 0; overflow: hidden; height: 100vh; }
+        .slide { display: none; min-height: 100vh; flex-direction: column; justify-content: center; overflow-y: auto; }
+        .slide.active { display: flex; }
+        .code-block { background: #1e1e1e; }
+        .gradient-js { background: linear-gradient(135deg, #f7df1e 0%, #323330 100%); }
+        .gradient-js-dark { background: linear-gradient(135deg, #323330 0%, #1a1a1a 100%); }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
+        .animate-fade-in-left { animation: fadeInLeft 0.6s ease-out forwards; }
+        .animate-pulse-slow { animation: pulse-slow 3s ease-in-out infinite; }
+
+        /* Delay classes */
+        .delay-100 { animation-delay: 0.1s; opacity: 0; }
+        .delay-200 { animation-delay: 0.2s; opacity: 0; }
+        .delay-300 { animation-delay: 0.3s; opacity: 0; }
+        .delay-400 { animation-delay: 0.4s; opacity: 0; }
+        .delay-500 { animation-delay: 0.5s; opacity: 0; }
+
+        /* Navigation dots */
+        .nav-dot { transition: all 0.3s ease; }
+        .nav-dot.active { transform: scale(1.3); }
+
+        /* Code highlighting */
+        .keyword { color: #c586c0; }
+        .string { color: #ce9178; }
+        .function { color: #dcdcaa; }
+        .comment { color: #6a9955; }
+        .tag { color: #569cd6; }
+        .attr { color: #9cdcfe; }
+        .value { color: #ce9178; }
+        .number { color: #b5cea8; }
+
+        /* High contrast */
+        body.high-contrast { background: #000 !important; }
+        body.high-contrast .bg-slate-900,
+        body.high-contrast .bg-slate-800 { background: #000 !important; }
+        body.high-contrast .bg-slate-800\/50 { background: rgba(0,0,0,0.8) !important; }
+        body.high-contrast .text-slate-300,
+        body.high-contrast .text-slate-400,
+        body.high-contrast .text-slate-500 { color: #fff !important; }
+        body.high-contrast .text-js { color: #ffff00 !important; }
+        body.high-contrast .border-slate-700 { border-color: #888 !important; }
+        body.high-contrast .gradient-js,
+        body.high-contrast .gradient-js-dark { background: #000 !important; }
+        #contrast-badge { position: fixed; top: 1rem; left: 1rem; z-index: 100; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); backdrop-filter: blur(4px); pointer-events: none; }
+    </style>
+</head>
+<body class="font-sans bg-slate-900 text-white">
+
+    <!-- Navigation latérale (générée en JS) -->
+    <nav id="dots" class="fixed right-6 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col gap-3"></nav>
+    <div id="contrast-badge" style="display:none">Contraste élevé (C)</div>
+
+    <!-- Slide 1: Titre -->
+    <section id="slide-1" class="slide active items-center justify-center gradient-js relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-20 left-20 w-64 h-64 bg-black rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 right-20 w-96 h-96 bg-black rounded-full blur-3xl"></div>
+        </div>
+        <div class="text-center px-6 relative z-10">
+            <div class="mb-8 animate-fade-in-up">
+                <div class="w-32 h-32 mx-auto bg-jsDark rounded-2xl flex items-center justify-center shadow-2xl">
+                    <span class="text-js font-bold text-6xl">JS</span>
+                </div>
+            </div>
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 animate-fade-in-up delay-100 text-jsDark">JavaScript</h1>
+            <p class="text-xl md:text-2xl text-jsDark/80 mb-8 animate-fade-in-up delay-200">Le langage du Web</p>
+            <div class="flex flex-wrap gap-4 justify-center animate-fade-in-up delay-300">
+                <span class="px-4 py-2 bg-jsDark/20 rounded-full text-sm backdrop-blur-sm text-jsDark">Introduction</span>
+                <span class="px-4 py-2 bg-jsDark/20 rounded-full text-sm backdrop-blur-sm text-jsDark">Histoire</span>
+                <span class="px-4 py-2 bg-jsDark/20 rounded-full text-sm backdrop-blur-sm text-jsDark">Premiers pas</span>
+            </div>
+            <div class="mt-16 animate-pulse-slow">
+                <svg class="w-8 h-8 mx-auto text-jsDark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                </svg>
+                <p class="text-sm text-jsDark/70 mt-2">Flèches pour naviguer</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 2: Le cours C122 -->
+    <section id="slide-2" class="slide items-center bg-slate-800 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <div class="text-center mb-12">
+                <span class="text-js font-mono text-sm mb-4 block">Cours C122</span>
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">Programmation du <span class="text-js">client web</span></h2>
+                <p class="text-xl text-slate-400">ESIG 1ère année — Semestre 2</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6 mb-12">
+                <a href="https://devjs.ch/cours/122/" target="_blank" class="bg-slate-900/50 p-8 rounded-2xl border border-slate-700 hover:border-js/50 transition-all hover:transform hover:scale-105 text-center group">
+                    <div class="w-16 h-16 bg-js/20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-js/30 transition-colors">
+                        <svg class="w-8 h-8 text-js" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 group-hover:text-js transition-colors">Présentation</h3>
+                    <p class="text-slate-400 text-sm">Objectifs, outils et organisation du cours</p>
+                </a>
+
+                <a href="https://devjs.ch/cours/122/plan.html" target="_blank" class="bg-slate-900/50 p-8 rounded-2xl border border-slate-700 hover:border-js/50 transition-all hover:transform hover:scale-105 text-center group">
+                    <div class="w-16 h-16 bg-js/20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-js/30 transition-colors">
+                        <svg class="w-8 h-8 text-js" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 group-hover:text-js transition-colors">Plan d'enseignement</h3>
+                    <p class="text-slate-400 text-sm">15 séances détaillées avec objectifs</p>
+                </a>
+
+                <a href="https://devjs.ch/cours/122/exercices.html" target="_blank" class="bg-slate-900/50 p-8 rounded-2xl border border-slate-700 hover:border-js/50 transition-all hover:transform hover:scale-105 text-center group">
+                    <div class="w-16 h-16 bg-js/20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-js/30 transition-colors">
+                        <svg class="w-8 h-8 text-js" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 group-hover:text-js transition-colors">Liste des exercices</h3>
+                    <p class="text-slate-400 text-sm">44 exercices répartis en 9 modules</p>
+                </a>
+            </div>
+
+            <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 max-w-3xl mx-auto">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-bold text-js mb-3">Informations</h4>
+                        <ul class="text-slate-400 text-sm space-y-2">
+                            <li>📅 21 janvier → 27 mai 2026</li>
+                            <li>🕐 Mercredi 12:55 - 14:25</li>
+                            <li>📍 Salle A2-07</li>
+                            <li>⏱️ 30 périodes (15 séances)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-js mb-3">Objectifs</h4>
+                        <ul class="text-slate-400 text-sm space-y-2">
+                            <li>✓ Maîtriser JavaScript</li>
+                            <li>✓ Manipuler le DOM</li>
+                            <li>✓ Créer des formulaires</li>
+                            <li>✓ Consommer une API</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 3: Qu'est-ce que JavaScript -->
+    <section id="slide-3" class="slide items-center bg-slate-900 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <span class="text-js font-mono text-sm mb-4 block">01 / Introduction</span>
+                    <h2 class="text-4xl md:text-5xl font-bold mb-6">Qu'est-ce que <span class="text-js">JavaScript</span> ?</h2>
+                    <p class="text-lg text-slate-300 mb-6 leading-relaxed">
+                        JavaScript est un <strong class="text-white">langage de script</strong>,
+                        <strong class="text-js">multiplateforme</strong> et <strong class="text-white">orienté objet</strong>.
+                    </p>
+                    <p class="text-lg text-slate-300 mb-6 leading-relaxed">
+                        C'est un langage <strong class="text-white">léger</strong> qui doit faire partie d'un
+                        <strong class="text-js">environnement hôte</strong> (un navigateur web par exemple)
+                        pour pouvoir être utilisé.
+                    </p>
+                    <p class="text-lg text-slate-300 leading-relaxed">
+                        Créé en <strong class="text-white">1995</strong> par <strong class="text-js">Brendan Eich</strong>
+                        chez Netscape, initialement appelé LiveScript.
+                    </p>
+                </div>
+                <div class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700">
+                    <h3 class="text-lg font-semibold mb-4 text-slate-200">Le saviez-vous ?</h3>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-slate-700/30 rounded-lg">
+                            <p class="text-slate-300">
+                                <span class="text-js font-bold">JavaScript ≠ Java</span>
+                            </p>
+                            <p class="text-sm text-slate-400 mt-2">
+                                Renommé JavaScript pour bénéficier de la popularité de Java dans les années 90.
+                                Les deux langages n'ont rien en commun !
+                            </p>
+                        </div>
+                        <div class="p-4 bg-slate-700/30 rounded-lg">
+                            <p class="text-slate-300">
+                                <span class="text-js font-bold">ECMAScript</span>
+                            </p>
+                            <p class="text-sm text-slate-400 mt-2">
+                                Nom officiel standardisé par ECMA (European Computer Manufacturers Association).
+                                ES6 (2015) est la version majeure moderne.
+                            </p>
+                        </div>
+                    </div>
+                    <a href="https://developer.mozilla.org/fr/docs/Web/JavaScript" target="_blank" class="mt-4 inline-flex items-center gap-2 text-js hover:underline text-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                        </svg>
+                        Documentation MDN →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 4: Histoire de JavaScript -->
+    <section id="slide-4" class="slide items-center bg-slate-800 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-js font-mono text-sm mb-4 block">02 / Histoire</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-12">L'évolution de <span class="text-js">JavaScript</span></h2>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                    <span class="text-2xl font-bold text-js">1995</span>
+                    <h3 class="text-lg font-bold mt-2 mb-2">Naissance</h3>
+                    <p class="text-slate-400 text-sm">Création par Brendan Eich. Pages web interactives, validation de formulaires.</p>
+                </div>
+
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                    <span class="text-2xl font-bold text-js">2006</span>
+                    <h3 class="text-lg font-bold mt-2 mb-2">jQuery</h3>
+                    <p class="text-slate-400 text-sm">Simplification du DOM, animations, compatibilité navigateurs.</p>
+                </div>
+
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                    <span class="text-2xl font-bold text-js">2009</span>
+                    <h3 class="text-lg font-bold mt-2 mb-2">ES5</h3>
+                    <p class="text-slate-400 text-sm">Mode strict, JSON natif, nouvelles méthodes tableaux.</p>
+                </div>
+
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                    <span class="text-2xl font-bold text-js">2010-14</span>
+                    <h3 class="text-lg font-bold mt-2 mb-2">Frameworks MVC</h3>
+                    <p class="text-slate-400 text-sm">Backbone.js, AngularJS, Ember.js. Applications web structurées.</p>
+                </div>
+
+                <div class="bg-js/20 p-6 rounded-2xl border border-js/50">
+                    <span class="text-2xl font-bold text-js">2015</span>
+                    <h3 class="text-lg font-bold mt-2 mb-2">ES6 / ES2015</h3>
+                    <p class="text-slate-300 text-sm"><code>let</code>, <code>const</code>, arrow functions, Promises, modules.</p>
+                </div>
+
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                    <span class="text-2xl font-bold text-js">2013-16</span>
+                    <h3 class="text-lg font-bold mt-2 mb-2">Frameworks modernes</h3>
+                    <p class="text-slate-400 text-sm">React (2013), Vue.js (2014), Angular 2+ (2016). Composants & Virtual DOM.</p>
+                </div>
+            </div>
+
+            <div class="mt-8 bg-js/10 border border-js/30 p-4 rounded-2xl">
+                <p class="text-js font-medium">💡 Aujourd'hui</p>
+                <p class="text-slate-300 text-sm mt-2">JavaScript est le langage le plus utilisé au monde. Il évolue chaque année avec de nouvelles fonctionnalités (ES2020, ES2023...).</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 5: Généralités -->
+    <section id="slide-5" class="slide items-center bg-slate-900 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-js font-mono text-sm mb-4 block">03 / Caractéristiques</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-12">Généralités sur <span class="text-js">JavaScript</span></h2>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="space-y-4">
+                    <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 hover:border-js/50 transition-colors">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-js/20 rounded-xl flex items-center justify-center">
+                                <svg class="w-6 h-6 text-js" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold">Langage interprété</h3>
+                                <p class="text-slate-400 text-sm">Exécuté ligne par ligne, pas de compilation</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 hover:border-js/50 transition-colors">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-js/20 rounded-xl flex items-center justify-center">
+                                <svg class="w-6 h-6 text-js" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold">Orienté objet</h3>
+                                <p class="text-slate-400 text-sm">Basé sur les prototypes</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 hover:border-js/50 transition-colors">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-js/20 rounded-xl flex items-center justify-center">
+                                <svg class="w-6 h-6 text-js" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold">Typage dynamique</h3>
+                                <p class="text-slate-400 text-sm">Les types sont déterminés à l'exécution</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 hover:border-js/50 transition-colors">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-js/20 rounded-xl flex items-center justify-center">
+                                <svg class="w-6 h-6 text-js" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold">Multiplateforme</h3>
+                                <p class="text-slate-400 text-sm">Navigateur, serveur, mobile, desktop</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 hover:border-js/50 transition-colors">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-js/20 rounded-xl flex items-center justify-center">
+                                <svg class="w-6 h-6 text-js" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold">Sensible à la casse</h3>
+                                <p class="text-slate-400 text-sm"><code>maVariable</code> ≠ <code>mavariable</code></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-red-500/10 p-6 rounded-2xl border border-red-500/30">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-red-500/20 rounded-xl flex items-center justify-center">
+                                <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-red-400">Attention !</h3>
+                                <p class="text-slate-400 text-sm">JavaScript ≠ Java (aucun lien !)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 6: JavaScript côté client -->
+    <section id="slide-6" class="slide items-center gradient-js-dark py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-js font-mono text-sm mb-4 block">04 / Navigateur</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">JavaScript <span class="text-js">côté client</span></h2>
+
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <p class="text-lg text-slate-300 mb-6 leading-relaxed">
+                        JavaScript est principalement utilisé dans le <strong class="text-white">navigateur</strong>
+                        pour rendre les pages web <strong class="text-js">interactives</strong>.
+                    </p>
+                    <p class="text-lg text-slate-300 mb-6 leading-relaxed">
+                        Les traitements côté client permettent des <strong class="text-white">interactions plus rapides</strong>
+                        sans attendre le serveur.
+                    </p>
+
+                    <!-- Schéma client-serveur -->
+                    <div class="my-6 bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                        <img src="https://media.slid.es/uploads/2783028/images/12311992/image.png" alt="Schéma client-serveur" class="w-full max-w-md mx-auto rounded-lg">
+                        <p class="text-center text-slate-400 text-xs mt-2">Architecture client-serveur</p>
+                    </div>
+
+                    <h3 class="text-xl font-bold mb-4 mt-8">Moteurs JavaScript</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-700">
+                            <p class="font-mono text-js text-sm">V8</p>
+                            <p class="text-xs text-slate-400">Chrome, Edge</p>
+                        </div>
+                        <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-700">
+                            <p class="font-mono text-js text-sm">SpiderMonkey</p>
+                            <p class="text-xs text-slate-400">Firefox</p>
+                        </div>
+                        <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-700">
+                            <p class="font-mono text-js text-sm">JavaScriptCore</p>
+                            <p class="text-xs text-slate-400">Safari</p>
+                        </div>
+                        <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-700">
+                            <p class="font-mono text-js text-sm">Chakra</p>
+                            <p class="text-xs text-slate-400">IE (obsolète)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
+                    <h3 class="text-lg font-semibold mb-4 text-slate-200">Pourquoi le côté client ?</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg">
+                            <span class="text-js text-xl">⚡</span>
+                            <div>
+                                <p class="font-medium">Réactivité</p>
+                                <p class="text-sm text-slate-400">Interactions instantanées sans requête serveur</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg">
+                            <span class="text-js text-xl">💰</span>
+                            <div>
+                                <p class="font-medium">Économie serveur</p>
+                                <p class="text-sm text-slate-400">Moins de charge sur l'infrastructure</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg">
+                            <span class="text-js text-xl">📈</span>
+                            <div>
+                                <p class="font-medium">Scalabilité</p>
+                                <p class="text-sm text-slate-400">Plus d'utilisateurs simultanés</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg">
+                            <span class="text-js text-xl">🎨</span>
+                            <div>
+                                <p class="font-medium">UX améliorée</p>
+                                <p class="text-sm text-slate-400">Interfaces riches et dynamiques</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 7: Ce que JS peut/ne peut pas faire -->
+    <section id="slide-7" class="slide items-center bg-slate-900 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-js font-mono text-sm mb-4 block">05 / Capacités</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-12">Que peut faire <span class="text-js">JavaScript</span> ?</h2>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-green-500/10 p-6 rounded-2xl border border-green-500/30">
+                    <h3 class="text-xl font-bold mb-6 text-green-400 flex items-center gap-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Dans le navigateur
+                    </h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start gap-3">
+                            <span class="text-green-400 mt-1">✓</span>
+                            <span class="text-slate-300">Modifier le HTML et les styles CSS</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-green-400 mt-1">✓</span>
+                            <span class="text-slate-300">Réagir aux actions utilisateur (clics, clavier)</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-green-400 mt-1">✓</span>
+                            <span class="text-slate-300">Envoyer des requêtes réseau (AJAX, fetch)</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-green-400 mt-1">✓</span>
+                            <span class="text-slate-300">Gérer les cookies</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-green-400 mt-1">✓</span>
+                            <span class="text-slate-300">Stocker des données (localStorage)</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-green-400 mt-1">✓</span>
+                            <span class="text-slate-300">Afficher des alertes et messages</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bg-red-500/10 p-6 rounded-2xl border border-red-500/30">
+                    <h3 class="text-xl font-bold mb-6 text-red-400 flex items-center gap-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        Limitations (sécurité)
+                    </h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start gap-3">
+                            <span class="text-red-400 mt-1">✗</span>
+                            <span class="text-slate-300">Accéder au disque dur (lecture/écriture)</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-red-400 mt-1">✗</span>
+                            <span class="text-slate-300">Récupérer des fichiers sans accord</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-red-400 mt-1">✗</span>
+                            <span class="text-slate-300">Utiliser caméra/micro sans permission</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-red-400 mt-1">✗</span>
+                            <span class="text-slate-300">Interagir avec d'autres onglets/domaines</span>
+                        </li>
+                    </ul>
+                    <div class="mt-6 p-3 bg-red-500/10 rounded-lg">
+                        <p class="text-sm text-slate-400">
+                            <span class="text-red-400 font-medium">🔒 Sécurité</span> — Ces limitations protègent l'utilisateur contre les sites malveillants.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 8: Ce qui rend JS unique -->
+    <section id="slide-8" class="slide items-center bg-slate-800 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-js font-mono text-sm mb-4 block">06 / Atouts</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-12">Ce qui rend JavaScript <span class="text-js">unique</span></h2>
+
+            <div class="grid md:grid-cols-3 gap-6 mb-12">
+                <div class="bg-slate-900/50 p-8 rounded-2xl border border-slate-700 hover:border-js/50 transition-colors text-center">
+                    <div class="w-16 h-16 bg-js/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <span class="text-3xl">🔗</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Intégration totale</h3>
+                    <p class="text-slate-400">Fonctionne nativement avec HTML et CSS — la trinité du web</p>
+                </div>
+
+                <div class="bg-slate-900/50 p-8 rounded-2xl border border-slate-700 hover:border-js/50 transition-colors text-center">
+                    <div class="w-16 h-16 bg-js/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <span class="text-3xl">🌐</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Universel</h3>
+                    <p class="text-slate-400">Supporté par tous les navigateurs par défaut</p>
+                </div>
+
+                <div class="bg-slate-900/50 p-8 rounded-2xl border border-slate-700 hover:border-js/50 transition-colors text-center">
+                    <div class="w-16 h-16 bg-js/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <span class="text-3xl">🎯</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Polyvalent</h3>
+                    <p class="text-slate-400">Frontend, Backend, Mobile, Desktop</p>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                <h3 class="text-lg font-bold mb-4">Écosystème JavaScript</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="p-4 bg-slate-800/50 rounded-xl text-center">
+                        <p class="font-bold text-js">Frontend</p>
+                        <p class="text-xs text-slate-400 mt-1">Vue.js, React, Angular</p>
+                    </div>
+                    <div class="p-4 bg-slate-800/50 rounded-xl text-center">
+                        <p class="font-bold text-js">Backend</p>
+                        <p class="text-xs text-slate-400 mt-1">Node.js, Deno</p>
+                    </div>
+                    <div class="p-4 bg-slate-800/50 rounded-xl text-center">
+                        <p class="font-bold text-js">Mobile</p>
+                        <p class="text-xs text-slate-400 mt-1">React Native, Ionic</p>
+                    </div>
+                    <div class="p-4 bg-slate-800/50 rounded-xl text-center">
+                        <p class="font-bold text-js">Desktop</p>
+                        <p class="text-xs text-slate-400 mt-1">Electron (Slack, Discord)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 9: Où écrire du JavaScript -->
+    <section id="slide-9" class="slide items-center bg-slate-900 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-js font-mono text-sm mb-4 block">07 / Pratique</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-12">Où écrire du <span class="text-js">JavaScript</span> ?</h2>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="w-10 h-10 bg-js rounded-lg flex items-center justify-center font-bold text-jsDark">1</span>
+                        <h3 class="text-xl font-bold">Dans la console</h3>
+                    </div>
+                    <p class="text-slate-400 mb-4">Idéal pour tester rapidement du code.</p>
+                    <div class="code-block rounded-xl p-4 font-mono text-sm">
+                        <p class="text-slate-500 mb-2">// Ouvrir avec :</p>
+                        <p class="text-slate-300"><span class="keyword">Ctrl</span> + <span class="keyword">Shift</span> + <span class="keyword">J</span> <span class="comment">// Windows</span></p>
+                        <p class="text-slate-300"><span class="keyword">Cmd</span> + <span class="keyword">Option</span> + <span class="keyword">J</span> <span class="comment">// Mac</span></p>
+                    </div>
+                    <div class="mt-4 code-block rounded-xl p-4 font-mono text-sm">
+                        <p class="text-slate-300"><span class="function">alert</span>(<span class="string">"Bonjour !"</span>);</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="w-10 h-10 bg-js rounded-lg flex items-center justify-center font-bold text-jsDark">2</span>
+                        <h3 class="text-xl font-bold">Dans une page HTML</h3>
+                    </div>
+                    <p class="text-slate-400 mb-4">Code entre balises <code class="text-js">&lt;script&gt;</code>.</p>
+                    <div class="code-block rounded-xl p-4 font-mono text-sm overflow-x-auto">
+                        <pre class="text-slate-300"><span class="tag">&lt;h1&gt;</span>Ma page<span class="tag">&lt;/h1&gt;</span>
+
+<span class="tag">&lt;script&gt;</span>
+  <span class="function">alert</span>(<span class="string">"Bonjour !"</span>);
+<span class="tag">&lt;/script&gt;</span></pre>
+                    </div>
+                    <div class="mt-4 p-3 bg-yellow-500/10 rounded-lg border border-yellow-500/30">
+                        <p class="text-yellow-400 text-sm">⚠️ Éviter de mélanger JS et HTML dans le même fichier.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bacs à sable en ligne -->
+            <div class="mt-12">
+                <h3 class="text-xl font-bold mb-6 text-center">🧪 Bacs à sable en ligne</h3>
+                <p class="text-slate-400 text-center mb-6">Testez du code JavaScript directement dans votre navigateur !</p>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <a href="https://codepen.io/pen/" target="_blank" class="bg-slate-800/50 p-4 rounded-xl border border-slate-700 hover:border-js/50 transition-colors text-center group">
+                        <div class="text-3xl mb-2">🖊️</div>
+                        <p class="font-bold text-js group-hover:underline">CodePen</p>
+                        <p class="text-xs text-slate-500">HTML + CSS + JS</p>
+                    </a>
+                    <a href="https://jsfiddle.net/" target="_blank" class="bg-slate-800/50 p-4 rounded-xl border border-slate-700 hover:border-js/50 transition-colors text-center group">
+                        <div class="text-3xl mb-2">🎻</div>
+                        <p class="font-bold text-js group-hover:underline">JSFiddle</p>
+                        <p class="text-xs text-slate-500">Classique</p>
+                    </a>
+                    <a href="https://playcode.io/javascript" target="_blank" class="bg-slate-800/50 p-4 rounded-xl border border-slate-700 hover:border-js/50 transition-colors text-center group">
+                        <div class="text-3xl mb-2">▶️</div>
+                        <p class="font-bold text-js group-hover:underline">PlayCode</p>
+                        <p class="text-xs text-slate-500">Rapide</p>
+                    </a>
+                    <a href="https://jsbin.com/?js,console" target="_blank" class="bg-slate-800/50 p-4 rounded-xl border border-slate-700 hover:border-js/50 transition-colors text-center group">
+                        <div class="text-3xl mb-2">📦</div>
+                        <p class="font-bold text-js group-hover:underline">JS Bin</p>
+                        <p class="text-xs text-slate-500">Avec console</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 10: Fichier externe -->
+    <section id="slide-10" class="slide items-center bg-slate-800 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-js font-mono text-sm mb-4 block">08 / Bonnes pratiques</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">Fichier <span class="text-js">externe</span></h2>
+
+            <div class="grid md:grid-cols-2 gap-12 items-start">
+                <div>
+                    <p class="text-lg text-slate-300 mb-6">
+                        La <strong class="text-white">meilleure pratique</strong> est de séparer le JavaScript dans des fichiers <code class="text-js">.js</code> externes.
+                    </p>
+
+                    <div class="code-block rounded-xl p-4 font-mono text-sm mb-6">
+                        <p class="text-slate-500 mb-2">index.html</p>
+                        <pre class="text-slate-300"><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;title&gt;</span>Ma page<span class="tag">&lt;/title&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;h1&gt;</span>Contenu<span class="tag">&lt;/h1&gt;</span>
+
+  <span class="comment">&lt;!-- Script à la fin ! --&gt;</span>
+  <span class="tag">&lt;script</span> <span class="attr">src</span>=<span class="string">"app.js"</span><span class="tag">&gt;&lt;/script&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></pre>
+                    </div>
+
+                    <div class="bg-js/10 border border-js/30 p-4 rounded-xl">
+                        <p class="text-js font-medium">💡 Pourquoi à la fin du body ?</p>
+                        <ul class="text-slate-400 text-sm mt-2 space-y-1">
+                            <li>• La page s'affiche plus vite</li>
+                            <li>• Tous les éléments HTML existent déjà</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                    <h3 class="text-lg font-bold mb-4">Avantages de la séparation</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg">
+                            <span class="text-2xl">📦</span>
+                            <div>
+                                <p class="font-medium">Organisation</p>
+                                <p class="text-sm text-slate-400">HTML, CSS et JS séparés</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg">
+                            <span class="text-2xl">♻️</span>
+                            <div>
+                                <p class="font-medium">Réutilisation</p>
+                                <p class="text-sm text-slate-400">Un fichier JS pour plusieurs pages</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg">
+                            <span class="text-2xl">🚀</span>
+                            <div>
+                                <p class="font-medium">Cache navigateur</p>
+                                <p class="text-sm text-slate-400">Le JS est mis en cache</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg">
+                            <span class="text-2xl">🔧</span>
+                            <div>
+                                <p class="font-medium">Maintenance</p>
+                                <p class="text-sm text-slate-400">Plus facile à débugger</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 11: use strict -->
+    <section id="slide-11" class="slide items-center bg-slate-900 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-js font-mono text-sm mb-4 block">09 / Qualité</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">La directive <span class="text-js">"use strict"</span></h2>
+
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <p class="text-lg text-slate-300 mb-6 leading-relaxed">
+                        En ajoutant <code class="text-js">"use strict"</code> au début d'un script,
+                        on demande au navigateur de <strong class="text-white">respecter la norme ECMAScript</strong>
+                        et d'arrêter le script à la moindre erreur.
+                    </p>
+
+                    <div class="code-block rounded-xl p-4 font-mono text-sm mb-6">
+                        <pre class="text-slate-300"><span class="string">"use strict"</span>;
+
+<span class="comment">// Erreur ! Variable non déclarée</span>
+msg = <span class="string">"Bonjour"</span>;  <span class="comment">// ❌ Crash</span>
+
+<span class="comment">// Correct</span>
+<span class="keyword">let</span> msg = <span class="string">"Bonjour"</span>;  <span class="comment">// ✅ OK</span></pre>
+                    </div>
+
+                    <div class="bg-green-500/10 border border-green-500/30 p-4 rounded-xl">
+                        <p class="text-green-400 font-medium">✅ Toujours utiliser "use strict"</p>
+                        <p class="text-slate-400 text-sm mt-1">Évite les auto-corrections silencieuses du navigateur qui masquent les bugs.</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
+                    <h3 class="text-lg font-bold mb-4">Ce que "use strict" empêche</h3>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-red-500/10 rounded-lg border border-red-500/20">
+                            <p class="text-slate-300 text-sm">Variables non déclarées</p>
+                            <code class="text-red-400 text-xs">x = 10; // Erreur</code>
+                        </div>
+                        <div class="p-3 bg-red-500/10 rounded-lg border border-red-500/20">
+                            <p class="text-slate-300 text-sm">Mots réservés comme variables</p>
+                            <code class="text-red-400 text-xs">let private = 1; // Erreur</code>
+                        </div>
+                        <div class="p-3 bg-red-500/10 rounded-lg border border-red-500/20">
+                            <p class="text-slate-300 text-sm">Paramètres en double</p>
+                            <code class="text-red-400 text-xs">function f(a, a) {} // Erreur</code>
+                        </div>
+                        <div class="p-3 bg-red-500/10 rounded-lg border border-red-500/20">
+                            <p class="text-slate-300 text-sm">Suppression de variables</p>
+                            <code class="text-red-400 text-xs">delete x; // Erreur</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 12: Conventions de nommage -->
+    <section id="slide-12" class="slide items-center bg-slate-800 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-js font-mono text-sm mb-4 block">10 / Style</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">Conventions de <span class="text-js">nommage</span></h2>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                    <h3 class="text-lg font-bold mb-4 text-js">camelCase</h3>
+                    <p class="text-slate-400 text-sm mb-4">Variables, fonctions, méthodes</p>
+                    <div class="code-block rounded-xl p-4 font-mono text-sm">
+                        <pre class="text-slate-300"><span class="keyword">let</span> userName = <span class="string">"Alice"</span>;
+<span class="keyword">let</span> totalPrice = <span class="number">99.90</span>;
+<span class="keyword">function</span> <span class="function">calculateTotal</span>() { }
+<span class="keyword">function</span> <span class="function">getUserById</span>() { }</pre>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                    <h3 class="text-lg font-bold mb-4 text-js">SCREAMING_SNAKE_CASE</h3>
+                    <p class="text-slate-400 text-sm mb-4">Constantes globales</p>
+                    <div class="code-block rounded-xl p-4 font-mono text-sm">
+                        <pre class="text-slate-300"><span class="keyword">const</span> MAX_USERS = <span class="number">100</span>;
+<span class="keyword">const</span> API_ENDPOINT = <span class="string">"/api"</span>;
+<span class="keyword">const</span> DEFAULT_TIMEOUT = <span class="number">5000</span>;</pre>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                    <h3 class="text-lg font-bold mb-4 text-js">PascalCase</h3>
+                    <p class="text-slate-400 text-sm mb-4">Classes et constructeurs</p>
+                    <div class="code-block rounded-xl p-4 font-mono text-sm">
+                        <pre class="text-slate-300"><span class="keyword">class</span> <span class="function">UserController</span> { }
+<span class="keyword">class</span> <span class="function">ProductModel</span> { }
+<span class="keyword">class</span> <span class="function">ShoppingCart</span> { }</pre>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                    <h3 class="text-lg font-bold mb-4 text-js">Éléments HTML</h3>
+                    <p class="text-slate-400 text-sm mb-4">Préfixe descriptif + camelCase</p>
+                    <div class="code-block rounded-xl p-4 font-mono text-sm">
+                        <pre class="text-slate-300"><span class="keyword">const</span> btnSubmit = document...
+<span class="keyword">const</span> inputEmail = document...
+<span class="keyword">const</span> divContainer = document...
+<span class="keyword">const</span> listItems = document...</pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap gap-4 justify-center">
+                <a href="https://google.github.io/styleguide/jsguide.html" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-js/20 hover:bg-js/30 rounded-lg text-js transition-colors text-sm">
+                    Google Style Guide →
+                </a>
+                <a href="https://github.com/airbnb/javascript" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-slate-300 transition-colors text-sm">
+                    Airbnb Style Guide →
+                </a>
+                <a href="https://eslint.org/" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-slate-300 transition-colors text-sm">
+                    ESLint →
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 13: Ressources -->
+    <section id="slide-13" class="slide items-center gradient-js py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full text-center">
+            <span class="font-mono text-sm mb-4 block text-jsDark/70">11 / Pour aller plus loin</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-12 text-jsDark">Ressources</h2>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-12">
+                <a href="https://developer.mozilla.org/fr/docs/Web/JavaScript" target="_blank" class="bg-jsDark/20 backdrop-blur-sm p-6 rounded-2xl hover:bg-jsDark/30 transition-colors block">
+                    <div class="text-4xl mb-4">📚</div>
+                    <h3 class="text-xl font-bold mb-2 text-jsDark">MDN Web Docs</h3>
+                    <p class="text-jsDark/70 text-sm">Référence officielle Mozilla</p>
+                </a>
+
+                <a href="https://javascript.info/" target="_blank" class="bg-jsDark/20 backdrop-blur-sm p-6 rounded-2xl hover:bg-jsDark/30 transition-colors block">
+                    <div class="text-4xl mb-4">📖</div>
+                    <h3 class="text-xl font-bold mb-2 text-jsDark">JavaScript.info</h3>
+                    <p class="text-jsDark/70 text-sm">Tutoriel moderne et complet</p>
+                </a>
+
+                <a href="https://devjs.ch/js/" target="_blank" class="bg-jsDark/20 backdrop-blur-sm p-6 rounded-2xl hover:bg-jsDark/30 transition-colors block">
+                    <div class="text-4xl mb-4">🎓</div>
+                    <h3 class="text-xl font-bold mb-2 text-jsDark">devjs.ch</h3>
+                    <p class="text-jsDark/70 text-sm">Support de cours</p>
+                </a>
+
+                <a href="https://nuxy-beige.vercel.app/" target="_blank" class="bg-jsDark/20 backdrop-blur-sm p-6 rounded-2xl hover:bg-jsDark/30 transition-colors block">
+                    <div class="text-4xl mb-4">🤖</div>
+                    <h3 class="text-xl font-bold mb-2 text-jsDark">Nuxy</h3>
+                    <p class="text-jsDark/70 text-sm">Assistant IA pour le cours</p>
+                </a>
+            </div>
+
+            <div class="bg-jsDark/20 backdrop-blur-sm p-8 rounded-2xl max-w-2xl mx-auto">
+                <h3 class="text-2xl font-bold mb-4 text-jsDark">Prêt à coder ?</h3>
+                <p class="text-jsDark/80 mb-6">Ouvrez la console de votre navigateur et tapez :</p>
+                <div class="bg-jsDark rounded-xl p-4 font-mono text-xl">
+                    <code class="text-js">alert("Hello World!");</code>
+                </div>
+            </div>
+
+            <div class="mt-12 flex justify-center gap-4">
+                <a href="https://devjs.ch/js/" target="_blank" class="px-8 py-4 bg-jsDark text-js font-bold rounded-xl hover:bg-jsDark/90 transition-colors">
+                    Voir le cours complet
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const dotsContainer = document.getElementById('dots');
+        const badge = document.getElementById('contrast-badge');
+        let current = 0;
+
+        slides.forEach((_, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'nav-dot w-3 h-3 rounded-full bg-white/30 hover:bg-js transition-all cursor-pointer border-0 p-0';
+            btn.addEventListener('click', () => go(i));
+            dotsContainer.appendChild(btn);
+        });
+        const dots = dotsContainer.querySelectorAll('.nav-dot');
+
+        function update() {
+            slides.forEach((s, i) => s.classList.toggle('active', i === current));
+            dots.forEach((d, i) => {
+                d.classList.toggle('bg-js', i === current);
+                d.classList.toggle('bg-white/30', i !== current);
+                d.classList.toggle('active', i === current);
+            });
+        }
+        function next() { if (current < slides.length - 1) { current++; update(); } }
+        function prev() { if (current > 0) { current--; update(); } }
+        function go(i) { current = i; update(); }
+
+        document.addEventListener('keydown', (e) => {
+            if (['ArrowDown', 'ArrowRight', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); next(); }
+            else if (['ArrowUp', 'ArrowLeft'].includes(e.key)) { e.preventDefault(); prev(); }
+            else if (e.key.toLowerCase() === 'c') {
+                document.body.classList.toggle('high-contrast');
+                badge.style.display = document.body.classList.contains('high-contrast') ? 'block' : 'none';
+            }
+        });
+
+        update();
+    </script>
+</body>
+</html>

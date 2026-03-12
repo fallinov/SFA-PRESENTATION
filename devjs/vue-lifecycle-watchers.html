@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cycle de vie & Watchers — Vue.js</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        vue: '#42b883',
+                        vueDark: '#35495e',
+                        vuetify: '#1867C0',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html, body { margin: 0; overflow: hidden; height: 100vh; }
+        .slide { display: none; min-height: 100vh; flex-direction: column; justify-content: center; overflow-y: auto; }
+        .slide.active { display: flex; }
+        .code-block { background: #1e1e1e; }
+        .gradient-vue { background: linear-gradient(135deg, #42b883 0%, #35495e 100%); }
+        .gradient-vuetify { background: linear-gradient(135deg, #1867C0 0%, #5CBBF6 100%); }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
+        .animate-fade-in-left { animation: fadeInLeft 0.6s ease-out forwards; }
+        .animate-pulse-slow { animation: pulse-slow 3s ease-in-out infinite; }
+
+        /* Delay classes */
+        .delay-100 { animation-delay: 0.1s; opacity: 0; }
+        .delay-200 { animation-delay: 0.2s; opacity: 0; }
+        .delay-300 { animation-delay: 0.3s; opacity: 0; }
+        .delay-400 { animation-delay: 0.4s; opacity: 0; }
+        .delay-500 { animation-delay: 0.5s; opacity: 0; }
+
+        /* Navigation dots */
+        .nav-dot { transition: all 0.3s ease; }
+        .nav-dot.active { transform: scale(1.3); }
+
+        /* Code highlighting */
+        .keyword { color: #c586c0; }
+        .string { color: #ce9178; }
+        .function { color: #dcdcaa; }
+        .comment { color: #6a9955; }
+        .tag { color: #569cd6; }
+        .attr { color: #9cdcfe; }
+        .value { color: #ce9178; }
+
+        /* High contrast */
+        body.high-contrast { background: #000 !important; }
+        body.high-contrast .bg-slate-900,
+        body.high-contrast .bg-slate-800 { background: #000 !important; }
+        body.high-contrast .bg-slate-800\/50 { background: rgba(0,0,0,0.8) !important; }
+        body.high-contrast .text-slate-300,
+        body.high-contrast .text-slate-400,
+        body.high-contrast .text-slate-500 { color: #fff !important; }
+        body.high-contrast .text-vue { color: #5fffb0 !important; }
+        body.high-contrast .border-slate-700 { border-color: #888 !important; }
+        body.high-contrast .gradient-vue,
+        body.high-contrast .gradient-vuetify { background: #000 !important; }
+        #contrast-badge { position: fixed; top: 1rem; left: 1rem; z-index: 100; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); backdrop-filter: blur(4px); pointer-events: none; }
+    </style>
+</head>
+<body class="font-sans bg-slate-900 text-white">
+
+    <!-- Navigation latérale (générée en JS) -->
+    <nav id="dots" class="fixed right-6 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col gap-3"></nav>
+    <div id="contrast-badge" style="display:none">Contraste élevé (C)</div>
+
+    <!-- Slide 1: Titre -->
+    <section id="slide-1" class="slide active items-center justify-center gradient-vue relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-20 left-20 w-64 h-64 bg-white rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 right-20 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+        </div>
+        <div class="text-center px-6 relative z-10">
+            <div class="mb-8 animate-fade-in-up">
+                <svg class="w-32 h-32 mx-auto" viewBox="0 0 261.76 226.69" xmlns="http://www.w3.org/2000/svg">
+                    <path d="m161.096.001-30.224 52.35L100.647.002H0L130.872 226.69 261.76 0z" fill="#41b883"/>
+                    <path d="m161.096.001-30.224 52.35L100.647.002H52.33l78.542 136.01L209.398.001z" fill="#35495e"/>
+                </svg>
+            </div>
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 animate-fade-in-up delay-100">Cycle de vie & Watchers</h1>
+            <p class="text-xl md:text-2xl text-white/90 mb-4 animate-fade-in-up delay-200">Comprendre le comportement des composants Vue.js</p>
+            <p class="text-lg text-white/60 mb-8 animate-fade-in-up delay-200">Séance 5 — 25 février 2026</p>
+            <div class="flex flex-wrap gap-4 justify-center animate-fade-in-up delay-300">
+                <span class="px-4 py-2 bg-white/20 rounded-full text-sm backdrop-blur-sm">Cycle de vie</span>
+                <span class="px-4 py-2 bg-white/20 rounded-full text-sm backdrop-blur-sm">Computed</span>
+                <span class="px-4 py-2 bg-white/20 rounded-full text-sm backdrop-blur-sm">Watchers</span>
+            </div>
+            <div class="mt-16 animate-pulse-slow">
+                <svg class="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                </svg>
+                <p class="text-sm text-white/70 mt-2">Flèches pour naviguer</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 2: Objectifs -->
+    <section id="slide-2" class="slide items-center bg-slate-900 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">01 / Objectifs</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-12">Objectifs de la <span class="text-vue">séance</span></h2>
+
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <div class="bg-slate-800/50 p-8 rounded-2xl border border-slate-700 hover:border-vue/50 transition-colors">
+                    <div class="w-14 h-14 bg-vue/20 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-vue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Cycle de vie</h3>
+                    <p class="text-slate-400">Comprendre quand un composant naît, vit et meurt</p>
+                </div>
+
+                <div class="bg-slate-800/50 p-8 rounded-2xl border border-slate-700 hover:border-vue/50 transition-colors">
+                    <div class="w-14 h-14 bg-vue/20 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-vue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Computed</h3>
+                    <p class="text-slate-400">Rappel des propriétés calculées avec mise en cache</p>
+                </div>
+
+                <div class="bg-slate-800/50 p-8 rounded-2xl border border-slate-700 hover:border-vue/50 transition-colors">
+                    <div class="w-14 h-14 bg-vue/20 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-vue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Watchers</h3>
+                    <p class="text-slate-400">Réagir aux changements de données avec <code class="text-vue">watch()</code></p>
+                </div>
+            </div>
+
+            <div class="bg-vue/10 border border-vue/30 p-4 rounded-2xl">
+                <p class="text-vue font-medium">💡 Pour le projet Pokédex</p>
+                <p class="text-slate-300 text-sm mt-2">Ces concepts sont essentiels : <code class="text-vue">onMounted</code> pour charger les Pokémon, <code class="text-vue">computed</code> pour filtrer la liste, et <code class="text-vue">watch</code> pour réagir à la recherche.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 3: Cycle de vie d'un composant -->
+    <section id="slide-3" class="slide items-center bg-slate-800 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">02 / Cycle de vie</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">La <span class="text-vue">vie</span> d'un composant</h2>
+
+            <div class="grid md:grid-cols-2 gap-12 items-start">
+                <div>
+                    <p class="text-lg text-slate-300 mb-6 leading-relaxed">
+                        Un composant Vue passe par plusieurs étapes : <strong class="text-white">création</strong>,
+                        <strong class="text-white">montage</strong> dans le DOM, <strong class="text-white">mises à jour</strong>,
+                        et <strong class="text-white">destruction</strong>.
+                    </p>
+                    <p class="text-lg text-slate-300 mb-8 leading-relaxed">
+                        Vue nous permet d'exécuter du code à chaque étape grâce aux
+                        <strong class="text-vue">hooks de cycle de vie</strong>.
+                    </p>
+
+                    <div class="bg-vue/10 border border-vue/30 p-4 rounded-xl mb-6">
+                        <p class="text-vue font-medium">💡 Analogie</p>
+                        <p class="text-slate-300 text-sm mt-2">
+                            Comme un être vivant : naissance → vie → mort.
+                            À chaque étape, on peut intervenir.
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                        <p class="font-semibold text-vue mb-2">Les 2 hooks les plus utilisés</p>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex items-center gap-2">
+                                <span class="text-vue">1.</span>
+                                <code class="bg-slate-800 px-2 py-1 rounded text-vue font-mono">onMounted()</code>
+                                <span class="text-slate-400">— Composant prêt dans le DOM</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-vue">2.</span>
+                                <code class="bg-slate-800 px-2 py-1 rounded text-vue font-mono">onUnmounted()</code>
+                                <span class="text-slate-400">— Composant supprimé du DOM</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                    <h3 class="text-lg font-semibold mb-6 text-slate-200">Hooks de cycle de vie</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-4 p-3 bg-slate-700/30 rounded-lg">
+                            <span class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center text-xs font-bold text-blue-400">1</span>
+                            <div>
+                                <p class="font-mono text-sm text-slate-300">setup()</p>
+                                <p class="text-xs text-slate-500">Le script s'exécute</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 p-3 bg-slate-700/30 rounded-lg">
+                            <span class="w-8 h-8 bg-yellow-500/20 rounded-lg flex items-center justify-center text-xs font-bold text-yellow-400">2</span>
+                            <div>
+                                <p class="font-mono text-sm text-slate-300">onBeforeMount</p>
+                                <p class="text-xs text-slate-500">Avant l'insertion dans le DOM</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 p-3 bg-vue/20 rounded-lg border border-vue/30">
+                            <span class="w-8 h-8 bg-vue/30 rounded-lg flex items-center justify-center text-xs font-bold text-vue">3</span>
+                            <div>
+                                <p class="font-mono text-sm text-vue font-bold">onMounted</p>
+                                <p class="text-xs text-slate-400">Le composant est dans le DOM ✅</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 p-3 bg-slate-700/30 rounded-lg">
+                            <span class="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center text-xs font-bold text-purple-400">4</span>
+                            <div>
+                                <p class="font-mono text-sm text-slate-300">onBeforeUpdate</p>
+                                <p class="text-xs text-slate-500">Avant une mise à jour</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 p-3 bg-slate-700/30 rounded-lg">
+                            <span class="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center text-xs font-bold text-purple-400">5</span>
+                            <div>
+                                <p class="font-mono text-sm text-slate-300">onUpdated</p>
+                                <p class="text-xs text-slate-500">Après une mise à jour</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 p-3 bg-slate-700/30 rounded-lg">
+                            <span class="w-8 h-8 bg-orange-500/20 rounded-lg flex items-center justify-center text-xs font-bold text-orange-400">6</span>
+                            <div>
+                                <p class="font-mono text-sm text-slate-300">onBeforeUnmount</p>
+                                <p class="text-xs text-slate-500">Avant la suppression</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 p-3 bg-vue/20 rounded-lg border border-vue/30">
+                            <span class="w-8 h-8 bg-vue/30 rounded-lg flex items-center justify-center text-xs font-bold text-vue">7</span>
+                            <div>
+                                <p class="font-mono text-sm text-vue font-bold">onUnmounted</p>
+                                <p class="text-xs text-slate-400">Le composant est détruit ✅</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 4: onMounted -->
+    <section id="slide-4" class="slide items-center bg-slate-900 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">03 / Hook principal</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8"><span class="text-vue">onMounted</span>()</h2>
+
+            <div class="grid md:grid-cols-2 gap-12 items-start">
+                <div class="code-block rounded-2xl p-6 font-mono text-sm overflow-x-auto border border-slate-700">
+                    <div class="flex items-center gap-2 mb-4 text-slate-400">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                        <span class="ml-2">App.vue</span>
+                    </div>
+                    <pre class="text-slate-300 leading-relaxed"><span class="tag">&lt;script setup&gt;</span>
+<span class="keyword">import</span> { ref, onMounted } <span class="keyword">from</span> <span class="string">'vue'</span>
+
+<span class="keyword">const</span> users = <span class="function">ref</span>([])
+<span class="keyword">const</span> loading = <span class="function">ref</span>(<span class="value">true</span>)
+
+<span class="function">onMounted</span>(<span class="keyword">async</span> () =&gt; {
+  <span class="comment">// Le composant est dans le DOM</span>
+  <span class="comment">// Idéal pour charger des données</span>
+  <span class="keyword">const</span> response = <span class="keyword">await</span> <span class="function">fetch</span>(<span class="string">'/api/users'</span>)
+  users.<span class="attr">value</span> = <span class="keyword">await</span> response.<span class="function">json</span>()
+  loading.<span class="attr">value</span> = <span class="value">false</span>
+})
+<span class="tag">&lt;/script&gt;</span>
+
+<span class="tag">&lt;template&gt;</span>
+  <span class="tag">&lt;p</span> <span class="attr">v-if</span>=<span class="value">"loading"</span><span class="tag">&gt;</span>Chargement...<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;ul</span> <span class="attr">v-else</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;li</span> <span class="attr">v-for</span>=<span class="value">"user in users"</span><span class="tag">&gt;</span>
+      {{ user.name }}
+    <span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;/ul&gt;</span>
+<span class="tag">&lt;/template&gt;</span></pre>
+                </div>
+
+                <div class="space-y-6">
+                    <h3 class="text-xl font-bold text-slate-200">Cas d'utilisation</h3>
+
+                    <div class="space-y-4">
+                        <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                            <p class="font-semibold text-vue mb-1">🌐 Charger des données</p>
+                            <p class="text-sm text-slate-400">Appeler une API pour récupérer des données au chargement</p>
+                        </div>
+                        <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                            <p class="font-semibold text-vue mb-1">📚 Initialiser une librairie</p>
+                            <p class="text-sm text-slate-400">Carte, graphique, éditeur qui ont besoin du DOM</p>
+                        </div>
+                        <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                            <p class="font-semibold text-vue mb-1">👂 Ajouter un écouteur</p>
+                            <p class="text-sm text-slate-400">Écouter le scroll, le resize, les touches clavier</p>
+                        </div>
+                        <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                            <p class="font-semibold text-vue mb-1">🎯 Accéder au DOM</p>
+                            <p class="text-sm text-slate-400">Lire des dimensions, mettre le focus sur un input</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-red-500/10 border border-red-500/30 p-4 rounded-xl">
+                        <p class="text-red-400 font-medium">⚠️ Le DOM n'existe PAS dans setup()</p>
+                        <p class="text-slate-400 text-sm mt-1">Il faut attendre <code class="text-vue">onMounted</code> pour accéder aux éléments HTML</p>
+                    </div>
+
+                    <a href="https://fr.vuejs.org/tutorial/#step-8" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-vue/20 hover:bg-vue/30 rounded-lg text-vue transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Tutoriel Vue.js — Étape 8 →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 5: onUnmounted -->
+    <section id="slide-5" class="slide items-center bg-slate-800 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">04 / Nettoyage</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8"><span class="text-vue">onUnmounted</span>()</h2>
+
+            <div class="grid md:grid-cols-2 gap-12 items-start">
+                <div class="code-block rounded-2xl p-6 font-mono text-sm overflow-x-auto border border-slate-700">
+                    <div class="flex items-center gap-2 mb-4 text-slate-400">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                        <span class="ml-2">ScrollTracker.vue</span>
+                    </div>
+                    <pre class="text-slate-300 leading-relaxed"><span class="tag">&lt;script setup&gt;</span>
+<span class="keyword">import</span> { ref, onMounted, onUnmounted }
+  <span class="keyword">from</span> <span class="string">'vue'</span>
+
+<span class="keyword">const</span> scrollY = <span class="function">ref</span>(<span class="value">0</span>)
+
+<span class="keyword">function</span> <span class="function">handleScroll</span>() {
+  scrollY.<span class="attr">value</span> = window.<span class="attr">scrollY</span>
+}
+
+<span class="comment">// Ajouter l'écouteur</span>
+<span class="function">onMounted</span>(() =&gt; {
+  window.<span class="function">addEventListener</span>(
+    <span class="string">'scroll'</span>, handleScroll
+  )
+})
+
+<span class="comment">// Supprimer l'écouteur</span>
+<span class="function">onUnmounted</span>(() =&gt; {
+  window.<span class="function">removeEventListener</span>(
+    <span class="string">'scroll'</span>, handleScroll
+  )
+})
+<span class="tag">&lt;/script&gt;</span>
+
+<span class="tag">&lt;template&gt;</span>
+  <span class="tag">&lt;p&gt;</span>Scroll : {{ scrollY }}px<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;/template&gt;</span></pre>
+                </div>
+
+                <div class="space-y-6">
+                    <p class="text-lg text-slate-300 leading-relaxed">
+                        Quand un composant est <strong class="text-white">supprimé du DOM</strong> (navigation, <code class="text-vue">v-if</code>),
+                        il faut <strong class="text-vue">nettoyer</strong> ce qu'on a mis en place.
+                    </p>
+
+                    <h3 class="text-xl font-bold text-slate-200">Pourquoi nettoyer ?</h3>
+                    <div class="space-y-4">
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                            <p class="font-semibold text-red-400 mb-1">🧠 Fuites mémoire</p>
+                            <p class="text-sm text-slate-400">Les écouteurs non supprimés restent actifs en arrière-plan</p>
+                        </div>
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                            <p class="font-semibold text-yellow-400 mb-1">⚡ Performances</p>
+                            <p class="text-sm text-slate-400">Chaque listener inutile consomme des ressources</p>
+                        </div>
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                            <p class="font-semibold text-orange-400 mb-1">🐛 Bugs</p>
+                            <p class="text-sm text-slate-400">Du code qui tourne sur un composant qui n'existe plus</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-vue/10 border border-vue/30 p-4 rounded-xl">
+                        <p class="text-vue font-medium">💡 Règle d'or</p>
+                        <p class="text-slate-300 text-sm mt-2">Chaque <code class="bg-slate-800 px-2 py-1 rounded text-vue font-mono">addEventListener</code> dans <code class="text-vue">onMounted</code> doit avoir son <code class="bg-slate-800 px-2 py-1 rounded text-vue font-mono">removeEventListener</code> dans <code class="text-vue">onUnmounted</code></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 6: Rappel computed() -->
+    <section id="slide-6" class="slide items-center bg-slate-900 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">05 / Rappel</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">Propriétés <span class="text-vue">calculées</span></h2>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <div class="bg-slate-800/50 p-6 rounded-2xl border border-red-500/30">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <span class="text-red-400">❌</span>
+                        <span>Sans computed</span>
+                    </h3>
+                    <div class="code-block rounded-xl p-4 font-mono text-sm">
+                        <pre class="text-slate-300"><span class="comment">// Recalculé à chaque rendu ❌</span>
+<span class="keyword">function</span> <span class="function">getTotal</span>() {
+  <span class="keyword">return</span> items.<span class="attr">value</span>
+    .<span class="function">reduce</span>((sum, i) =&gt;
+      sum + i.<span class="attr">price</span>, <span class="value">0</span>
+    )
+}</pre>
+                    </div>
+                    <p class="mt-4 text-slate-400 text-sm">
+                        Dans le template : <code class="text-red-400">{{ getTotal() }}</code>
+                    </p>
+                    <p class="mt-2 text-red-400 text-sm">
+                        Recalculé à chaque rendu, même si rien n'a changé
+                    </p>
+                </div>
+
+                <div class="bg-slate-800/50 p-6 rounded-2xl border border-vue/30">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <span class="text-vue">✅</span>
+                        <span>Avec computed</span>
+                    </h3>
+                    <div class="code-block rounded-xl p-4 font-mono text-sm">
+                        <pre class="text-slate-300"><span class="comment">// Mis en cache automatiquement ✅</span>
+<span class="keyword">const</span> total = <span class="function">computed</span>(() =&gt; {
+  <span class="keyword">return</span> items.<span class="attr">value</span>
+    .<span class="function">reduce</span>((sum, i) =&gt;
+      sum + i.<span class="attr">price</span>, <span class="value">0</span>
+    )
+})</pre>
+                    </div>
+                    <p class="mt-4 text-slate-400 text-sm">
+                        Dans le template : <code class="text-vue">{{ total }}</code>
+                    </p>
+                    <p class="mt-2 text-vue text-sm">
+                        Recalculé uniquement si <code>items</code> change
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-4 mb-8">
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                    <p class="font-semibold text-vue mb-1">🧠 Cache intelligent</p>
+                    <p class="text-sm text-slate-400">Ne recalcule que si ses dépendances changent</p>
+                </div>
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                    <p class="font-semibold text-vue mb-1">📖 Lecture seule</p>
+                    <p class="text-sm text-slate-400">Retourne une valeur, pas une action</p>
+                </div>
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                    <p class="font-semibold text-vue mb-1">📋 Dans le template</p>
+                    <p class="text-sm text-slate-400"><code class="text-vue">{{ total }}</code> au lieu de <code class="text-red-400">{{ getTotal() }}</code></p>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="https://fr.vuejs.org/tutorial/#step-9" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-vue/20 hover:bg-vue/30 rounded-lg text-vue transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Tutoriel Vue.js — Étape 9 →
+                </a>
+                <a href="https://fr.vuejs.org/guide/essentials/computed.html" target="_blank" class="inline-flex items-center gap-2 text-slate-400 hover:text-vue transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                    </svg>
+                    Documentation complète →
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 7: watch() -->
+    <section id="slide-7" class="slide items-center bg-slate-800 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">06 / Watchers</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8"><span class="text-vue">watch</span>() — Réagir aux changements</h2>
+
+            <div class="grid md:grid-cols-2 gap-12 items-start">
+                <div class="code-block rounded-2xl p-6 font-mono text-sm overflow-x-auto border border-slate-700">
+                    <div class="flex items-center gap-2 mb-4 text-slate-400">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                        <span class="ml-2">SearchPage.vue</span>
+                    </div>
+                    <pre class="text-slate-300 leading-relaxed"><span class="tag">&lt;script setup&gt;</span>
+<span class="keyword">import</span> { ref, watch } <span class="keyword">from</span> <span class="string">'vue'</span>
+
+<span class="keyword">const</span> search = <span class="function">ref</span>(<span class="string">''</span>)
+<span class="keyword">const</span> results = <span class="function">ref</span>([])
+
+<span class="comment">// Surveiller 'search' et réagir</span>
+<span class="function">watch</span>(search, <span class="keyword">async</span> (newVal, oldVal) =&gt; {
+  console.<span class="function">log</span>(
+    <span class="string">`"${oldVal}" → "${newVal}"`</span>
+  )
+
+  <span class="keyword">if</span> (newVal.<span class="attr">length</span> &gt;= <span class="value">3</span>) {
+    <span class="keyword">const</span> res = <span class="keyword">await</span> <span class="function">fetch</span>(
+      <span class="string">`/api/search?q=${newVal}`</span>
+    )
+    results.<span class="attr">value</span> = <span class="keyword">await</span> res.<span class="function">json</span>()
+  }
+})
+<span class="tag">&lt;/script&gt;</span>
+
+<span class="tag">&lt;template&gt;</span>
+  <span class="tag">&lt;input</span> <span class="attr">v-model</span>=<span class="value">"search"</span>
+         <span class="attr">placeholder</span>=<span class="value">"Rechercher..."</span> <span class="tag">/&gt;</span>
+  <span class="tag">&lt;ul&gt;</span>
+    <span class="tag">&lt;li</span> <span class="attr">v-for</span>=<span class="value">"r in results"</span><span class="tag">&gt;</span>
+      {{ r.name }}
+    <span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;/ul&gt;</span>
+<span class="tag">&lt;/template&gt;</span></pre>
+                </div>
+
+                <div class="space-y-6">
+                    <h3 class="text-xl font-bold text-slate-200">Points clés</h3>
+
+                    <div class="space-y-4">
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="w-6 h-6 bg-vue rounded-full flex items-center justify-center text-xs font-bold">1</span>
+                                <span class="text-slate-300 font-medium">Source explicite</span>
+                            </div>
+                            <p class="text-sm text-slate-400 ml-9"><code class="text-vue">watch(search, ...)</code> — on déclare ce qu'on surveille</p>
+                        </div>
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="w-6 h-6 bg-vue rounded-full flex items-center justify-center text-xs font-bold">2</span>
+                                <span class="text-slate-300 font-medium">Deux arguments</span>
+                            </div>
+                            <p class="text-sm text-slate-400 ml-9">Reçoit la <strong class="text-white">nouvelle</strong> et l'<strong class="text-white">ancienne</strong> valeur</p>
+                        </div>
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="w-6 h-6 bg-vue rounded-full flex items-center justify-center text-xs font-bold">3</span>
+                                <span class="text-slate-300 font-medium">Effets de bord</span>
+                            </div>
+                            <p class="text-sm text-slate-400 ml-9">Idéal pour : appels API, localStorage, logs</p>
+                        </div>
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="w-6 h-6 bg-vue rounded-full flex items-center justify-center text-xs font-bold">4</span>
+                                <span class="text-slate-300 font-medium">Pas immédiat</span>
+                            </div>
+                            <p class="text-sm text-slate-400 ml-9">Ne se déclenche PAS au premier rendu (par défaut)</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-vue/10 border border-vue/30 p-4 rounded-xl">
+                        <p class="text-vue font-medium font-mono text-sm">Option : { immediate: true }</p>
+                        <p class="text-slate-300 text-sm mt-2">Pour exécuter le watcher dès le chargement du composant</p>
+                    </div>
+
+                    <a href="https://fr.vuejs.org/tutorial/#step-10" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-vue/20 hover:bg-vue/30 rounded-lg text-vue transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Tutoriel Vue.js — Étape 10 →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 8: watchEffect() -->
+    <section id="slide-8" class="slide items-center bg-slate-900 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">07 / watchEffect</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8"><span class="text-vue">watchEffect</span>() — Détection automatique</h2>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <div class="bg-slate-800/50 p-6 rounded-2xl border border-blue-500/30">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-lg text-sm font-mono">watch()</span>
+                        <span class="text-slate-400 text-sm font-normal">Explicite</span>
+                    </h3>
+                    <div class="code-block rounded-xl p-4 font-mono text-sm mb-4">
+                        <pre class="text-slate-300"><span class="function">watch</span>(search, <span class="keyword">async</span> (val) =&gt; {
+  results.<span class="attr">value</span> =
+    <span class="keyword">await</span> <span class="function">fetchAPI</span>(val)
+})</pre>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-center gap-2">
+                            <span class="text-blue-400">✓</span>
+                            <span class="text-slate-300">On déclare ce qu'on surveille</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-blue-400">✓</span>
+                            <span class="text-slate-300">Accès à <code class="text-vue">oldValue</code> et <code class="text-vue">newValue</code></span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-blue-400">✓</span>
+                            <span class="text-slate-300">Ne s'exécute <strong class="text-white">pas</strong> immédiatement</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/50 p-6 rounded-2xl border border-purple-500/30">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <span class="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-lg text-sm font-mono">watchEffect()</span>
+                        <span class="text-slate-400 text-sm font-normal">Automatique</span>
+                    </h3>
+                    <div class="code-block rounded-xl p-4 font-mono text-sm mb-4">
+                        <pre class="text-slate-300"><span class="function">watchEffect</span>(<span class="keyword">async</span> () =&gt; {
+  results.<span class="attr">value</span> =
+    <span class="keyword">await</span> <span class="function">fetchAPI</span>(search.<span class="attr">value</span>)
+})</pre>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-center gap-2">
+                            <span class="text-purple-400">✓</span>
+                            <span class="text-slate-300">Détecte les dépendances automatiquement</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-purple-400">✗</span>
+                            <span class="text-slate-300">Pas d'accès à <code class="text-slate-500">oldValue</code></span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-purple-400">✓</span>
+                            <span class="text-slate-300">S'exécute <strong class="text-white">immédiatement</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-vue/10 border border-vue/30 p-6 rounded-2xl">
+                <p class="text-vue font-bold text-lg mb-3">💡 Conseil</p>
+                <p class="text-slate-300">En cas de doute, utilisez <code class="bg-slate-800 px-2 py-1 rounded text-vue font-mono">watch()</code> — c'est plus explicite et prévisible. Vous savez exactement ce qui est surveillé.</p>
+            </div>
+
+            <div class="mt-6 flex justify-center">
+                <a href="https://fr.vuejs.org/guide/essentials/watchers.html" target="_blank" class="inline-flex items-center gap-2 text-slate-400 hover:text-vue transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                    </svg>
+                    Documentation Watchers →
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 9: computed vs watch -->
+    <section id="slide-9" class="slide items-center bg-slate-800 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">08 / Comparaison</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8"><span class="text-vue">computed</span> vs <span class="text-vue">watch</span></h2>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-10">
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="px-3 py-1 bg-vue/20 text-vue rounded-lg text-sm font-mono font-bold">computed()</span>
+                    </div>
+                    <p class="text-lg text-slate-300 mb-4">Transformer des données</p>
+                    <p class="text-slate-400 italic mb-6">"Combien de Pokémon de type Feu ?"</p>
+                    <div class="code-block rounded-xl p-4 font-mono text-sm">
+                        <pre class="text-slate-300"><span class="keyword">const</span> firePokemons = <span class="function">computed</span>(() =&gt;
+  pokemons.<span class="attr">value</span>.<span class="function">filter</span>(
+    p =&gt; p.<span class="attr">type</span> === <span class="string">'Feu'</span>
+  )
+)</pre>
+                    </div>
+                    <div class="mt-4 flex items-center gap-2 text-sm text-vue">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                        </svg>
+                        Retourne une VALEUR
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="px-3 py-1 bg-vue/20 text-vue rounded-lg text-sm font-mono font-bold">watch()</span>
+                    </div>
+                    <p class="text-lg text-slate-300 mb-4">Réagir à un changement</p>
+                    <p class="text-slate-400 italic mb-6">"Quand la recherche change, appeler l'API"</p>
+                    <div class="code-block rounded-xl p-4 font-mono text-sm">
+                        <pre class="text-slate-300"><span class="function">watch</span>(search, <span class="keyword">async</span> (val) =&gt; {
+  <span class="keyword">const</span> res = <span class="keyword">await</span> <span class="function">fetch</span>(
+    <span class="string">`/api?q=${val}`</span>
+  )
+  results.<span class="attr">value</span> = <span class="keyword">await</span> res.<span class="function">json</span>()
+})</pre>
+                    </div>
+                    <div class="mt-4 flex items-center gap-2 text-sm text-vue">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                        </svg>
+                        Exécute un EFFET
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 mb-8">
+                <h3 class="text-lg font-bold mb-4 text-slate-200">Comment choisir ?</h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="flex items-start gap-4 p-4 bg-vue/10 rounded-xl border border-vue/20">
+                        <span class="text-2xl">🧮</span>
+                        <div>
+                            <p class="font-medium text-vue">J'ai besoin d'une VALEUR dérivée</p>
+                            <p class="text-sm text-slate-400 mt-1">→ <code class="text-vue">computed</code></p>
+                            <p class="text-xs text-slate-500 mt-1">filteredPokemons, totalCount, pokemonsByType</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4 p-4 bg-vue/10 rounded-xl border border-vue/20">
+                        <span class="text-2xl">⚡</span>
+                        <div>
+                            <p class="font-medium text-vue">J'ai besoin d'un EFFET</p>
+                            <p class="text-sm text-slate-400 mt-1">→ <code class="text-vue">watch</code></p>
+                            <p class="text-xs text-slate-500 mt-1">appel API, sauvegarde localStorage, log</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-red-500/10 border border-red-500/30 p-4 rounded-xl">
+                <p class="text-red-400 font-medium">⚠️ Erreur fréquente</p>
+                <p class="text-slate-400 text-sm mt-1">Ne pas utiliser <code class="text-vue">watch</code> pour calculer une valeur dérivée — c'est le rôle de <code class="text-vue">computed</code>.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 10: Exercices -->
+    <section id="slide-10" class="slide items-center bg-slate-900 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">09 / Pratique</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-12">À vous de <span class="text-vue">jouer</span> !</h2>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-12">
+                <a href="https://fr.vuejs.org/tutorial/#step-8" target="_blank" class="bg-slate-800/50 p-8 rounded-2xl border border-slate-700 hover:border-vue/50 transition-colors block">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-14 h-14 bg-vue/20 rounded-xl flex items-center justify-center">
+                            <svg class="w-7 h-7 text-vue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">Tutoriel Vue.js</h3>
+                            <p class="text-slate-400">Étapes 8, 9 et 10</p>
+                        </div>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-center gap-2">
+                            <span class="text-vue">8</span>
+                            <span class="text-slate-300">Cycle de vie</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-vue">9</span>
+                            <span class="text-slate-300">Propriétés calculées</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-vue">10</span>
+                            <span class="text-slate-300">Observateurs (watchers)</span>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-vue text-sm">fr.vuejs.org/tutorial →</p>
+                </a>
+
+                <a href="https://kode.ch/vue-bases/" target="_blank" class="bg-slate-800/50 p-8 rounded-2xl border border-slate-700 hover:border-vue/50 transition-colors block">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-14 h-14 bg-vue/20 rounded-xl flex items-center justify-center">
+                            <svg class="w-7 h-7 text-vue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">Exercices "Bases de Vue.js"</h3>
+                            <p class="text-slate-400">Exercices 5, 6 et 7</p>
+                        </div>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-center gap-2">
+                            <span class="text-vue">5</span>
+                            <span class="text-slate-300">Pratique du cycle de vie</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-vue">6</span>
+                            <span class="text-slate-300">Propriétés calculées avancées</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-vue">7</span>
+                            <span class="text-slate-300">Watchers et effets</span>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-vue text-sm">kode.ch/vue-bases →</p>
+                </a>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-vue/10 border border-vue/30 p-6 rounded-2xl">
+                    <p class="text-vue font-bold text-lg mb-2">📋 En classe</p>
+                    <p class="text-slate-300">Tutoriel étapes 8-10 ensemble, puis exercices 5 à 7</p>
+                </div>
+                <div class="bg-yellow-500/10 border border-yellow-500/30 p-6 rounded-2xl">
+                    <p class="text-yellow-400 font-bold text-lg mb-2">📚 Devoirs</p>
+                    <p class="text-slate-300">Terminer les exercices 5, 6 et 7 pour la prochaine séance</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 11: Ressources -->
+    <section id="slide-11" class="slide items-center gradient-vue py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full text-center">
+            <span class="font-mono text-sm mb-4 block text-white/70">10 / Pour aller plus loin</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-12">Ressources</h2>
+
+            <div class="grid md:grid-cols-3 gap-6 mb-12">
+                <a href="https://fr.vuejs.org/guide/essentials/lifecycle.html" target="_blank" class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl hover:bg-white/20 transition-colors block">
+                    <div class="text-4xl mb-4">🔄</div>
+                    <h3 class="text-xl font-bold mb-2">Cycle de vie</h3>
+                    <p class="text-white/70 text-sm">Documentation officielle</p>
+                </a>
+
+                <a href="https://fr.vuejs.org/guide/essentials/computed.html" target="_blank" class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl hover:bg-white/20 transition-colors block">
+                    <div class="text-4xl mb-4">🧮</div>
+                    <h3 class="text-xl font-bold mb-2">Computed</h3>
+                    <p class="text-white/70 text-sm">Propriétés calculées</p>
+                </a>
+
+                <a href="https://fr.vuejs.org/guide/essentials/watchers.html" target="_blank" class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl hover:bg-white/20 transition-colors block">
+                    <div class="text-4xl mb-4">👁️</div>
+                    <h3 class="text-xl font-bold mb-2">Watchers</h3>
+                    <p class="text-white/70 text-sm">Observateurs de données</p>
+                </a>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6 mb-12">
+                <a href="https://fr.vuejs.org/tutorial/" target="_blank" class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl hover:bg-white/20 transition-colors block">
+                    <div class="text-4xl mb-4">🎮</div>
+                    <h3 class="text-xl font-bold mb-2">Tutoriel interactif</h3>
+                    <p class="text-white/70 text-sm">Apprendre en codant</p>
+                </a>
+
+                <a href="https://devjs.ch/vue/" target="_blank" class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl hover:bg-white/20 transition-colors block">
+                    <div class="text-4xl mb-4">📚</div>
+                    <h3 class="text-xl font-bold mb-2">devjs.ch</h3>
+                    <p class="text-white/70 text-sm">Support de cours Vue.js</p>
+                </a>
+
+                <a href="https://kode.ch/vue-bases/" target="_blank" class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl hover:bg-white/20 transition-colors block">
+                    <div class="text-4xl mb-4">💻</div>
+                    <h3 class="text-xl font-bold mb-2">Exercices</h3>
+                    <p class="text-white/70 text-sm">kode.ch/vue-bases</p>
+                </a>
+            </div>
+
+            <div class="bg-white/10 backdrop-blur-sm p-8 rounded-2xl max-w-2xl mx-auto">
+                <h3 class="text-2xl font-bold mb-4">Prochaine séance</h3>
+                <p class="text-white/80 mb-2">Introduction à Vuetify !</p>
+                <p class="text-white/60 text-sm">Composants Material Design, grilles et layouts</p>
+            </div>
+
+            <div class="mt-12 flex justify-center gap-4">
+                <a href="https://devjs.ch/vue/" target="_blank" class="px-8 py-4 bg-white text-vueDark font-bold rounded-xl hover:bg-white/90 transition-colors">
+                    Voir le cours complet
+                </a>
+                <a href="https://kode.ch/vue-bases/" target="_blank" class="px-8 py-4 bg-white/20 font-bold rounded-xl hover:bg-white/30 transition-colors">
+                    Exercices pratiques
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const dotsContainer = document.getElementById('dots');
+        const badge = document.getElementById('contrast-badge');
+        let current = 0;
+
+        slides.forEach((_, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'nav-dot w-3 h-3 rounded-full bg-white/30 hover:bg-vue transition-all cursor-pointer border-0 p-0';
+            btn.addEventListener('click', () => go(i));
+            dotsContainer.appendChild(btn);
+        });
+        const dots = dotsContainer.querySelectorAll('.nav-dot');
+
+        function update() {
+            slides.forEach((s, i) => s.classList.toggle('active', i === current));
+            dots.forEach((d, i) => {
+                d.classList.toggle('bg-vue', i === current);
+                d.classList.toggle('bg-white/30', i !== current);
+                d.classList.toggle('active', i === current);
+            });
+        }
+        function next() { if (current < slides.length - 1) { current++; update(); } }
+        function prev() { if (current > 0) { current--; update(); } }
+        function go(i) { current = i; update(); }
+
+        document.addEventListener('keydown', (e) => {
+            if (['ArrowDown', 'ArrowRight', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); next(); }
+            else if (['ArrowUp', 'ArrowLeft'].includes(e.key)) { e.preventDefault(); prev(); }
+            else if (e.key.toLowerCase() === 'c') {
+                document.body.classList.toggle('high-contrast');
+                badge.style.display = document.body.classList.contains('high-contrast') ? 'block' : 'none';
+            }
+        });
+
+        update();
+    </script>
+</body>
+</html>

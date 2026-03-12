@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classification LGPD des logiciels - Présentation COPIL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .slide { display: none; }
+        .slide.active { display: flex; }
+        .gradient-text {
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        .glow {
+            box-shadow: 0 0 40px rgba(59, 130, 246, 0.15);
+        }
+        /* Mode contrasté (touche C) */
+        body.high-contrast {
+            background: #fff !important;
+            color: #000 !important;
+        }
+        body.high-contrast .gradient-text {
+            background: none !important;
+            -webkit-text-fill-color: #000 !important;
+            color: #000 !important;
+        }
+        body.high-contrast .bg-slate-900,
+        body.high-contrast .bg-slate-800,
+        body.high-contrast .bg-slate-800\/80,
+        body.high-contrast .bg-slate-800\/50,
+        body.high-contrast [class*="from-slate-800"] {
+            background: #f0f0f0 !important;
+        }
+        body.high-contrast [class*="bg-green-500/10"],
+        body.high-contrast [class*="from-green-500"] {
+            background: #d4edda !important;
+        }
+        body.high-contrast [class*="bg-orange-500/10"],
+        body.high-contrast [class*="from-amber-500"],
+        body.high-contrast [class*="from-orange-500"] {
+            background: #fff3cd !important;
+        }
+        body.high-contrast [class*="bg-red-500/10"],
+        body.high-contrast [class*="from-red-500"] {
+            background: #f8d7da !important;
+        }
+        body.high-contrast [class*="bg-blue-500/10"],
+        body.high-contrast [class*="from-blue-500"] {
+            background: #cce5ff !important;
+        }
+        body.high-contrast .text-slate-100,
+        body.high-contrast .text-slate-200,
+        body.high-contrast .text-slate-300,
+        body.high-contrast .text-slate-400,
+        body.high-contrast .text-white {
+            color: #000 !important;
+        }
+        body.high-contrast .text-green-300,
+        body.high-contrast .text-green-400 {
+            color: #155724 !important;
+        }
+        body.high-contrast .text-orange-300,
+        body.high-contrast .text-orange-400,
+        body.high-contrast .text-amber-400 {
+            color: #856404 !important;
+        }
+        body.high-contrast .text-red-300,
+        body.high-contrast .text-red-400 {
+            color: #721c24 !important;
+        }
+        body.high-contrast .text-blue-400 {
+            color: #004085 !important;
+        }
+        body.high-contrast [class*="border-green"] {
+            border-color: #155724 !important;
+        }
+        body.high-contrast [class*="border-orange"],
+        body.high-contrast [class*="border-amber"] {
+            border-color: #856404 !important;
+        }
+        body.high-contrast [class*="border-red"] {
+            border-color: #721c24 !important;
+        }
+        body.high-contrast [class*="border-blue"] {
+            border-color: #004085 !important;
+        }
+        body.high-contrast [class*="border-slate"] {
+            border-color: #ccc !important;
+        }
+        body.high-contrast table thead {
+            background: #ddd !important;
+        }
+        body.high-contrast table tr {
+            border-color: #bbb !important;
+        }
+        body.high-contrast .bg-green-500 {
+            background: #155724 !important;
+        }
+        body.high-contrast .bg-orange-500 {
+            background: #b45309 !important;
+        }
+        body.high-contrast .bg-red-500 {
+            background: #721c24 !important;
+        }
+        body.high-contrast a {
+            color: #004085 !important;
+            background: #cce5ff !important;
+        }
+        body.high-contrast [class*="blur"] {
+            filter: none !important;
+            -webkit-filter: none !important;
+        }
+        body.high-contrast [class*="shadow"] {
+            box-shadow: none !important;
+        }
+        body.high-contrast .glow {
+            box-shadow: 0 0 0 2px #ccc !important;
+        }
+        body.high-contrast #dots button {
+            border: 2px solid #000 !important;
+        }
+        body.high-contrast #dots button.active-dot {
+            background: #000 !important;
+        }
+        /* Indicateur mode contrasté */
+        #contrast-indicator {
+            display: none;
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 100;
+            background: #000;
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        body.high-contrast #contrast-indicator {
+            display: block;
+            background: #333;
+            color: #fff;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen">
+
+    <!-- Slide 1: Titre -->
+    <div class="slide active min-h-screen flex-col justify-center items-center p-12 relative overflow-hidden" data-slide="1">
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl"></div>
+        </div>
+
+        <div class="text-center max-w-4xl relative z-10">
+            <div class="inline-block mb-6 px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-full">
+                <span class="text-blue-400 text-sm font-medium">COPIL &bull; Pr&eacute;sentation aux divisions</span>
+            </div>
+            <h1 class="text-6xl font-bold mb-6 gradient-text leading-tight pb-2">Classification LGPD</h1>
+            <p class="text-3xl text-slate-300 mb-2 font-light">des logiciels p&eacute;dagogiques</p>
+            <p class="text-xl text-slate-400 mb-12">Choix du Groupe de Coordination Num&eacute;rique (GCN)</p>
+            <div class="flex justify-center items-center gap-6 text-slate-400">
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <span>F&eacute;vrier 2026</span>
+                </div>
+                <span class="text-slate-600">&bull;</span>
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <span>Groupe de Coordination Num&eacute;rique</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 2: Pourquoi -->
+    <div class="slide min-h-screen flex-col justify-center items-center p-12" data-slide="2">
+        <div class="max-w-4xl w-full">
+            <h2 class="text-4xl font-bold mb-10 text-center">
+                <span class="gradient-text">Pourquoi classifier ?</span>
+            </h2>
+
+            <div class="bg-gradient-to-br from-slate-800 to-slate-800/50 p-8 rounded-2xl mb-10 border border-slate-700/50 glow">
+                <p class="text-xl text-slate-200 mb-4 leading-relaxed">La LGPD (Loi f&eacute;d&eacute;rale sur la protection des donn&eacute;es) exige que les institutions publiques <strong class="text-blue-400">garantissent la s&eacute;curit&eacute; des donn&eacute;es</strong> de leurs usagers.</p>
+                <p class="text-slate-300 leading-relaxed">Pour le CEJEF, cela concerne directement les <strong class="text-blue-400">donn&eacute;es des &eacute;l&egrave;ves</strong> utilis&eacute;es dans les logiciels p&eacute;dagogiques.</p>
+            </div>
+
+            <div class="grid grid-cols-3 gap-6">
+                <div class="card-hover bg-gradient-to-br from-red-500/10 to-transparent border border-red-500/20 p-6 rounded-xl text-center">
+                    <div class="w-14 h-14 bg-red-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-7 h-7 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    </div>
+                    <p class="text-red-400 font-semibold text-lg">Risque l&eacute;gal</p>
+                    <p class="text-slate-400 text-sm mt-2">Amendes RGPD jusqu'&agrave; 250'000 CHF</p>
+                </div>
+                <div class="card-hover bg-gradient-to-br from-amber-500/10 to-transparent border border-amber-500/20 p-6 rounded-xl text-center">
+                    <div class="w-14 h-14 bg-amber-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-7 h-7 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    </div>
+                    <p class="text-amber-400 font-semibold text-lg">Cloud Act</p>
+                    <p class="text-slate-400 text-sm mt-2">Les donn&eacute;es sur serveurs US sont accessibles par la justice am&eacute;ricaine</p>
+                </div>
+                <div class="card-hover bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-500/20 p-6 rounded-xl text-center">
+                    <div class="w-14 h-14 bg-blue-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-7 h-7 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    </div>
+                    <p class="text-blue-400 font-semibold text-lg">Devoir de protection</p>
+                    <p class="text-slate-400 text-sm mt-2">Donn&eacute;es d'&eacute;l&egrave;ves mineurs sous notre responsabilit&eacute;</p>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap gap-x-6 gap-y-1 mt-8 text-xs text-slate-500">
+                <span><strong class="text-slate-400">LGPD</strong> &mdash; Loi f&eacute;d&eacute;rale sur la protection des donn&eacute;es (Suisse)</span>
+                <span><strong class="text-slate-400">RGPD</strong> &mdash; R&egrave;glement g&eacute;n&eacute;ral sur la protection des donn&eacute;es (UE)</span>
+                <span><strong class="text-slate-400">Cloud Act</strong> &mdash; Loi am&eacute;ricaine autorisant l'acc&egrave;s aux donn&eacute;es sur infrastructure US</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 3: Les 3 niveaux -->
+    <div class="slide min-h-screen flex-col justify-center p-12" data-slide="3">
+        <div class="max-w-5xl mx-auto w-full">
+            <h2 class="text-4xl font-bold mb-10 text-center">
+                <span class="gradient-text">3 niveaux de classification</span>
+            </h2>
+
+            <div class="grid grid-cols-3 gap-6 mb-10">
+                <div class="card-hover bg-gradient-to-br from-green-500/20 to-green-500/5 border border-green-500/30 p-8 rounded-2xl text-center">
+                    <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-green-500/30">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                    </div>
+                    <span class="inline-block bg-green-500 px-5 py-1.5 rounded-full text-sm font-bold mb-3">VALID&Eacute;</span>
+                    <p class="text-green-300 font-semibold text-lg mb-2">Usage autoris&eacute;</p>
+                    <p class="text-slate-400 text-sm leading-relaxed">Donn&eacute;es d'&eacute;l&egrave;ves autoris&eacute;es. Cr&eacute;ation de comptes OK.</p>
+                </div>
+                <div class="card-hover bg-gradient-to-br from-orange-500/20 to-orange-500/5 border border-orange-500/30 p-8 rounded-2xl text-center">
+                    <div class="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-orange-500/30">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    </div>
+                    <span class="inline-block bg-orange-500 px-5 py-1.5 rounded-full text-sm font-bold mb-3">RESTREINT</span>
+                    <p class="text-orange-300 font-semibold text-lg mb-2">Usage avec pr&eacute;cautions</p>
+                    <p class="text-slate-400 text-sm leading-relaxed">Enseignants uniquement. Pas de donn&eacute;es d'&eacute;l&egrave;ves.</p>
+                </div>
+                <div class="card-hover bg-gradient-to-br from-red-500/20 to-red-500/5 border border-red-500/30 p-8 rounded-2xl text-center">
+                    <div class="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-red-500/30">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </div>
+                    <span class="inline-block bg-red-500 px-5 py-1.5 rounded-full text-sm font-bold mb-3">INTERDIT</span>
+                    <p class="text-red-300 font-semibold text-lg mb-2">Usage interdit</p>
+                    <p class="text-slate-400 text-sm leading-relaxed">Ni enseignants ni &eacute;l&egrave;ves. Non conforme.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-slate-800/50 backdrop-blur p-5 rounded-xl border border-slate-700/50">
+                    <p class="text-slate-300"><strong class="text-blue-400">R&egrave;gle cl&eacute; :</strong> Le niveau global est d&eacute;termin&eacute; par le <strong class="text-white">crit&egrave;re le plus faible</strong>. Si l'h&eacute;bergement est vert mais que la conformit&eacute; RGPD est orange, le logiciel est <span class="text-orange-400 font-bold">orange</span>.</p>
+                </div>
+                <div class="bg-slate-800/50 backdrop-blur p-5 rounded-xl border border-slate-700/50">
+                    <p class="text-slate-300"><strong class="text-blue-400">P&eacute;rim&egrave;tre :</strong> Ce r&eacute;f&eacute;rentiel couvre uniquement les <strong class="text-white">logiciels p&eacute;dagogiques</strong>, pas les outils administratifs. Ils ne permettent pas de stocker des <strong class="text-white">donn&eacute;es sensibles</strong> (sant&eacute;, notes officielles, etc.).</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 4: Critères de classification -->
+    <div class="slide min-h-screen flex-col justify-center p-12" data-slide="4">
+        <div class="max-w-6xl mx-auto w-full">
+            <h2 class="text-4xl font-bold mb-8">
+                <span class="gradient-text">Crit&egrave;res de classification</span>
+            </h2>
+
+            <div class="bg-slate-800/80 backdrop-blur rounded-xl overflow-hidden border border-slate-700/50 mb-8">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-700/50">
+                        <tr>
+                            <th class="p-4 font-semibold text-slate-300">Crit&egrave;re</th>
+                            <th class="p-4 font-semibold text-green-400">Valid&eacute;</th>
+                            <th class="p-4 font-semibold text-orange-400">Restreint</th>
+                            <th class="p-4 font-semibold text-red-400">Interdit</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-slate-300">
+                        <tr class="border-t border-slate-700/50 hover:bg-slate-700/30 transition">
+                            <td class="p-4 font-medium">H&eacute;bergement</td>
+                            <td class="p-4"><span class="text-green-400">Suisse / UE</span></td>
+                            <td class="p-4"><span class="text-orange-400">&Eacute;tats-Unis (certifi&eacute; DPF)</span></td>
+                            <td class="p-4"><span class="text-red-400">Chine, Russie&hellip;</span></td>
+                        </tr>
+                        <tr class="border-t border-slate-700/50 hover:bg-slate-700/30 transition">
+                            <td class="p-4 font-medium">Conformit&eacute; RGPD</td>
+                            <td class="p-4"><span class="text-green-400">Politique conforme</span></td>
+                            <td class="p-4"><span class="text-orange-400">Partielle / DPF</span></td>
+                            <td class="p-4"><span class="text-red-400">Non conforme / amendes</span></td>
+                        </tr>
+                        <tr class="border-t border-slate-700/50 hover:bg-slate-700/30 transition">
+                            <td class="p-4 font-medium">Collecte de donn&eacute;es</td>
+                            <td class="p-4"><span class="text-green-400">Minimale, pas de tracking</span></td>
+                            <td class="p-4"><span class="text-orange-400">Analytics tiers</span></td>
+                            <td class="p-4"><span class="text-red-400">Invasive / sans consentement</span></td>
+                        </tr>
+                        <tr class="border-t border-slate-700/50 hover:bg-slate-700/30 transition">
+                            <td class="p-4 font-medium">Infrastructure US</td>
+                            <td class="p-4"><span class="text-green-400">Avec contrat CEJEF</span></td>
+                            <td class="p-4"><span class="text-orange-400">Sans contrat (Cloud Act)</span></td>
+                            <td class="p-4 text-slate-600">&mdash;</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="p-5 bg-gradient-to-r from-blue-500/10 to-transparent border border-blue-500/30 rounded-xl flex items-center gap-4 mb-6">
+                <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <p class="text-slate-300"><strong class="text-blue-400">Cloud Act :</strong> Toute donn&eacute;e h&eacute;berg&eacute;e sur infrastructure am&eacute;ricaine (AWS, Google Cloud, Azure) est soumise au droit US, m&ecirc;me si le serveur est en Europe.</p>
+            </div>
+
+            <div class="flex flex-wrap gap-x-6 gap-y-1 text-xs text-slate-500">
+                <span><strong class="text-slate-400">DPF</strong> &mdash; EU-US Data Privacy Framework, accord d'ad&eacute;quation UE&ndash;USA</span>
+                <span><strong class="text-slate-400">DPA</strong> &mdash; Data Processing Agreement, contrat de traitement des donn&eacute;es</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 5: Cas concrets -->
+    <div class="slide min-h-screen flex-col justify-center p-12" data-slide="5">
+        <div class="max-w-6xl mx-auto w-full">
+            <h2 class="text-4xl font-bold mb-8">
+                <span class="gradient-text">Exemples concrets</span>
+            </h2>
+
+            <!-- Vert -->
+            <div class="mb-6">
+                <h3 class="text-sm font-semibold text-green-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <span class="w-3 h-3 bg-green-500 rounded-full"></span>
+                    Valid&eacute; &mdash; 44 logiciels
+                </h3>
+                <div class="grid grid-cols-4 gap-3">
+                    <div class="card-hover bg-green-500/10 border border-green-500/30 p-4 rounded-xl">
+                        <p class="font-semibold text-green-400">Microsoft 365</p>
+                        <p class="text-xs text-slate-400 mt-1">Contrat DPA CEJEF &middot; H&eacute;bergement UE</p>
+                    </div>
+                    <div class="card-hover bg-green-500/10 border border-green-500/30 p-4 rounded-xl">
+                        <p class="font-semibold text-green-400">Moodle</p>
+                        <p class="text-xs text-slate-400 mt-1">Open source &middot; H&eacute;berg&eacute; CEJEF</p>
+                    </div>
+                    <div class="card-hover bg-green-500/10 border border-green-500/30 p-4 rounded-xl">
+                        <p class="font-semibold text-green-400">Mistral Le Chat</p>
+                        <p class="text-xs text-slate-400 mt-1">IA fran&ccedil;aise &middot; Serveurs UE</p>
+                    </div>
+                    <div class="card-hover bg-green-500/10 border border-green-500/30 p-4 rounded-xl">
+                        <p class="font-semibold text-green-400">GeoGebra</p>
+                        <p class="text-xs text-slate-400 mt-1">RGPD conforme &middot; Pas de tracking</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orange -->
+            <div class="mb-6">
+                <h3 class="text-sm font-semibold text-orange-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <span class="w-3 h-3 bg-orange-500 rounded-full"></span>
+                    Restreint &mdash; 63 logiciels
+                </h3>
+                <div class="grid grid-cols-4 gap-3">
+                    <div class="card-hover bg-orange-500/10 border border-orange-500/30 p-4 rounded-xl">
+                        <p class="font-semibold text-orange-400">Canva</p>
+                        <p class="text-xs text-slate-400 mt-1">Australie &middot; Certifi&eacute; DPF</p>
+                    </div>
+                    <div class="card-hover bg-orange-500/10 border border-orange-500/30 p-4 rounded-xl">
+                        <p class="font-semibold text-orange-400">ChatGPT</p>
+                        <p class="text-xs text-slate-400 mt-1">USA &middot; Cloud Act applicable</p>
+                    </div>
+                    <div class="card-hover bg-orange-500/10 border border-orange-500/30 p-4 rounded-xl">
+                        <p class="font-semibold text-orange-400">Kahoot</p>
+                        <p class="text-xs text-slate-400 mt-1">Norv&egrave;ge &middot; AWS multi-r&eacute;gion</p>
+                    </div>
+                    <div class="card-hover bg-orange-500/10 border border-orange-500/30 p-4 rounded-xl">
+                        <p class="font-semibold text-orange-400">Chrome / Firefox</p>
+                        <p class="text-xs text-slate-400 mt-1">T&eacute;l&eacute;m&eacute;trie vers serveurs US</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rouge -->
+            <div>
+                <h3 class="text-sm font-semibold text-red-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <span class="w-3 h-3 bg-red-500 rounded-full"></span>
+                    Interdit &mdash; 20 logiciels
+                </h3>
+                <div class="grid grid-cols-4 gap-3">
+                    <div class="card-hover bg-red-500/10 border border-red-500/30 p-4 rounded-xl">
+                        <p class="font-semibold text-red-400">CapCut</p>
+                        <p class="text-xs text-slate-400 mt-1">ByteDance (Chine) &middot; 530M&euro; d'amende</p>
+                    </div>
+                    <div class="card-hover bg-red-500/10 border border-red-500/30 p-4 rounded-xl">
+                        <p class="font-semibold text-red-400">TikTok</p>
+                        <p class="text-xs text-slate-400 mt-1">ByteDance (Chine) &middot; Scan intrusif</p>
+                    </div>
+                    <div class="card-hover bg-red-500/10 border border-red-500/30 p-4 rounded-xl">
+                        <p class="font-semibold text-red-400">Duolingo</p>
+                        <p class="text-xs text-slate-400 mt-1">Collecte extensive &middot; IA invasive</p>
+                    </div>
+                    <div class="card-hover bg-red-500/10 border border-red-500/30 p-4 rounded-xl">
+                        <p class="font-semibold text-red-400">Prezi</p>
+                        <p class="text-xs text-slate-400 mt-1">Non conforme RGPD</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 6: Cas spécial Microsoft -->
+    <div class="slide min-h-screen flex-col justify-center items-center p-12" data-slide="6">
+        <div class="max-w-4xl w-full">
+            <h2 class="text-4xl font-bold mb-10 text-center">
+                <span class="gradient-text">Cas sp&eacute;cial : Microsoft 365</span>
+            </h2>
+
+            <div class="bg-gradient-to-br from-slate-800 to-slate-800/50 p-8 rounded-2xl mb-8 border border-slate-700/50 glow">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center shadow-lg shadow-green-500/30">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-bold text-white">Class&eacute; VERT</p>
+                        <p class="text-slate-400">Word, Excel, Teams, OneDrive, OneNote, Forms, Outlook</p>
+                    </div>
+                </div>
+                <p class="text-slate-300 leading-relaxed mb-4">Microsoft est une entreprise am&eacute;ricaine. <strong class="text-orange-400">Sans contrat, ces outils seraient orange</strong> (Cloud Act applicable).</p>
+                <p class="text-slate-200 leading-relaxed">Cependant, le CEJEF dispose d'un <strong class="text-green-400">contrat DPA institutionnel</strong> qui garantit :</p>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4">
+                <div class="bg-green-500/10 border border-green-500/30 p-5 rounded-xl text-center">
+                    <svg class="w-8 h-8 text-green-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <p class="text-green-400 font-semibold">H&eacute;bergement UE</p>
+                    <p class="text-slate-400 text-sm mt-1">Garanti contractuellement</p>
+                </div>
+                <div class="bg-green-500/10 border border-green-500/30 p-5 rounded-xl text-center">
+                    <svg class="w-8 h-8 text-green-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    <p class="text-green-400 font-semibold">Protection DPA</p>
+                    <p class="text-slate-400 text-sm mt-1">Accord de traitement des donn&eacute;es</p>
+                </div>
+                <div class="bg-green-500/10 border border-green-500/30 p-5 rounded-xl text-center">
+                    <svg class="w-8 h-8 text-green-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    <p class="text-green-400 font-semibold">Donn&eacute;es prot&eacute;g&eacute;es</p>
+                    <p class="text-slate-400 text-sm mt-1">Pas de transfert hors UE</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 7: Impact pour les enseignants -->
+    <div class="slide min-h-screen flex-col justify-center p-12" data-slide="7">
+        <div class="max-w-5xl mx-auto w-full">
+            <h2 class="text-4xl font-bold mb-10 text-center">
+                <span class="gradient-text">Ce qui change pour les enseignants</span>
+            </h2>
+
+            <div class="grid grid-cols-2 gap-8">
+                <div class="space-y-4">
+                    <div class="bg-green-500/10 border border-green-500/30 p-6 rounded-xl">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <p class="font-semibold text-green-400">Logiciel VERT</p>
+                        </div>
+                        <ul class="space-y-2 text-slate-300 text-sm">
+                            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Utilisation libre avec les &eacute;l&egrave;ves</li>
+                            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Cr&eacute;ation de comptes &eacute;l&egrave;ves autoris&eacute;e</li>
+                            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Donn&eacute;es personnelles autoris&eacute;es</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-orange-500/10 border border-orange-500/30 p-6 rounded-xl">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                            </div>
+                            <p class="font-semibold text-orange-400">Logiciel ORANGE</p>
+                        </div>
+                        <ul class="space-y-2 text-slate-300 text-sm">
+                            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Pr&eacute;paration de cours : OK</li>
+                            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-orange-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01"></path></svg> &Eacute;l&egrave;ves : uniquement en anonyme</li>
+                            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg> <strong class="text-orange-300">Interdit : donn&eacute;es d'&eacute;l&egrave;ves</strong></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="bg-red-500/10 border border-red-500/30 p-6 rounded-xl">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </div>
+                            <p class="font-semibold text-red-400">Logiciel ROUGE</p>
+                        </div>
+                        <ul class="space-y-2 text-slate-300 text-sm">
+                            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg> Aucune utilisation professionnelle</li>
+                            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg> Ni enseignants ni &eacute;l&egrave;ves</li>
+                            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Alternatives vertes propos&eacute;es</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-slate-800 to-slate-800/50 p-6 rounded-xl border border-slate-700/50">
+                        <h3 class="text-sm font-semibold text-blue-400 uppercase tracking-wider mb-4">Le r&eacute;f&eacute;rentiel en ligne</h3>
+                        <ul class="space-y-3 text-slate-300 text-sm">
+                            <li class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                Recherche par nom, cat&eacute;gorie, discipline
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                                Filtrage par niveau de conformit&eacute;
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                                Fiche d&eacute;taill&eacute;e par logiciel
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                                Alternatives recommand&eacute;es
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 8: Chiffres clés -->
+    <div class="slide min-h-screen flex-col justify-center items-center p-12" data-slide="8">
+        <div class="max-w-4xl w-full">
+            <h2 class="text-4xl font-bold mb-10 text-center">
+                <span class="gradient-text">Le catalogue aujourd'hui</span>
+            </h2>
+
+            <div class="grid grid-cols-4 gap-6 mb-10">
+                <div class="card-hover bg-slate-800/80 backdrop-blur p-6 rounded-xl border border-slate-700/50 text-center">
+                    <p class="text-4xl font-bold text-white mb-1">127</p>
+                    <p class="text-slate-400 text-sm">logiciels r&eacute;f&eacute;renc&eacute;s</p>
+                </div>
+                <div class="card-hover bg-green-500/10 border border-green-500/30 p-6 rounded-xl text-center">
+                    <p class="text-4xl font-bold text-green-400 mb-1">44</p>
+                    <p class="text-slate-400 text-sm">valid&eacute;s</p>
+                </div>
+                <div class="card-hover bg-orange-500/10 border border-orange-500/30 p-6 rounded-xl text-center">
+                    <p class="text-4xl font-bold text-orange-400 mb-1">63</p>
+                    <p class="text-slate-400 text-sm">restreints</p>
+                </div>
+                <div class="card-hover bg-red-500/10 border border-red-500/30 p-6 rounded-xl text-center">
+                    <p class="text-4xl font-bold text-red-400 mb-1">20</p>
+                    <p class="text-slate-400 text-sm">interdits</p>
+                </div>
+            </div>
+
+            <div class="text-center mb-10">
+                <a href="https://fallinov.github.io/2025-cns-sfa-referentiel-logiciels-cejef/"
+                   target="_blank"
+                   class="group inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white text-xl px-10 py-5 rounded-xl transition-all duration-300 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:scale-105">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    <span>Voir le r&eacute;f&eacute;rentiel en ligne</span>
+                    <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                </a>
+            </div>
+
+            <div class="bg-slate-800/50 backdrop-blur p-5 rounded-xl border border-slate-700/50 text-center">
+                <p class="text-slate-300"><strong class="text-blue-400">Mise en production :</strong> juin 2026 &mdash; Le catalogue sera mis &agrave; jour en continu par le GCN.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 9: Validation -->
+    <div class="slide min-h-screen flex-col justify-center items-center p-12 relative overflow-hidden" data-slide="9">
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute -top-40 -left-40 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-40 -right-40 w-80 h-80 bg-green-500/10 rounded-full blur-3xl"></div>
+        </div>
+
+        <div class="text-center max-w-4xl relative z-10">
+            <h2 class="text-4xl font-bold mb-10">
+                <span class="gradient-text">Validation demand&eacute;e</span>
+            </h2>
+
+            <div class="space-y-4 mb-10 text-left max-w-2xl mx-auto">
+                <div class="bg-slate-800/80 backdrop-blur p-5 rounded-xl border border-slate-700/50 flex items-center gap-4 hover:border-slate-600 transition">
+                    <span class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0 text-sm font-bold text-blue-400">1</span>
+                    <p class="text-slate-200">Validation du <strong class="text-blue-400">syst&egrave;me &agrave; 3 niveaux</strong> (vert / orange / rouge)</p>
+                </div>
+                <div class="bg-slate-800/80 backdrop-blur p-5 rounded-xl border border-slate-700/50 flex items-center gap-4 hover:border-slate-600 transition">
+                    <span class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0 text-sm font-bold text-blue-400">2</span>
+                    <p class="text-slate-200">Validation des <strong class="text-blue-400">crit&egrave;res de classification</strong> (h&eacute;bergement, RGPD, collecte)</p>
+                </div>
+                <div class="bg-slate-800/80 backdrop-blur p-5 rounded-xl border border-slate-700/50 flex items-center gap-4 hover:border-slate-600 transition">
+                    <span class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0 text-sm font-bold text-blue-400">3</span>
+                    <p class="text-slate-200">Validation des <strong class="text-blue-400">r&egrave;gles d'usage</strong> par niveau (donn&eacute;es &eacute;l&egrave;ves, comptes, anonymat)</p>
+                </div>
+                <div class="bg-slate-800/80 backdrop-blur p-5 rounded-xl border border-slate-700/50 flex items-center gap-4 hover:border-slate-600 transition">
+                    <span class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0 text-sm font-bold text-blue-400">4</span>
+                    <p class="text-slate-200">Accord pour le <strong class="text-blue-400">d&eacute;ploiement</strong> du r&eacute;f&eacute;rentiel en ligne</p>
+                </div>
+            </div>
+
+            <div class="flex justify-center items-center gap-6 text-slate-400">
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    <span>Steve Fallet</span>
+                </div>
+                <span class="text-slate-600">&bull;</span>
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    <span>steve.fallet@jura.ch</span>
+                </div>
+                <span class="text-slate-600">&bull;</span>
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <span>Groupe de Coordination Num&eacute;rique</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Indicateur mode contrasté -->
+    <div id="contrast-indicator">MODE CONTRAST&Eacute; (C pour d&eacute;sactiver)</div>
+
+    <!-- Navigation - Dots verticaux à droite -->
+    <div class="fixed right-6 top-1/2 transform -translate-y-1/2 flex flex-col gap-3 z-50" id="dots"></div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.getElementById('dots');
+        let current = 0;
+
+        slides.forEach((_, i) => {
+            const dot = document.createElement('button');
+            dot.className = `w-3 h-3 rounded-full transition-all duration-300 ${i === 0 ? 'bg-blue-400 scale-125' : 'bg-white/30 hover:bg-white/50'}`;
+            dot.onclick = () => go(i);
+            dots.appendChild(dot);
+        });
+
+        function update() {
+            const hc = document.body.classList.contains('high-contrast');
+            slides.forEach((s, i) => s.classList.toggle('active', i === current));
+            dots.querySelectorAll('button').forEach((d, i) => {
+                const isActive = i === current;
+                d.className = `w-3 h-3 rounded-full transition-all duration-300 ${isActive ? (hc ? 'bg-black scale-125 active-dot' : 'bg-blue-400 scale-125') : (hc ? 'bg-gray-400 hover:bg-gray-600' : 'bg-white/30 hover:bg-white/50')}`;
+            });
+        }
+
+        function next() { if (current < slides.length - 1) { current++; update(); } }
+        function prev() { if (current > 0) { current--; update(); } }
+        function go(i) { current = i; update(); }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'Enter') { e.preventDefault(); next(); }
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
+            if (e.key === 'c' || e.key === 'C') { document.body.classList.toggle('high-contrast'); update(); }
+        });
+    </script>
+</body>
+</html>
