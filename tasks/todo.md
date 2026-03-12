@@ -1,9 +1,9 @@
 # TODO — SFA-PRESENTATION
 
 ## Souveraineté des données
-- [ ] Télécharger Tailwind CSS et le servir localement (toutes les présentations utilisent le CDN)
-- [ ] Télécharger les polices Google Fonts (Inter, JetBrains Mono) et les auto-héberger
-- [ ] Remplacer les liens CDN Lucide Icons par des SVG inline ou locaux
+- [x] Télécharger Tailwind CSS et le servir localement → `libs/tailwind.js`
+- [x] Télécharger les polices Google Fonts (Inter, JetBrains Mono) → `libs/fonts/`
+- [ ] Remplacer les liens CDN Lucide Icons par des SVG inline ou locaux (si utilisés)
 
 ## Améliorations
 - [ ] Ajouter un bouton retour au sommaire dans chaque présentation

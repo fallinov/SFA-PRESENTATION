@@ -26,13 +26,21 @@ SFA-PRESENTATION/
 ### Fichiers HTML
 - Un fichier HTML autonome par présentation (tout inline : CSS, JS, contenu)
 - Système de slides : classes `.slide` / `.slide.active` avec navigation clavier
-- Tailwind CSS via CDN pour le style
-- Polices : Inter (texte), JetBrains Mono (code) via Google Fonts CDN
+- Tailwind CSS local : `libs/tailwind.js`
+- Polices locales : Inter + JetBrains Mono dans `libs/fonts/` (CSS : `libs/fonts.css`)
+- Aucun CDN externe — tout est self-hosted
 
 ### Assets
 - Tous les assets partagés dans `assets/` à la racine
 - Sous-dossiers : `logos/` (SVG), `backgrounds/` (PNG)
 - Depuis un sous-dossier de présentation, référencer avec `../assets/`
+
+### Librairies (`libs/`)
+- `tailwind.js` — Tailwind CSS (script standalone)
+- `fonts.css` — Déclarations @font-face (latin + latin-ext)
+- `fonts/` — Fichiers woff2 (Inter, JetBrains Mono)
+- Depuis un sous-dossier : `../libs/tailwind.js`, `../libs/fonts.css`
+- Depuis la racine : `libs/tailwind.js`, `libs/fonts.css`
 
 ### Organisation
 - Un dossier par projet/cours
