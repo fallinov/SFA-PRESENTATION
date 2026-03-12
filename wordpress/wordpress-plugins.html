@@ -35,7 +35,7 @@ html { scroll-behavior: smooth; }
     scroll-snap-align: start;
     overflow: hidden;
 }
-.code-block { background: #1e1e1e; }
+.code-block { background: #1e1e1e; position: relative; }
 .gradient-wp { background: linear-gradient(135deg, #0073aa 0%, #23282d 100%); }
 .gradient-wp-light { background: linear-gradient(135deg, #00a0d2 0%, #0073aa 100%); }
 
@@ -77,6 +77,45 @@ html { scroll-behavior: smooth; }
 .value { color: #ce9178; }
 .variable { color: #4ec9b0; }
 .php-tag { color: #808080; }
+
+/* Bouton copier */
+.copy-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.25rem 0.6rem;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 0.375rem;
+    color: #94a3b8;
+    font-size: 0.75rem;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+.copy-btn:hover { background: rgba(255,255,255,0.2); color: #e2e8f0; }
+.copy-btn.copied { background: rgba(34,197,94,0.2); border-color: rgba(34,197,94,0.4); color: #4ade80; }
+
+/* Lien ressource */
+.resource-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.8rem;
+    background: rgba(0,115,170,0.15);
+    border: 1px solid rgba(0,115,170,0.3);
+    border-radius: 0.5rem;
+    color: #00a0d2;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+.resource-link:hover { background: rgba(0,115,170,0.25); color: #fff; }
 
 /* Mode contraste élevé */
 .high-contrast body,
@@ -205,7 +244,6 @@ html { scroll-behavior: smooth; }
     </div>
     <div class="text-center px-6 relative z-10">
         <div class="mb-8 animate-fade-in-up">
-            <!-- WordPress Logo -->
             <svg class="w-32 h-32 mx-auto" viewBox="0 0 122.52 122.523" xmlns="http://www.w3.org/2000/svg">
                 <g fill="#fff">
                     <path d="m8.708 61.26c0 20.802 12.089 38.779 29.619 47.298l-25.069-68.686c-2.916 6.536-4.55 13.769-4.55 21.388z"/>
@@ -238,7 +276,13 @@ html { scroll-behavior: smooth; }
     <div class="max-w-6xl mx-auto px-6 w-full">
         <div class="grid md:grid-cols-2 gap-12 items-center">
             <div>
-                <span class="text-wp font-mono text-base mb-4 block">01 / Définition</span>
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="text-wp font-mono text-base">01 / Définition</span>
+                    <a href="https://divtec.gitbook.io/dev-web/creer-des-plugins/introduction-aux-plugins-wordpress" target="_blank" class="resource-link">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                        Cours
+                    </a>
+                </div>
                 <h2 class="text-4xl md:text-5xl font-bold mb-6">C'est quoi un <span class="text-wp">plugin</span> ?</h2>
                 <blockquote class="text-xl text-slate-300 mb-6 leading-relaxed border-l-4 border-wp pl-6 italic">
                     "Les plugins sont des paquets de code qui permettent d'étendre et de personnaliser les fonctionnalités de WordPress."
@@ -253,36 +297,24 @@ html { scroll-behavior: smooth; }
             <div class="space-y-6">
                 <div class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700">
                     <h3 class="text-lg font-semibold mb-4 text-wp flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                        </svg>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                         Cas d'usage
                     </h3>
                     <div class="space-y-3">
                         <div class="flex items-start gap-3 p-3 bg-wp/10 rounded-lg">
                             <span class="text-wp text-xl">🔌</span>
-                            <div>
-                                <p class="font-medium">Connecter une API externe</p>
-                                <p class="text-sm text-slate-300">Afficher des données depuis un service tiers</p>
-                            </div>
+                            <div><p class="font-medium">Connecter une API externe</p><p class="text-sm text-slate-300">Afficher des données depuis un service tiers</p></div>
                         </div>
                         <div class="flex items-start gap-3 p-3 bg-wp/10 rounded-lg">
                             <span class="text-wp text-xl">🗄️</span>
-                            <div>
-                                <p class="font-medium">Accéder à une base de données</p>
-                                <p class="text-sm text-slate-300">Lire/écrire des données métier personnalisées</p>
-                            </div>
+                            <div><p class="font-medium">Accéder à une base de données</p><p class="text-sm text-slate-300">Lire/écrire des données métier personnalisées</p></div>
                         </div>
                         <div class="flex items-start gap-3 p-3 bg-wp/10 rounded-lg">
                             <span class="text-wp text-xl">⚙️</span>
-                            <div>
-                                <p class="font-medium">Ajouter des fonctionnalités</p>
-                                <p class="text-sm text-slate-300">Formulaires, galeries, SEO, sécurité...</p>
-                            </div>
+                            <div><p class="font-medium">Ajouter des fonctionnalités</p><p class="text-sm text-slate-300">Formulaires, galeries, SEO, sécurité...</p></div>
                         </div>
                     </div>
                 </div>
-
                 <div class="bg-wp/10 border border-wp/30 p-4 rounded-xl">
                     <p class="text-wp font-medium">📂 Emplacement</p>
                     <p class="text-slate-300 text-sm mt-2">Tous les plugins résident dans <code class="bg-slate-700 px-2 py-1 rounded text-wp font-mono">wp-content/plugins/</code></p>
@@ -295,78 +327,53 @@ html { scroll-behavior: smooth; }
 <!-- Slide 3: Créer un plugin -->
 <section id="slide-3" class="slide flex items-center bg-slate-800 py-20">
     <div class="max-w-6xl mx-auto px-6 w-full">
-        <span class="text-wp font-mono text-base mb-4 block">02 / Création</span>
+        <div class="flex items-center gap-3 mb-4">
+            <span class="text-wp font-mono text-base">02 / Création</span>
+            <a href="https://divtec.gitbook.io/dev-web/creer-des-plugins/creer-un-plugin-wordpress" target="_blank" class="resource-link">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                Cours
+            </a>
+        </div>
         <h2 class="text-4xl md:text-5xl font-bold mb-8">Créer son <span class="text-wp">premier plugin</span></h2>
-
         <div class="grid md:grid-cols-2 gap-12 items-start">
             <div>
-                <p class="text-lg text-slate-300 mb-6 leading-relaxed">
-                    Créer un plugin WordPress est <strong class="text-white">très simple</strong> : un dossier, un fichier PHP, un commentaire.
-                </p>
-
+                <p class="text-lg text-slate-300 mb-6 leading-relaxed">Créer un plugin WordPress est <strong class="text-white">très simple</strong> : un dossier, un fichier PHP, un commentaire.</p>
                 <div class="bg-slate-900/50 p-6 rounded-xl border border-slate-700 mb-6">
                     <h3 class="text-lg font-bold mb-4">5 étapes</h3>
                     <div class="space-y-3">
-                        <div class="flex items-center gap-3">
-                            <span class="w-8 h-8 bg-wp/20 rounded-full flex items-center justify-center font-bold text-wp">1</span>
-                            <span class="text-slate-300">Accéder au dossier <code class="bg-slate-700 px-2 py-0.5 rounded text-xs font-mono">wp-content</code></span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <span class="w-8 h-8 bg-wp/20 rounded-full flex items-center justify-center font-bold text-wp">2</span>
-                            <span class="text-slate-300">Ouvrir le répertoire <code class="bg-slate-700 px-2 py-0.5 rounded text-xs font-mono">plugins</code></span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <span class="w-8 h-8 bg-wp/20 rounded-full flex items-center justify-center font-bold text-wp">3</span>
-                            <span class="text-slate-300">Créer un <strong class="text-white">dossier</strong> pour votre plugin</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <span class="w-8 h-8 bg-wp/20 rounded-full flex items-center justify-center font-bold text-wp">4</span>
-                            <span class="text-slate-300">Créer un fichier <strong class="text-white">PHP</strong> dedans</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <span class="w-8 h-8 bg-wp/20 rounded-full flex items-center justify-center font-bold text-wp">5</span>
-                            <span class="text-slate-300">Ajouter le <strong class="text-white">DocBlock</strong> obligatoire</span>
-                        </div>
+                        <div class="flex items-center gap-3"><span class="w-8 h-8 bg-wp/20 rounded-full flex items-center justify-center font-bold text-wp">1</span><span class="text-slate-300">Accéder au dossier <code class="bg-slate-700 px-2 py-0.5 rounded text-xs font-mono">wp-content</code></span></div>
+                        <div class="flex items-center gap-3"><span class="w-8 h-8 bg-wp/20 rounded-full flex items-center justify-center font-bold text-wp">2</span><span class="text-slate-300">Ouvrir le répertoire <code class="bg-slate-700 px-2 py-0.5 rounded text-xs font-mono">plugins</code></span></div>
+                        <div class="flex items-center gap-3"><span class="w-8 h-8 bg-wp/20 rounded-full flex items-center justify-center font-bold text-wp">3</span><span class="text-slate-300">Créer un <strong class="text-white">dossier</strong> pour votre plugin</span></div>
+                        <div class="flex items-center gap-3"><span class="w-8 h-8 bg-wp/20 rounded-full flex items-center justify-center font-bold text-wp">4</span><span class="text-slate-300">Créer un fichier <strong class="text-white">PHP</strong> dedans</span></div>
+                        <div class="flex items-center gap-3"><span class="w-8 h-8 bg-wp/20 rounded-full flex items-center justify-center font-bold text-wp">5</span><span class="text-slate-300">Ajouter le <strong class="text-white">DocBlock</strong> obligatoire</span></div>
                     </div>
                 </div>
-
                 <div class="bg-wpOrange/10 border border-wpOrange/30 p-4 rounded-xl">
                     <p class="text-wpOrange font-medium">⚠️ Important</p>
                     <p class="text-slate-300 text-sm mt-1">Respecter <strong class="text-white">scrupuleusement</strong> la syntaxe du DocBlock — pas d'espace entre <code class="text-wp font-mono">Plugin Name</code> et les deux-points !</p>
                 </div>
             </div>
-
             <div class="space-y-6">
                 <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
                     <p class="text-sm text-slate-300 mb-3 font-mono">Structure de fichiers</p>
-                    <div class="code-block rounded-xl p-4 font-mono text-sm">
-                        <code>
-                            <span class="comment">wordpress/</span><br>
-                            ├── wp-admin/<br>
-                            ├── wp-content/<br>
-                            │&nbsp;&nbsp;&nbsp;├── plugins/<br>
-                            │&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── akismet/<br>
-                            │&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── <span class="function">mon-premier-plugin/</span><br>
-                            │&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── <span class="string">mon-premier-plugin.php</span><br>
-                        </code>
-                    </div>
+                    <div class="code-block rounded-xl p-4 font-mono text-sm"><code><span class="comment">wordpress/</span><br>├── wp-admin/<br>├── wp-content/<br>│&nbsp;&nbsp;&nbsp;├── plugins/<br>│&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── akismet/<br>│&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── <span class="function">mon-premier-plugin/</span><br>│&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── <span class="string">mon-premier-plugin.php</span></code></div>
                 </div>
-
                 <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
                     <p class="text-sm text-slate-300 mb-3 font-mono">mon-premier-plugin.php</p>
-                    <div class="code-block rounded-xl p-4 font-mono text-sm overflow-x-auto">
-                        <code>
-                            <span class="php-tag">&lt;?php</span><br>
-                            <span class="comment">/*</span><br>
-                            <span class="comment">Plugin Name: Mon Premier Plugin</span><br>
-                            <span class="comment">Description: Un plugin de test</span><br>
-                            <span class="comment">Version: 1.0</span><br>
-                            <span class="comment">Author: Mon Nom</span><br>
-                            <span class="comment">*/</span>
-                        </code>
+                    <div class="code-block rounded-xl p-4 pr-20 font-mono text-sm overflow-x-auto" data-code="&lt;?php
+/*
+Plugin Name: Mon Premier Plugin
+Description: Un plugin de test
+Version: 1.0
+Author: Mon Nom
+*/">
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            Copier
+                        </button>
+                        <code><span class="php-tag">&lt;?php</span><br><span class="comment">/*</span><br><span class="comment">Plugin Name: Mon Premier Plugin</span><br><span class="comment">Description: Un plugin de test</span><br><span class="comment">Version: 1.0</span><br><span class="comment">Author: Mon Nom</span><br><span class="comment">*/</span></code>
                     </div>
                 </div>
-
                 <div class="bg-green-500/10 border border-green-500/30 p-4 rounded-xl">
                     <p class="text-green-400 font-medium">✓ Résultat</p>
                     <p class="text-slate-300 text-sm mt-1">Le plugin apparaît dans le menu <strong class="text-white">Extensions</strong> de WordPress, prêt à être activé.</p>
@@ -379,68 +386,62 @@ html { scroll-behavior: smooth; }
 <!-- Slide 4: Hooks — Actions -->
 <section id="slide-4" class="slide flex items-center bg-slate-900 py-20">
     <div class="max-w-6xl mx-auto px-6 w-full">
-        <span class="text-wp font-mono text-base mb-4 block">03 / Hooks</span>
+        <div class="flex items-center gap-3 mb-4">
+            <span class="text-wp font-mono text-base">03 / Hooks</span>
+            <a href="https://divtec.gitbook.io/dev-web/creer-des-plugins/hooks-actions-et-filtres" target="_blank" class="resource-link">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                Cours
+            </a>
+        </div>
         <h2 class="text-4xl md:text-5xl font-bold mb-8">Les <span class="text-wp">Actions</span></h2>
-
         <div class="grid md:grid-cols-2 gap-12 items-start">
             <div>
-                <p class="text-lg text-slate-300 mb-6 leading-relaxed">
-                    Les <strong class="text-white">hooks</strong> sont des points d'ancrage placés dans WordPress pour intervenir <strong class="text-wp">sans modifier les fichiers de base</strong>.
-                </p>
-                <p class="text-lg text-slate-300 mb-6 leading-relaxed">
-                    Les <strong class="text-white">actions</strong> permettent d'appeler une fonction au moment où WordPress exécute une fonctionnalité spécifique.
-                </p>
-
+                <p class="text-lg text-slate-300 mb-6 leading-relaxed">Les <strong class="text-white">hooks</strong> sont des points d'ancrage placés dans WordPress pour intervenir <strong class="text-wp">sans modifier les fichiers de base</strong>.</p>
+                <p class="text-lg text-slate-300 mb-6 leading-relaxed">Les <strong class="text-white">actions</strong> permettent d'appeler une fonction au moment où WordPress exécute une fonctionnalité spécifique.</p>
                 <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700 mb-6">
                     <h3 class="text-lg font-bold mb-3 text-wp">add_action( $tag, $callback )</h3>
                     <div class="space-y-3">
-                        <div class="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg">
-                            <span class="text-wp font-mono font-bold">$tag</span>
-                            <p class="text-sm text-slate-300">Nom du crochet (ex : <code class="text-wp">'wp_head'</code>, <code class="text-wp">'delete_post'</code>)</p>
-                        </div>
-                        <div class="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg">
-                            <span class="text-wp font-mono font-bold">$callback</span>
-                            <p class="text-sm text-slate-300">Fonction à exécuter quand l'action se déclenche</p>
-                        </div>
+                        <div class="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg"><span class="text-wp font-mono font-bold">$tag</span><p class="text-sm text-slate-300">Nom du crochet (ex : <code class="text-wp">'wp_head'</code>, <code class="text-wp">'delete_post'</code>)</p></div>
+                        <div class="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg"><span class="text-wp font-mono font-bold">$callback</span><p class="text-sm text-slate-300">Fonction à exécuter quand l'action se déclenche</p></div>
                     </div>
                 </div>
-
                 <div class="bg-wp/10 border border-wp/30 p-4 rounded-xl">
                     <p class="text-wp font-medium">💡 Bonne pratique</p>
                     <p class="text-slate-300 text-sm mt-1">Préfixer les noms de fonctions avec le nom du plugin pour <strong class="text-white">éviter les conflits</strong>.</p>
                 </div>
             </div>
-
             <div class="space-y-6">
                 <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
                     <p class="text-sm text-slate-300 mb-3 font-mono">Exemple 1 — Ajouter une balise meta</p>
-                    <div class="code-block rounded-xl p-4 font-mono text-sm overflow-x-auto">
-                        <code>
-                            <span class="comment">// Ajouter une meta dans &lt;head&gt;</span><br>
-                            <span class="keyword">function</span> <span class="function">mon_plugin_meta</span>() {<br>
-                            &nbsp;&nbsp;<span class="keyword">echo</span> <span class="string">'&lt;meta name="author"</span><br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">content="ESIG" /&gt;'</span>;<br>
-                            }<br><br>
-                            <span class="function">add_action</span>(<span class="string">'wp_head'</span>,<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'mon_plugin_meta'</span>);
-                        </code>
+                    <div class="code-block rounded-xl p-4 pr-20 font-mono text-sm overflow-x-auto" data-code="// Ajouter une meta dans &lt;head&gt;
+function mon_plugin_meta() {
+    echo '&lt;meta name=&quot;author&quot; content=&quot;ESIG&quot; /&gt;';
+}
+
+add_action('wp_head', 'mon_plugin_meta');">
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            Copier
+                        </button>
+                        <code><span class="comment">// Ajouter une meta dans &lt;head&gt;</span><br><span class="keyword">function</span> <span class="function">mon_plugin_meta</span>() {<br>&nbsp;&nbsp;<span class="keyword">echo</span> <span class="string">'&lt;meta name="author"</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">content="ESIG" /&gt;'</span>;<br>}<br><br><span class="function">add_action</span>(<span class="string">'wp_head'</span>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'mon_plugin_meta'</span>);</code>
                     </div>
                 </div>
-
                 <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
                     <p class="text-sm text-slate-300 mb-3 font-mono">Exemple 2 — Email à la suppression d'un article</p>
-                    <div class="code-block rounded-xl p-4 font-mono text-sm overflow-x-auto">
-                        <code>
-                            <span class="keyword">function</span> <span class="function">mon_plugin_notif</span>(<span class="variable">$post_id</span>) {<br>
-                            &nbsp;&nbsp;<span class="function">wp_mail</span>(<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'admin@esig.ch'</span>,<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'Article supprimé'</span>,<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'ID: '</span> . <span class="variable">$post_id</span><br>
-                            &nbsp;&nbsp;);<br>
-                            }<br><br>
-                            <span class="function">add_action</span>(<span class="string">'delete_post'</span>,<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'mon_plugin_notif'</span>);
-                        </code>
+                    <div class="code-block rounded-xl p-4 pr-20 font-mono text-sm overflow-x-auto" data-code="function mon_plugin_notif($post_id) {
+    wp_mail(
+        'admin@esig.ch',
+        'Article supprimé',
+        'ID: ' . $post_id
+    );
+}
+
+add_action('delete_post', 'mon_plugin_notif');">
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            Copier
+                        </button>
+                        <code><span class="keyword">function</span> <span class="function">mon_plugin_notif</span>(<span class="variable">$post_id</span>) {<br>&nbsp;&nbsp;<span class="function">wp_mail</span>(<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'admin@esig.ch'</span>,<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'Article supprimé'</span>,<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'ID: '</span> . <span class="variable">$post_id</span><br>&nbsp;&nbsp;);<br>}<br><br><span class="function">add_action</span>(<span class="string">'delete_post'</span>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'mon_plugin_notif'</span>);</code>
                     </div>
                     <p class="text-slate-400 text-sm mt-3">Le paramètre <code class="text-wp font-mono">$post_id</code> est passé automatiquement par WordPress.</p>
                 </div>
@@ -452,75 +453,56 @@ html { scroll-behavior: smooth; }
 <!-- Slide 5: Hooks — Filtres -->
 <section id="slide-5" class="slide flex items-center gradient-wp-light py-20">
     <div class="max-w-6xl mx-auto px-6 w-full">
-        <span class="font-mono text-sm mb-4 block text-white/80">04 / Hooks</span>
+        <div class="flex items-center gap-3 mb-4">
+            <span class="font-mono text-sm text-white/80">04 / Hooks</span>
+            <a href="https://divtec.gitbook.io/dev-web/creer-des-plugins/hooks-actions-et-filtres" target="_blank" class="resource-link" style="background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.3);color:#fff;">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                Cours
+            </a>
+        </div>
         <h2 class="text-4xl md:text-5xl font-bold mb-8">Les <span class="text-white">Filtres</span></h2>
-
         <div class="grid md:grid-cols-2 gap-12 items-start">
             <div>
-                <p class="text-xl text-white/90 mb-6 leading-relaxed">
-                    Les filtres permettent de <strong>modifier une valeur</strong> durant l'exécution de WordPress sans toucher à l'original.
-                </p>
-
+                <p class="text-xl text-white/90 mb-6 leading-relaxed">Les filtres permettent de <strong>modifier une valeur</strong> durant l'exécution de WordPress sans toucher à l'original.</p>
                 <div class="bg-white/10 backdrop-blur-sm p-6 rounded-xl mb-6">
                     <h3 class="font-bold mb-3">add_filter( $tag, $callback )</h3>
                     <p class="text-white/80 text-sm mb-4">Même syntaxe que <code class="bg-white/20 px-2 py-0.5 rounded">add_action()</code>, mais la fonction <strong>doit retourner</strong> la valeur modifiée.</p>
                     <div class="grid grid-cols-2 gap-4">
-                        <div class="bg-white/10 p-4 rounded-lg text-center">
-                            <p class="text-2xl mb-2">🎯</p>
-                            <p class="font-medium">Action</p>
-                            <p class="text-white/70 text-sm mt-1">Exécute du code</p>
-                        </div>
-                        <div class="bg-white/10 p-4 rounded-lg text-center">
-                            <p class="text-2xl mb-2">🔄</p>
-                            <p class="font-medium">Filtre</p>
-                            <p class="text-white/70 text-sm mt-1">Modifie une valeur</p>
-                        </div>
+                        <div class="bg-white/10 p-4 rounded-lg text-center"><p class="text-2xl mb-2">🎯</p><p class="font-medium">Action</p><p class="text-white/70 text-sm mt-1">Exécute du code</p></div>
+                        <div class="bg-white/10 p-4 rounded-lg text-center"><p class="text-2xl mb-2">🔄</p><p class="font-medium">Filtre</p><p class="text-white/70 text-sm mt-1">Modifie une valeur</p></div>
                     </div>
                 </div>
-
                 <div class="bg-white/20 backdrop-blur-sm p-4 rounded-xl">
                     <p class="text-white font-medium">⚠️ Attention</p>
                     <p class="text-white/80 text-sm mt-1">Un filtre doit <strong class="text-white">toujours retourner</strong> la valeur, sinon le contenu disparaît !</p>
                 </div>
             </div>
-
             <div class="space-y-6">
                 <div class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
                     <p class="text-sm text-white/70 mb-3 font-mono">Exemple — Remplacer "et" par "&amp;" dans les titres</p>
-                    <div class="code-block rounded-xl p-4 font-mono text-sm overflow-x-auto">
-                        <code>
-                            <span class="keyword">function</span> <span class="function">mon_plugin_titre</span>(<span class="variable">$title</span>) {<br>
-                            &nbsp;&nbsp;<span class="keyword">return</span> <span class="function">str_replace</span>(<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="string">' et '</span>,<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="string">' &amp; '</span>,<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">$title</span><br>
-                            &nbsp;&nbsp;);<br>
-                            }<br><br>
-                            <span class="function">add_filter</span>(<span class="string">'the_title'</span>,<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'mon_plugin_titre'</span>);
-                        </code>
+                    <div class="code-block rounded-xl p-4 pr-20 font-mono text-sm overflow-x-auto" data-code="function mon_plugin_titre($title) {
+    return str_replace(
+        ' et ',
+        ' &amp; ',
+        $title
+    );
+}
+
+add_filter('the_title', 'mon_plugin_titre');">
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            Copier
+                        </button>
+                        <code><span class="keyword">function</span> <span class="function">mon_plugin_titre</span>(<span class="variable">$title</span>) {<br>&nbsp;&nbsp;<span class="keyword">return</span> <span class="function">str_replace</span>(<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">' et '</span>,<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">' &amp; '</span>,<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">$title</span><br>&nbsp;&nbsp;);<br>}<br><br><span class="function">add_filter</span>(<span class="string">'the_title'</span>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'mon_plugin_titre'</span>);</code>
                     </div>
                 </div>
-
                 <div class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
                     <h3 class="text-lg font-bold mb-4">Quelques filtres utiles</h3>
                     <div class="space-y-3 font-mono text-sm">
-                        <div class="flex justify-between p-3 bg-white/10 rounded-lg">
-                            <span class="text-white">the_title</span>
-                            <span class="text-white/60">Titre de l'article</span>
-                        </div>
-                        <div class="flex justify-between p-3 bg-white/10 rounded-lg">
-                            <span class="text-white">the_content</span>
-                            <span class="text-white/60">Contenu de l'article</span>
-                        </div>
-                        <div class="flex justify-between p-3 bg-white/10 rounded-lg">
-                            <span class="text-white">the_excerpt</span>
-                            <span class="text-white/60">Extrait de l'article</span>
-                        </div>
-                        <div class="flex justify-between p-3 bg-white/10 rounded-lg">
-                            <span class="text-white">wp_title</span>
-                            <span class="text-white/60">Titre de la page</span>
-                        </div>
+                        <div class="flex justify-between p-3 bg-white/10 rounded-lg"><span class="text-white">the_title</span><span class="text-white/60">Titre de l'article</span></div>
+                        <div class="flex justify-between p-3 bg-white/10 rounded-lg"><span class="text-white">the_content</span><span class="text-white/60">Contenu de l'article</span></div>
+                        <div class="flex justify-between p-3 bg-white/10 rounded-lg"><span class="text-white">the_excerpt</span><span class="text-white/60">Extrait de l'article</span></div>
+                        <div class="flex justify-between p-3 bg-white/10 rounded-lg"><span class="text-white">wp_title</span><span class="text-white/60">Titre de la page</span></div>
                     </div>
                 </div>
             </div>
@@ -531,81 +513,63 @@ html { scroll-behavior: smooth; }
 <!-- Slide 6: Shortcodes — Introduction -->
 <section id="slide-6" class="slide flex items-center bg-slate-900 py-20">
     <div class="max-w-6xl mx-auto px-6 w-full">
-        <span class="text-wp font-mono text-base mb-4 block">05 / Shortcodes</span>
+        <div class="flex items-center gap-3 mb-4">
+            <span class="text-wp font-mono text-base">05 / Shortcodes</span>
+            <a href="https://divtec.gitbook.io/dev-web/creer-des-plugins/creer-un-shortcode-wordpress" target="_blank" class="resource-link">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                Cours
+            </a>
+        </div>
         <h2 class="text-4xl md:text-5xl font-bold mb-8">Créer un <span class="text-wp">shortcode</span></h2>
-
         <div class="grid md:grid-cols-2 gap-12 items-start">
             <div>
-                <p class="text-lg text-slate-300 mb-6 leading-relaxed">
-                    WordPress interdit l'ajout de <strong class="text-white">PHP</strong> directement dans les articles pour des raisons de <strong class="text-wpOrange">sécurité</strong>.
-                </p>
-                <p class="text-lg text-slate-300 mb-6 leading-relaxed">
-                    Les shortcodes sont des <strong class="text-white">macros</strong> qui permettent d'injecter du contenu dynamique dans les pages et articles.
-                </p>
-
+                <p class="text-lg text-slate-300 mb-6 leading-relaxed">WordPress interdit l'ajout de <strong class="text-white">PHP</strong> directement dans les articles pour des raisons de <strong class="text-wpOrange">sécurité</strong>.</p>
+                <p class="text-lg text-slate-300 mb-6 leading-relaxed">Les shortcodes sont des <strong class="text-white">macros</strong> qui permettent d'injecter du contenu dynamique dans les pages et articles.</p>
                 <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700 mb-6">
                     <h3 class="text-lg font-bold mb-3 text-wp">Syntaxe</h3>
                     <p class="text-slate-300 text-sm mb-4">Comme des balises HTML, mais avec des <strong class="text-white">crochets [ ]</strong> au lieu de chevrons &lt; &gt;</p>
                     <div class="space-y-3">
-                        <div class="flex items-center gap-3 p-3 bg-slate-700/30 rounded-lg">
-                            <span class="text-slate-400 font-mono text-sm">HTML</span>
-                            <code class="text-slate-300 font-mono text-sm">&lt;img src="photo.jpg" /&gt;</code>
-                        </div>
-                        <div class="flex items-center gap-3 p-3 bg-wp/10 rounded-lg">
-                            <span class="text-wp font-mono text-sm">WP</span>
-                            <code class="text-wp font-mono text-sm">[gallerie id="127" col="3"]</code>
-                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-slate-700/30 rounded-lg"><span class="text-slate-400 font-mono text-sm">HTML</span><code class="text-slate-300 font-mono text-sm">&lt;img src="photo.jpg" /&gt;</code></div>
+                        <div class="flex items-center gap-3 p-3 bg-wp/10 rounded-lg"><span class="text-wp font-mono text-sm">WP</span><code class="text-wp font-mono text-sm">[gallerie id="127" col="3"]</code></div>
                     </div>
                 </div>
-
                 <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700">
                     <h3 class="text-lg font-bold mb-3">add_shortcode( $tag, $callback )</h3>
                     <div class="space-y-3">
-                        <div class="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg">
-                            <span class="text-wp font-mono font-bold">$tag</span>
-                            <p class="text-sm text-slate-300">Nom du shortcode (ex : <code class="text-wp">'yoda'</code>)</p>
-                        </div>
-                        <div class="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg">
-                            <span class="text-wp font-mono font-bold">$callback</span>
-                            <p class="text-sm text-slate-300">Fonction qui <strong class="text-white">retourne</strong> le HTML à afficher</p>
-                        </div>
+                        <div class="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg"><span class="text-wp font-mono font-bold">$tag</span><p class="text-sm text-slate-300">Nom du shortcode (ex : <code class="text-wp">'yoda'</code>)</p></div>
+                        <div class="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg"><span class="text-wp font-mono font-bold">$callback</span><p class="text-sm text-slate-300">Fonction qui <strong class="text-white">retourne</strong> le HTML à afficher</p></div>
                     </div>
                 </div>
             </div>
-
             <div class="space-y-6">
                 <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
                     <p class="text-sm text-slate-300 mb-3 font-mono">Exemple — Shortcode [yoda]</p>
-                    <div class="code-block rounded-xl p-4 font-mono text-sm overflow-x-auto">
-                        <code>
-                            <span class="keyword">function</span> <span class="function">mon_plugin_yoda</span>() {<br>
-                            &nbsp;&nbsp;<span class="keyword">return</span> <span class="string">'&lt;blockquote&gt;</span><br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="string">Que la force soit avec toi</span><br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="string">jeune padawan !</span><br>
-                            &nbsp;&nbsp;<span class="string">&lt;/blockquote&gt;'</span>;<br>
-                            }<br><br>
-                            <span class="function">add_shortcode</span>(<span class="string">'yoda'</span>,<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'mon_plugin_yoda'</span>);
-                        </code>
+                    <div class="code-block rounded-xl p-4 pr-20 font-mono text-sm overflow-x-auto" data-code="function mon_plugin_yoda() {
+    return '&lt;blockquote&gt;Que la force soit avec toi jeune padawan !&lt;/blockquote&gt;';
+}
+
+add_shortcode('yoda', 'mon_plugin_yoda');">
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            Copier
+                        </button>
+                        <code><span class="keyword">function</span> <span class="function">mon_plugin_yoda</span>() {<br>&nbsp;&nbsp;<span class="keyword">return</span> <span class="string">'&lt;blockquote&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">Que la force soit avec toi</span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">jeune padawan !</span><br>&nbsp;&nbsp;<span class="string">&lt;/blockquote&gt;'</span>;<br>}<br><br><span class="function">add_shortcode</span>(<span class="string">'yoda'</span>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'mon_plugin_yoda'</span>);</code>
                     </div>
                 </div>
-
                 <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
-                    <p class="text-sm text-slate-300 mb-3 font-mono">Utilisation dans un article</p>
+                    <p class="text-sm text-slate-300 mb-3 font-mono">Utilisation et résultat</p>
                     <div class="bg-white/5 p-4 rounded-xl">
-                        <p class="text-slate-300 mb-2">Dans l'éditeur WordPress :</p>
+                        <p class="text-slate-300 mb-2">Dans l'éditeur :</p>
                         <div class="bg-white rounded-lg p-4 text-slate-900 text-sm">
                             <p>Bonjour à tous, voici une citation :</p>
                             <p class="text-wp font-bold mt-2">[yoda]</p>
-                            <p class="mt-2">La suite de mon article...</p>
                         </div>
                     </div>
                     <div class="mt-4">
-                        <p class="text-sm text-slate-300 mb-2">Résultat affiché :</p>
+                        <p class="text-sm text-slate-300 mb-2">Résultat :</p>
                         <div class="bg-white rounded-lg p-4 text-slate-900 text-sm">
                             <p>Bonjour à tous, voici une citation :</p>
                             <blockquote class="border-l-4 border-wp pl-4 my-2 italic text-slate-600">Que la force soit avec toi jeune padawan !</blockquote>
-                            <p>La suite de mon article...</p>
                         </div>
                     </div>
                 </div>
@@ -617,81 +581,60 @@ html { scroll-behavior: smooth; }
 <!-- Slide 7: Shortcodes avancés -->
 <section id="slide-7" class="slide flex items-center bg-slate-800 py-20">
     <div class="max-w-6xl mx-auto px-6 w-full">
-        <span class="text-wp font-mono text-base mb-4 block">06 / Shortcodes avancés</span>
+        <div class="flex items-center gap-3 mb-4">
+            <span class="text-wp font-mono text-base">06 / Shortcodes avancés</span>
+            <a href="https://divtec.gitbook.io/dev-web/creer-des-plugins/enclosing-shortcodes-et-attributs" target="_blank" class="resource-link">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                Cours
+            </a>
+        </div>
         <h2 class="text-4xl md:text-5xl font-bold mb-8"><span class="text-wp">Enclosing</span> shortcodes et attributs</h2>
-
         <div class="grid md:grid-cols-2 gap-12 items-start">
             <div>
-                <p class="text-lg text-slate-300 mb-6 leading-relaxed">
-                    Les <strong class="text-white">enclosing shortcodes</strong> entourent du contenu pour le traiter, comme les balises HTML.
-                </p>
-
+                <p class="text-lg text-slate-300 mb-6 leading-relaxed">Les <strong class="text-white">enclosing shortcodes</strong> entourent du contenu pour le traiter, comme les balises HTML.</p>
                 <div class="bg-slate-900/50 p-6 rounded-xl border border-slate-700 mb-6">
                     <h3 class="text-lg font-bold mb-3">3 paramètres du callback</h3>
                     <div class="space-y-3">
-                        <div class="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg">
-                            <span class="text-wp font-mono font-bold text-sm">$atts</span>
-                            <p class="text-sm text-slate-300">Tableau des attributs du shortcode</p>
-                        </div>
-                        <div class="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg">
-                            <span class="text-wp font-mono font-bold text-sm">$content</span>
-                            <p class="text-sm text-slate-300">Contenu entre les balises ouvrante et fermante</p>
-                        </div>
-                        <div class="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg">
-                            <span class="text-wp font-mono font-bold text-sm">$tag</span>
-                            <p class="text-sm text-slate-300">Nom du shortcode utilisé</p>
-                        </div>
+                        <div class="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg"><span class="text-wp font-mono font-bold text-sm">$atts</span><p class="text-sm text-slate-300">Tableau des attributs du shortcode</p></div>
+                        <div class="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg"><span class="text-wp font-mono font-bold text-sm">$content</span><p class="text-sm text-slate-300">Contenu entre les balises ouvrante et fermante</p></div>
+                        <div class="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg"><span class="text-wp font-mono font-bold text-sm">$tag</span><p class="text-sm text-slate-300">Nom du shortcode utilisé</p></div>
                     </div>
                 </div>
-
                 <div class="bg-slate-900/50 p-6 rounded-xl border border-slate-700">
                     <h3 class="text-lg font-bold mb-3">Attributs personnalisés</h3>
-                    <p class="text-slate-300 text-sm mb-3">Les shortcodes acceptent des paramètres de configuration :</p>
+                    <p class="text-slate-300 text-sm mb-3">Les shortcodes acceptent des paramètres :</p>
                     <div class="space-y-2 font-mono text-sm">
-                        <div class="bg-slate-700/30 p-3 rounded-lg">
-                            <span class="text-wp">[vador]</span><span class="text-slate-300"> → blockquote (défaut)</span>
-                        </div>
-                        <div class="bg-slate-700/30 p-3 rounded-lg">
-                            <span class="text-wp">[vador tag="div"]</span><span class="text-slate-300"> → div</span>
-                        </div>
+                        <div class="bg-slate-700/30 p-3 rounded-lg"><span class="text-wp">[vador]</span><span class="text-slate-300"> → blockquote (défaut)</span></div>
+                        <div class="bg-slate-700/30 p-3 rounded-lg"><span class="text-wp">[vador tag="div"]</span><span class="text-slate-300"> → div</span></div>
                     </div>
                 </div>
             </div>
-
             <div class="space-y-6">
                 <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
                     <p class="text-sm text-slate-300 mb-3 font-mono">Exemple — Shortcode [vador]</p>
-                    <div class="code-block rounded-xl p-4 font-mono text-sm overflow-x-auto">
-                        <code>
-                            <span class="keyword">function</span> <span class="function">mon_plugin_vador</span>(<br>
-                            &nbsp;&nbsp;<span class="variable">$atts</span>, <span class="variable">$content</span>, <span class="variable">$tag</span><br>
-                            ) {<br>
-                            &nbsp;&nbsp;<span class="variable">$atts</span> = <span class="function">shortcode_atts</span>([<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'tag'</span> => <span class="string">'blockquote'</span><br>
-                            &nbsp;&nbsp;], <span class="variable">$atts</span>);<br><br>
-                            &nbsp;&nbsp;<span class="keyword">return</span> <span class="string">"&lt;{<span class="variable">$atts</span>['tag']}&gt;</span><br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="string">{<span class="variable">$content</span>},</span><br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="string">Je suis ton père !</span><br>
-                            &nbsp;&nbsp;<span class="string">&lt;/{<span class="variable">$atts</span>['tag']}&gt;"</span>;<br>
-                            }<br><br>
-                            <span class="function">add_shortcode</span>(<span class="string">'vador'</span>,<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'mon_plugin_vador'</span>);
-                        </code>
+                    <div class="code-block rounded-xl p-4 pr-20 font-mono text-sm overflow-x-auto" data-code="function mon_plugin_vador($atts, $content, $tag) {
+    $atts = shortcode_atts([
+        'tag' =&gt; 'blockquote'
+    ], $atts);
+
+    return &quot;&lt;{$atts['tag']}&gt;{$content}, Je suis ton père !&lt;/{$atts['tag']}&gt;&quot;;
+}
+
+add_shortcode('vador', 'mon_plugin_vador');">
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            Copier
+                        </button>
+                        <code><span class="keyword">function</span> <span class="function">mon_plugin_vador</span>(<br>&nbsp;&nbsp;<span class="variable">$atts</span>, <span class="variable">$content</span>, <span class="variable">$tag</span><br>) {<br>&nbsp;&nbsp;<span class="variable">$atts</span> = <span class="function">shortcode_atts</span>([<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'tag'</span> =&gt; <span class="string">'blockquote'</span><br>&nbsp;&nbsp;], <span class="variable">$atts</span>);<br><br>&nbsp;&nbsp;<span class="keyword">return</span> <span class="string">"&lt;{<span class="variable">$atts</span>['tag']}&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">{<span class="variable">$content</span>},</span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">Je suis ton père !</span><br>&nbsp;&nbsp;<span class="string">&lt;/{<span class="variable">$atts</span>['tag']}&gt;"</span>;<br>}<br><br><span class="function">add_shortcode</span>(<span class="string">'vador'</span>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'mon_plugin_vador'</span>);</code>
                     </div>
                 </div>
-
                 <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
                     <p class="text-sm text-slate-300 mb-3 font-mono">Utilisation et résultat</p>
                     <div class="space-y-3">
-                        <div class="bg-slate-700/30 p-3 rounded-lg font-mono text-sm">
-                            <span class="text-wp">[vador]</span><span class="text-white">Jean-Marc</span><span class="text-wp">[/vador]</span>
-                        </div>
-                        <div class="bg-white rounded-lg p-3 text-slate-900 text-sm">
-                            <blockquote class="border-l-4 border-red-500 pl-3 italic">Jean-Marc, Je suis ton père !</blockquote>
-                        </div>
+                        <div class="bg-slate-700/30 p-3 rounded-lg font-mono text-sm"><span class="text-wp">[vador]</span><span class="text-white">Jean-Marc</span><span class="text-wp">[/vador]</span></div>
+                        <div class="bg-white rounded-lg p-3 text-slate-900 text-sm"><blockquote class="border-l-4 border-red-500 pl-3 italic">Jean-Marc, Je suis ton père !</blockquote></div>
                     </div>
                 </div>
-
                 <div class="bg-wp/10 border border-wp/30 p-4 rounded-xl">
                     <p class="text-wp font-medium">💡 do_shortcode()</p>
                     <p class="text-slate-300 text-sm mt-1">Permet d'exécuter un shortcode directement en PHP, utile pour imbriquer des shortcodes.</p>
@@ -704,104 +647,65 @@ html { scroll-behavior: smooth; }
 <!-- Slide 8: Exercice shortcode ico -->
 <section id="slide-8" class="slide flex items-center bg-slate-900 py-20">
     <div class="max-w-6xl mx-auto px-6 w-full">
-        <span class="text-wp font-mono text-base mb-4 block">07 / Exercice</span>
+        <div class="flex items-center gap-3 mb-4">
+            <span class="text-wp font-mono text-base">07 / Exercice</span>
+            <a href="https://divtec.gitbook.io/dev-web/creer-des-plugins/exercice-shortcode-ico" target="_blank" class="resource-link">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                Énoncé complet
+            </a>
+        </div>
         <h2 class="text-4xl md:text-5xl font-bold mb-8">Shortcode <span class="text-wp">[ico]</span></h2>
-
         <div class="grid md:grid-cols-2 gap-12 items-start">
             <div>
-                <p class="text-lg text-slate-300 mb-6 leading-relaxed">
-                    Créer un shortcode qui permet d'insérer rapidement des <strong class="text-white">icônes PNG</strong> dans une page ou un article.
-                </p>
-
+                <p class="text-lg text-slate-300 mb-6 leading-relaxed">Créer un shortcode qui permet d'insérer rapidement des <strong class="text-white">icônes PNG</strong> dans une page ou un article.</p>
                 <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700 mb-6">
                     <h3 class="text-lg font-bold mb-4">Cahier des charges</h3>
                     <div class="space-y-3">
-                        <div class="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg">
-                            <span class="text-wp font-bold">1</span>
-                            <p class="text-sm text-slate-300">Récupérer le <strong class="text-white">nom de l'image</strong> saisi entre les balises et ajouter <code class="text-wp font-mono">.png</code></p>
-                        </div>
-                        <div class="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg">
-                            <span class="text-wp font-bold">2</span>
-                            <p class="text-sm text-slate-300">Utiliser <code class="text-wp font-mono">plugin_url()</code> pour obtenir le chemin vers les images du plugin</p>
-                        </div>
-                        <div class="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg">
-                            <span class="text-wp font-bold">3</span>
-                            <p class="text-sm text-slate-300">Retourner une chaîne <strong class="text-white">vide</strong> si l'image n'existe pas</p>
-                        </div>
+                        <div class="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg"><span class="text-wp font-bold">1</span><p class="text-sm text-slate-300">Récupérer le <strong class="text-white">nom de l'image</strong> saisi entre les balises et ajouter <code class="text-wp font-mono">.png</code></p></div>
+                        <div class="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg"><span class="text-wp font-bold">2</span><p class="text-sm text-slate-300">Utiliser <code class="text-wp font-mono">plugin_url()</code> pour obtenir le chemin vers les images du plugin</p></div>
+                        <div class="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg"><span class="text-wp font-bold">3</span><p class="text-sm text-slate-300">Retourner une chaîne <strong class="text-white">vide</strong> si l'image n'existe pas</p></div>
                     </div>
                 </div>
-
                 <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700">
                     <h3 class="text-lg font-bold mb-3">Attributs par défaut</h3>
                     <div class="space-y-2 font-mono text-sm">
-                        <div class="flex justify-between p-3 bg-slate-700/30 rounded-lg">
-                            <span class="text-wp">color</span>
-                            <span class="text-slate-300">'black'</span>
-                        </div>
-                        <div class="flex justify-between p-3 bg-slate-700/30 rounded-lg">
-                            <span class="text-wp">padding</span>
-                            <span class="text-slate-300">'9px'</span>
-                        </div>
-                        <div class="flex justify-between p-3 bg-slate-700/30 rounded-lg">
-                            <span class="text-wp">radius</span>
-                            <span class="text-slate-300">'100%'</span>
-                        </div>
+                        <div class="flex justify-between p-3 bg-slate-700/30 rounded-lg"><span class="text-wp">color</span><span class="text-slate-300">'black'</span></div>
+                        <div class="flex justify-between p-3 bg-slate-700/30 rounded-lg"><span class="text-wp">padding</span><span class="text-slate-300">'9px'</span></div>
+                        <div class="flex justify-between p-3 bg-slate-700/30 rounded-lg"><span class="text-wp">radius</span><span class="text-slate-300">'100%'</span></div>
                     </div>
                 </div>
             </div>
-
             <div class="space-y-6">
                 <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
                     <p class="text-sm text-slate-300 mb-3 font-mono">Utilisation dans un article</p>
                     <div class="space-y-2 font-mono text-sm">
-                        <div class="bg-slate-700/30 p-3 rounded-lg">
-                            <span class="text-wp">[ico]</span><span class="text-white">home</span><span class="text-wp">[/ico]</span>
-                        </div>
-                        <div class="bg-slate-700/30 p-3 rounded-lg">
-                            <span class="text-wp">[ico color="red"]</span><span class="text-white">star</span><span class="text-wp">[/ico]</span>
-                        </div>
-                        <div class="bg-slate-700/30 p-3 rounded-lg">
-                            <span class="text-wp">[ico color="blue" padding="15px"]</span><span class="text-white">user</span><span class="text-wp">[/ico]</span>
-                        </div>
+                        <div class="bg-slate-700/30 p-3 rounded-lg"><span class="text-wp">[ico]</span><span class="text-white">home</span><span class="text-wp">[/ico]</span></div>
+                        <div class="bg-slate-700/30 p-3 rounded-lg"><span class="text-wp">[ico color="red"]</span><span class="text-white">star</span><span class="text-wp">[/ico]</span></div>
+                        <div class="bg-slate-700/30 p-3 rounded-lg"><span class="text-wp">[ico color="blue" padding="15px"]</span><span class="text-white">user</span><span class="text-wp">[/ico]</span></div>
                     </div>
                 </div>
-
                 <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
                     <p class="text-sm text-slate-300 mb-3 font-mono">HTML généré</p>
-                    <div class="code-block rounded-xl p-4 font-mono text-sm overflow-x-auto">
-                        <code>
-                            <span class="tag">&lt;img</span><br>
-                            &nbsp;&nbsp;<span class="attr">src</span>=<span class="value">"...plugins/ico/img/home.png"</span><br>
-                            &nbsp;&nbsp;<span class="attr">alt</span>=<span class="value">"home"</span><br>
-                            &nbsp;&nbsp;<span class="attr">style</span>=<span class="value">"</span><br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="value">background-color: black;</span><br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="value">padding: 9px;</span><br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="value">border-radius: 100%;</span><br>
-                            &nbsp;&nbsp;<span class="value">"</span><br>
-                            <span class="tag">/&gt;</span>
-                        </code>
+                    <div class="code-block rounded-xl p-4 pr-20 font-mono text-sm overflow-x-auto" data-code='&lt;img
+  src="...plugins/ico/img/home.png"
+  alt="home"
+  style="
+    background-color: black;
+    padding: 9px;
+    border-radius: 100%;
+  "
+/&gt;'>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            Copier
+                        </button>
+                        <code><span class="tag">&lt;img</span><br>&nbsp;&nbsp;<span class="attr">src</span>=<span class="value">"...plugins/ico/img/home.png"</span><br>&nbsp;&nbsp;<span class="attr">alt</span>=<span class="value">"home"</span><br>&nbsp;&nbsp;<span class="attr">style</span>=<span class="value">"</span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="value">background-color: black;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="value">padding: 9px;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="value">border-radius: 100%;</span><br>&nbsp;&nbsp;<span class="value">"</span><br><span class="tag">/&gt;</span></code>
                     </div>
                 </div>
-
                 <div class="grid grid-cols-3 gap-4">
-                    <div class="bg-slate-800/50 p-4 rounded-xl text-center border border-slate-700">
-                        <div class="w-12 h-12 bg-black rounded-full mx-auto mb-2 flex items-center justify-center">
-                            <span class="text-white text-lg">🏠</span>
-                        </div>
-                        <p class="text-xs text-slate-400 font-mono">color="black"</p>
-                    </div>
-                    <div class="bg-slate-800/50 p-4 rounded-xl text-center border border-slate-700">
-                        <div class="w-12 h-12 bg-red-600 rounded-full mx-auto mb-2 flex items-center justify-center">
-                            <span class="text-white text-lg">⭐</span>
-                        </div>
-                        <p class="text-xs text-slate-400 font-mono">color="red"</p>
-                    </div>
-                    <div class="bg-slate-800/50 p-4 rounded-xl text-center border border-slate-700">
-                        <div class="w-12 h-12 bg-blue-600 rounded-full mx-auto mb-2 flex items-center justify-center">
-                            <span class="text-white text-lg">👤</span>
-                        </div>
-                        <p class="text-xs text-slate-400 font-mono">color="blue"</p>
-                    </div>
+                    <div class="bg-slate-800/50 p-4 rounded-xl text-center border border-slate-700"><div class="w-12 h-12 bg-black rounded-full mx-auto mb-2 flex items-center justify-center"><span class="text-white text-lg">🏠</span></div><p class="text-xs text-slate-400 font-mono">color="black"</p></div>
+                    <div class="bg-slate-800/50 p-4 rounded-xl text-center border border-slate-700"><div class="w-12 h-12 bg-red-600 rounded-full mx-auto mb-2 flex items-center justify-center"><span class="text-white text-lg">⭐</span></div><p class="text-xs text-slate-400 font-mono">color="red"</p></div>
+                    <div class="bg-slate-800/50 p-4 rounded-xl text-center border border-slate-700"><div class="w-12 h-12 bg-blue-600 rounded-full mx-auto mb-2 flex items-center justify-center"><span class="text-white text-lg">👤</span></div><p class="text-xs text-slate-400 font-mono">color="blue"</p></div>
                 </div>
             </div>
         </div>
@@ -811,89 +715,84 @@ html { scroll-behavior: smooth; }
 <!-- Slide 9: Shortcodes et bases de données -->
 <section id="slide-9" class="slide flex items-center bg-slate-800 py-20">
     <div class="max-w-6xl mx-auto px-6 w-full">
-        <span class="text-wp font-mono text-base mb-4 block">08 / Base de données</span>
+        <div class="flex items-center gap-3 mb-4">
+            <span class="text-wp font-mono text-base">08 / Base de données</span>
+            <a href="https://divtec.gitbook.io/dev-web/creer-des-plugins/shortcodes-et-bases-de-donnees" target="_blank" class="resource-link">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                Cours
+            </a>
+        </div>
         <h2 class="text-4xl md:text-5xl font-bold mb-8">Shortcodes et <span class="text-wp">BDD</span></h2>
-
         <div class="grid md:grid-cols-2 gap-12 items-start">
             <div>
-                <p class="text-lg text-slate-300 mb-6 leading-relaxed">
-                    Les shortcodes permettent d'intégrer des données provenant de <strong class="text-white">bases de données</strong>, d'<strong class="text-white">API externes</strong> ou de <strong class="text-white">fichiers de données</strong>.
-                </p>
-
+                <p class="text-lg text-slate-300 mb-6 leading-relaxed">Les shortcodes permettent d'intégrer des données provenant de <strong class="text-white">bases de données</strong>, d'<strong class="text-white">API externes</strong> ou de <strong class="text-white">fichiers de données</strong>.</p>
                 <div class="bg-slate-900/50 p-6 rounded-xl border border-slate-700 mb-6">
                     <p class="text-sm text-slate-300 mb-3 font-mono">Structure du plugin gest-cli</p>
-                    <div class="code-block rounded-xl p-4 font-mono text-sm">
-                        <code>
-                            <span class="comment">wp-content/plugins/</span><br>
-                            └── <span class="function">gest-cli/</span><br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;├── <span class="string">gest-cli.php</span>&nbsp;&nbsp;<span class="comment">← principal</span><br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;├── <span class="string">config.php</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← connexion</span><br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;├── <span class="string">db.php</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← PDO</span><br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;└── <span class="string">client.php</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← métier</span>
-                        </code>
-                    </div>
+                    <div class="code-block rounded-xl p-4 font-mono text-sm"><code><span class="comment">wp-content/plugins/</span><br>└── <span class="function">gest-cli/</span><br>&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="string">gest-cli.php</span>&nbsp;&nbsp;<span class="comment">← principal</span><br>&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="string">config.php</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← connexion</span><br>&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="string">db.php</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← PDO</span><br>&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="string">client.php</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← métier</span></code></div>
                 </div>
-
                 <div class="space-y-4">
                     <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700">
-                        <p class="text-sm text-slate-300 mb-2 font-mono">config.php — Constantes de connexion</p>
-                        <div class="code-block rounded-xl p-3 font-mono text-xs overflow-x-auto">
-                            <code>
-                                <span class="keyword">define</span>(<span class="string">'DB_HOST'</span>, <span class="string">'localhost'</span>);<br>
-                                <span class="keyword">define</span>(<span class="string">'DB_NAME'</span>, <span class="string">'ma_base'</span>);<br>
-                                <span class="keyword">define</span>(<span class="string">'DB_CHARSET'</span>, <span class="string">'utf8'</span>);<br>
-                                <span class="keyword">define</span>(<span class="string">'DB_USER'</span>, <span class="string">'user'</span>);<br>
-                                <span class="keyword">define</span>(<span class="string">'DB_PASS'</span>, <span class="string">'****'</span>);
-                            </code>
+                        <p class="text-sm text-slate-300 mb-2 font-mono">config.php</p>
+                        <div class="code-block rounded-xl p-3 pr-20 font-mono text-xs overflow-x-auto" data-code="define('DB_HOST', 'localhost');
+define('DB_NAME', 'ma_base');
+define('DB_CHARSET', 'utf8');
+define('DB_USER', 'user');
+define('DB_PASS', '****');">
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                Copier
+                            </button>
+                            <code><span class="keyword">define</span>(<span class="string">'DB_HOST'</span>, <span class="string">'localhost'</span>);<br><span class="keyword">define</span>(<span class="string">'DB_NAME'</span>, <span class="string">'ma_base'</span>);<br><span class="keyword">define</span>(<span class="string">'DB_CHARSET'</span>, <span class="string">'utf8'</span>);<br><span class="keyword">define</span>(<span class="string">'DB_USER'</span>, <span class="string">'user'</span>);<br><span class="keyword">define</span>(<span class="string">'DB_PASS'</span>, <span class="string">'****'</span>);</code>
                         </div>
                     </div>
-
                     <div class="bg-wpOrange/10 border border-wpOrange/30 p-4 rounded-xl">
                         <p class="text-wpOrange font-medium">⚠️ Sécurité</p>
                         <p class="text-slate-300 text-sm mt-1">Toujours <strong class="text-white">valider, nettoyer et échapper</strong> les données pour prévenir les injections SQL.</p>
                     </div>
                 </div>
             </div>
-
             <div class="space-y-6">
                 <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
                     <p class="text-sm text-slate-300 mb-3 font-mono">db.php — Connexion PDO</p>
-                    <div class="code-block rounded-xl p-4 font-mono text-sm overflow-x-auto">
-                        <code>
-                            <span class="keyword">function</span> <span class="function">getDB</span>() {<br>
-                            &nbsp;&nbsp;<span class="keyword">global</span> <span class="variable">$db</span>;<br>
-                            &nbsp;&nbsp;<span class="keyword">if</span> (<span class="variable">$db</span> === <span class="keyword">null</span>) {<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">$db</span> = <span class="keyword">new</span> <span class="variable">PDO</span>(<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"mysql:host="</span>.DB_HOST.<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">";dbname="</span>.DB_NAME.<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">";charset="</span>.DB_CHARSET,<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DB_USER, DB_PASS<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;);<br>
-                            &nbsp;&nbsp;}<br>
-                            &nbsp;&nbsp;<span class="keyword">return</span> <span class="variable">$db</span>;<br>
-                            }
-                        </code>
+                    <div class="code-block rounded-xl p-4 pr-20 font-mono text-sm overflow-x-auto" data-code="function getDB() {
+    global $db;
+    if ($db === null) {
+        $db = new PDO(
+            &quot;mysql:host=&quot;.DB_HOST.
+            &quot;;dbname=&quot;.DB_NAME.
+            &quot;;charset=&quot;.DB_CHARSET,
+            DB_USER, DB_PASS
+        );
+    }
+    return $db;
+}">
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            Copier
+                        </button>
+                        <code><span class="keyword">function</span> <span class="function">getDB</span>() {<br>&nbsp;&nbsp;<span class="keyword">global</span> <span class="variable">$db</span>;<br>&nbsp;&nbsp;<span class="keyword">if</span> (<span class="variable">$db</span> === <span class="keyword">null</span>) {<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">$db</span> = <span class="keyword">new</span> <span class="variable">PDO</span>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"mysql:host="</span>.DB_HOST.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">";dbname="</span>.DB_NAME.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">";charset="</span>.DB_CHARSET,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DB_USER, DB_PASS<br>&nbsp;&nbsp;&nbsp;&nbsp;);<br>&nbsp;&nbsp;}<br>&nbsp;&nbsp;<span class="keyword">return</span> <span class="variable">$db</span>;<br>}</code>
                     </div>
                 </div>
-
                 <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
                     <p class="text-sm text-slate-300 mb-3 font-mono">gest-cli.php — Shortcode [clients]</p>
-                    <div class="code-block rounded-xl p-4 font-mono text-sm overflow-x-auto">
-                        <code>
-                            <span class="keyword">require_once</span> <span class="function">__DIR__</span>.<span class="string">'/config.php'</span>;<br>
-                            <span class="keyword">require_once</span> <span class="function">__DIR__</span>.<span class="string">'/db.php'</span>;<br>
-                            <span class="keyword">require_once</span> <span class="function">__DIR__</span>.<span class="string">'/client.php'</span>;<br><br>
-                            <span class="keyword">function</span> <span class="function">gest_cli_shortcode</span>(<span class="variable">$atts</span>) {<br>
-                            &nbsp;&nbsp;<span class="variable">$clients</span> = <span class="function">getClient</span>(<span class="variable">$atts</span>);<br>
-                            &nbsp;&nbsp;<span class="comment">// Générer le HTML...</span><br>
-                            &nbsp;&nbsp;<span class="keyword">return</span> <span class="variable">$html</span>;<br>
-                            }<br><br>
-                            <span class="function">add_shortcode</span>(<span class="string">'clients'</span>,<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'gest_cli_shortcode'</span>);
-                        </code>
+                    <div class="code-block rounded-xl p-4 pr-20 font-mono text-sm overflow-x-auto" data-code="require_once __DIR__.'/config.php';
+require_once __DIR__.'/db.php';
+require_once __DIR__.'/client.php';
+
+function gest_cli_shortcode($atts) {
+    $clients = getClient($atts);
+    // Générer le HTML...
+    return $html;
+}
+
+add_shortcode('clients', 'gest_cli_shortcode');">
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            Copier
+                        </button>
+                        <code><span class="keyword">require_once</span> <span class="function">__DIR__</span>.<span class="string">'/config.php'</span>;<br><span class="keyword">require_once</span> <span class="function">__DIR__</span>.<span class="string">'/db.php'</span>;<br><span class="keyword">require_once</span> <span class="function">__DIR__</span>.<span class="string">'/client.php'</span>;<br><br><span class="keyword">function</span> <span class="function">gest_cli_shortcode</span>(<span class="variable">$atts</span>) {<br>&nbsp;&nbsp;<span class="variable">$clients</span> = <span class="function">getClient</span>(<span class="variable">$atts</span>);<br>&nbsp;&nbsp;<span class="comment">// Générer le HTML...</span><br>&nbsp;&nbsp;<span class="keyword">return</span> <span class="variable">$html</span>;<br>}<br><br><span class="function">add_shortcode</span>(<span class="string">'clients'</span>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'gest_cli_shortcode'</span>);</code>
                     </div>
                 </div>
-
                 <div class="bg-wp/10 border border-wp/30 p-4 rounded-xl">
                     <p class="text-wp font-medium">💡 Chemins sécurisés</p>
                     <p class="text-slate-300 text-sm mt-1">Toujours utiliser <code class="text-wp font-mono">__DIR__</code> pour les chemins complets lors des <code class="text-wp font-mono">require_once</code>.</p>
@@ -908,58 +807,47 @@ html { scroll-behavior: smooth; }
     <div class="max-w-6xl mx-auto px-6 w-full text-center">
         <span class="font-mono text-sm mb-4 block text-white/80">09 / Résumé</span>
         <h2 class="text-4xl md:text-5xl font-bold mb-12">Ce qu'il faut retenir</h2>
-
         <div class="grid md:grid-cols-4 gap-4 mb-12">
-            <div class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
-                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span class="text-2xl">🔌</span>
-                </div>
-                <h3 class="font-bold mb-2">Plugin</h3>
-                <p class="text-white/80 text-sm">Un dossier + un fichier PHP avec un DocBlock</p>
-            </div>
-
-            <div class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
-                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span class="text-2xl">🪝</span>
-                </div>
-                <h3 class="font-bold mb-2">Hooks</h3>
-                <p class="text-white/80 text-sm">Actions (exécuter) et Filtres (modifier)</p>
-            </div>
-
-            <div class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
-                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span class="text-2xl">📝</span>
-                </div>
-                <h3 class="font-bold mb-2">Shortcodes</h3>
-                <p class="text-white/80 text-sm">Macros [tag] pour du contenu dynamique</p>
-            </div>
-
-            <div class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
-                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span class="text-2xl">🗄️</span>
-                </div>
-                <h3 class="font-bold mb-2">BDD</h3>
-                <p class="text-white/80 text-sm">PDO + shortcodes = données métier dans WP</p>
-            </div>
+            <div class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl"><div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4"><span class="text-2xl">🔌</span></div><h3 class="font-bold mb-2">Plugin</h3><p class="text-white/80 text-sm">Un dossier + un fichier PHP avec un DocBlock</p></div>
+            <div class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl"><div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4"><span class="text-2xl">🪝</span></div><h3 class="font-bold mb-2">Hooks</h3><p class="text-white/80 text-sm">Actions (exécuter) et Filtres (modifier)</p></div>
+            <div class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl"><div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4"><span class="text-2xl">📝</span></div><h3 class="font-bold mb-2">Shortcodes</h3><p class="text-white/80 text-sm">Macros [tag] pour du contenu dynamique</p></div>
+            <div class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl"><div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4"><span class="text-2xl">🗄️</span></div><h3 class="font-bold mb-2">BDD</h3><p class="text-white/80 text-sm">PDO + shortcodes = données métier dans WP</p></div>
         </div>
-
         <div class="bg-white/20 backdrop-blur-sm p-8 rounded-2xl max-w-3xl mx-auto mb-8">
             <h3 class="text-2xl font-bold mb-4">Objectif du cours</h3>
             <p class="text-white/90 text-lg">Injecter des <strong>données métier</strong> dans WordPress au travers d'un plugin personnalisé (API externe, base de données tierce, fichier de données).</p>
         </div>
-
+        <div class="mb-6"><p class="text-white/60 text-sm mb-3 uppercase tracking-wider font-medium">Ressources du cours</p></div>
         <div class="grid md:grid-cols-4 gap-3 max-w-4xl mx-auto">
-            <a href="https://divtec.gitbook.io/dev-web/creer-des-plugins/introduction-aux-plugins-wordpress" target="_blank" class="px-4 py-3 bg-white/20 font-medium rounded-xl hover:bg-white/30 transition-colors text-sm">
+            <a href="https://divtec.gitbook.io/dev-web/creer-des-plugins/introduction-aux-plugins-wordpress" target="_blank" class="px-4 py-3 bg-white/20 font-medium rounded-xl hover:bg-white/30 transition-colors text-sm flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                 Introduction
             </a>
-            <a href="https://divtec.gitbook.io/dev-web/creer-des-plugins/creer-un-plugin-wordpress" target="_blank" class="px-4 py-3 bg-white/20 font-medium rounded-xl hover:bg-white/30 transition-colors text-sm">
+            <a href="https://divtec.gitbook.io/dev-web/creer-des-plugins/creer-un-plugin-wordpress" target="_blank" class="px-4 py-3 bg-white/20 font-medium rounded-xl hover:bg-white/30 transition-colors text-sm flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                 Créer un plugin
             </a>
-            <a href="https://divtec.gitbook.io/dev-web/creer-des-plugins/hooks-actions-et-filtres" target="_blank" class="px-4 py-3 bg-white/20 font-medium rounded-xl hover:bg-white/30 transition-colors text-sm">
+            <a href="https://divtec.gitbook.io/dev-web/creer-des-plugins/hooks-actions-et-filtres" target="_blank" class="px-4 py-3 bg-white/20 font-medium rounded-xl hover:bg-white/30 transition-colors text-sm flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                 Hooks
             </a>
-            <a href="https://divtec.gitbook.io/dev-web/creer-des-plugins/creer-un-shortcode-wordpress" target="_blank" class="px-4 py-3 bg-white/20 font-medium rounded-xl hover:bg-white/30 transition-colors text-sm">
+            <a href="https://divtec.gitbook.io/dev-web/creer-des-plugins/creer-un-shortcode-wordpress" target="_blank" class="px-4 py-3 bg-white/20 font-medium rounded-xl hover:bg-white/30 transition-colors text-sm flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                 Shortcodes
+            </a>
+        </div>
+        <div class="grid md:grid-cols-3 gap-3 max-w-3xl mx-auto mt-3">
+            <a href="https://divtec.gitbook.io/dev-web/creer-des-plugins/enclosing-shortcodes-et-attributs" target="_blank" class="px-4 py-3 bg-white/20 font-medium rounded-xl hover:bg-white/30 transition-colors text-sm flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                Enclosing &amp; attributs
+            </a>
+            <a href="https://divtec.gitbook.io/dev-web/creer-des-plugins/exercice-shortcode-ico" target="_blank" class="px-4 py-3 bg-white font-medium rounded-xl hover:bg-white/90 transition-colors text-sm text-wpDark flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                Exercice [ico]
+            </a>
+            <a href="https://divtec.gitbook.io/dev-web/creer-des-plugins/shortcodes-et-bases-de-donnees" target="_blank" class="px-4 py-3 bg-white/20 font-medium rounded-xl hover:bg-white/30 transition-colors text-sm flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                Shortcodes &amp; BDD
             </a>
         </div>
     </div>
@@ -968,32 +856,76 @@ html { scroll-behavior: smooth; }
 <!-- Footer -->
 <footer class="bg-slate-900 border-t border-slate-800 py-8">
     <div class="max-w-6xl mx-auto px-6 text-center">
-        <p class="text-slate-400">
-            Cours C741 — WordPress — ESIG
-        </p>
-        <p class="text-slate-500 text-sm mt-2">
-            <kbd class="px-2 py-1 bg-slate-700 rounded text-slate-300 font-mono text-xs">C</kbd> Mode contraste élevé
-        </p>
+        <p class="text-slate-400">Cours C741 — WordPress — ESIG</p>
+        <p class="text-slate-500 text-sm mt-2"><kbd class="px-2 py-1 bg-slate-700 rounded text-slate-300 font-mono text-xs">C</kbd> Mode contraste élevé</p>
     </div>
 </footer>
 
 <!-- Indicateur mode contraste -->
 <div class="contrast-indicator">
-    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-    </svg>
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
     Contraste élevé (C)
 </div>
 
-<script>
-// Navigation state
-const sections = document.querySelectorAll('.slide');
-const navDots = document.querySelectorAll('.nav-dot');
-let currentSlide = 0;
+<!-- Toast notification -->
+<div id="toast" class="fixed bottom-6 right-6 px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-lg shadow-lg z-[9999] opacity-0 translate-y-2 transition-all duration-300 pointer-events-none">
+    Code copié !
+</div>
 
-// Update navigation dots
+<script>
+// ============================================
+// Copier le code
+// ============================================
+function copyCode(btn) {
+    const codeBlock = btn.closest('[data-code]');
+    if (!codeBlock) return;
+
+    // Décoder les entités HTML via un element temporaire
+    const temp = document.createElement('textarea');
+    temp.textContent = codeBlock.getAttribute('data-code');
+    const rawAttr = codeBlock.getAttribute('data-code');
+
+    // Décoder les entités HTML
+    const decoder = document.createElement('div');
+    decoder.appendChild(document.createTextNode('')); // safe
+    // Use DOMParser for safe HTML entity decoding
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(rawAttr, 'text/html');
+    const code = doc.body.textContent || '';
+
+    navigator.clipboard.writeText(code).then(function() {
+        btn.classList.add('copied');
+        var checkSvg = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+        btn.textContent = '';
+        btn.insertAdjacentHTML('afterbegin', checkSvg + ' Copié !');
+
+        var toast = document.getElementById('toast');
+        toast.classList.remove('opacity-0', 'translate-y-2');
+        toast.classList.add('opacity-100', 'translate-y-0');
+
+        setTimeout(function() {
+            toast.classList.add('opacity-0', 'translate-y-2');
+            toast.classList.remove('opacity-100', 'translate-y-0');
+        }, 1500);
+
+        setTimeout(function() {
+            btn.classList.remove('copied');
+            var copySvg = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>';
+            btn.textContent = '';
+            btn.insertAdjacentHTML('afterbegin', copySvg + ' Copier');
+        }, 2000);
+    });
+}
+
+// ============================================
+// Navigation
+// ============================================
+var sections = document.querySelectorAll('.slide');
+var navDots = document.querySelectorAll('.nav-dot');
+var currentSlide = 0;
+
 function updateNavDots(index) {
-    navDots.forEach((dot, i) => {
+    navDots.forEach(function(dot, i) {
         dot.classList.remove('active', 'bg-wp', 'bg-wpLight');
         dot.classList.add('bg-white/40');
         if (i === index) {
@@ -1003,7 +935,6 @@ function updateNavDots(index) {
     });
 }
 
-// Go to specific slide
 function goToSlide(index) {
     if (index >= 0 && index < sections.length) {
         currentSlide = index;
@@ -1012,103 +943,65 @@ function goToSlide(index) {
     }
 }
 
-// Next slide
 function nextSlide() {
-    if (currentSlide < sections.length - 1) {
-        goToSlide(currentSlide + 1);
-    }
+    if (currentSlide < sections.length - 1) goToSlide(currentSlide + 1);
 }
 
-// Previous slide
 function prevSlide() {
-    if (currentSlide > 0) {
-        goToSlide(currentSlide - 1);
-    }
+    if (currentSlide > 0) goToSlide(currentSlide - 1);
 }
 
-// Intersection Observer to track current slide
-const observerOptions = {
-    root: null,
-    rootMargin: '-40% 0px -40% 0px',
-    threshold: 0
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
+var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
         if (entry.isIntersecting) {
-            const index = Array.from(sections).indexOf(entry.target);
+            var index = Array.from(sections).indexOf(entry.target);
             if (index !== -1) {
                 currentSlide = index;
                 updateNavDots(index);
             }
         }
     });
-}, observerOptions);
+}, { root: null, rootMargin: '-40% 0px -40% 0px', threshold: 0 });
 
-sections.forEach(section => observer.observe(section));
+sections.forEach(function(section) { observer.observe(section); });
 
-// Keyboard navigation
-document.addEventListener('keydown', (e) => {
-    // Next: ArrowDown, ArrowRight, Space, Enter
+document.addEventListener('keydown', function(e) {
     if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
-        e.preventDefault();
-        nextSlide();
-    }
-    // Previous: ArrowUp, ArrowLeft
-    else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
-        e.preventDefault();
-        prevSlide();
-    }
-    // Home: go to first slide
-    else if (e.key === 'Home') {
-        e.preventDefault();
-        goToSlide(0);
-    }
-    // End: go to last slide
-    else if (e.key === 'End') {
-        e.preventDefault();
-        goToSlide(sections.length - 1);
+        e.preventDefault(); nextSlide();
+    } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+        e.preventDefault(); prevSlide();
+    } else if (e.key === 'Home') {
+        e.preventDefault(); goToSlide(0);
+    } else if (e.key === 'End') {
+        e.preventDefault(); goToSlide(sections.length - 1);
     }
 });
 
-// Click on nav dots
-navDots.forEach((dot, index) => {
-    dot.addEventListener('click', (e) => {
-        e.preventDefault();
-        goToSlide(index);
+navDots.forEach(function(dot, index) {
+    dot.addEventListener('click', function(e) {
+        e.preventDefault(); goToSlide(index);
     });
 });
 
 // ============================================
 // Mode contraste élevé
 // ============================================
-
-// Initialiser le mode contraste depuis localStorage
 function initHighContrastMode() {
     if (localStorage.getItem('highContrast') === 'true') {
         document.documentElement.classList.add('high-contrast');
     }
 }
 
-// Basculer le mode contraste
 function toggleHighContrast() {
-    const isActive = document.documentElement.classList.toggle('high-contrast');
+    var isActive = document.documentElement.classList.toggle('high-contrast');
     localStorage.setItem('highContrast', isActive.toString());
 }
 
-// Initialiser au chargement
 initHighContrastMode();
 
-// Ajouter la touche C pour le mode contraste
-document.addEventListener('keydown', (e) => {
-    // Ignorer si focus dans un input
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-        return;
-    }
-    // Toggle avec la touche C
-    if (e.key === 'c' || e.key === 'C') {
-        toggleHighContrast();
-    }
+document.addEventListener('keydown', function(e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === 'c' || e.key === 'C') toggleHighContrast();
 });
 </script>
 </body>
