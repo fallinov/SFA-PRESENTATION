@@ -6,112 +6,228 @@
 <title>SFA Presentations</title>
 <script src="libs/tailwind.js"></script>
 <link rel="stylesheet" href="libs/fonts.css">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+      }
+    }
+  }
+}
+</script>
 <style>
 html { scroll-behavior: smooth; }
-body { font-family: 'Inter', system-ui, sans-serif; }
-.card {
-    transition: all 0.3s ease;
-    border: 1px solid rgba(148, 163, 184, 0.1);
+
+/* Grain texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
-.card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
-    border-color: rgba(96, 165, 250, 0.3);
+
+/* Staggered entrance */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-in {
+  opacity: 0;
+  animation: slideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Card interactions */
+.prez-card {
+  position: relative;
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease;
+}
+.prez-card:hover {
+  transform: translateX(6px);
+  box-shadow: -4px 0 0 var(--accent);
+}
+.prez-card::after {
+  content: '\2192';
+  position: absolute;
+  right: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%) translateX(-8px);
+  opacity: 0;
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  color: var(--accent);
+  font-size: 1.1rem;
+}
+.prez-card:hover::after {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+/* Section accent line */
+.section-line {
+  width: 3px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+/* Section number */
+.section-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  opacity: 0.7;
+}
+
+/* Decorative corner marks */
+.corner-mark::before,
+.corner-mark::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-color: rgba(255,255,255,0.06);
+  border-style: solid;
+}
+.corner-mark::before {
+  top: 0; left: 0;
+  border-width: 1px 0 0 1px;
+}
+.corner-mark::after {
+  bottom: 0; right: 0;
+  border-width: 0 1px 1px 0;
 }
 </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen">
+<body class="bg-[#0a0a0f] text-slate-200 min-h-screen antialiased selection:bg-blue-500/30">
 
-<div class="max-w-4xl mx-auto px-6 py-16">
+<!-- Background gradient -->
+<div class="fixed inset-0 pointer-events-none" style="background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(59,130,246,0.06) 0%, transparent 70%)"></div>
 
-<header class="text-center mb-16">
-    <h1 class="text-4xl font-bold mb-3 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-        SFA Presentations
+<div class="relative max-w-3xl mx-auto px-6 py-20">
+
+  <!-- Header -->
+  <header class="mb-24 animate-in" style="animation-delay: 0s">
+    <div class="flex items-center gap-3 mb-8">
+      <span class="font-mono text-[0.65rem] tracking-[0.2em] uppercase text-slate-500">Steve Fallet</span>
+      <span class="flex-1 h-px bg-slate-800"></span>
+      <span class="font-mono text-[0.65rem] tracking-[0.2em] uppercase text-slate-500">ESIG &middot; CEJEF</span>
+    </div>
+    <h1 class="text-5xl sm:text-6xl font-extrabold tracking-tight leading-[1.05] mb-4">
+      <span class="text-white">Presentations</span>
     </h1>
-    <p class="text-slate-400 text-lg">Sommaire des presentations</p>
-</header>
+    <p class="text-slate-500 text-lg max-w-md leading-relaxed">
+      Supports de cours et presentations institutionnelles.
+      <span class="font-mono text-sm text-slate-600">11 slides decks</span>
+    </p>
+  </header>
 
-<!-- WordPress -->
-<section class="mb-12">
-    <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-500 mb-4 flex items-center gap-2">
-        <span class="w-8 h-px bg-slate-700"></span>
-        WordPress — ESIG 741
-    </h2>
-    <div class="grid gap-3">
-        <a href="wordpress/wordpress-gestion-medias.html" class="card block rounded-lg bg-slate-800/60 px-5 py-4">
-            <span class="font-medium text-slate-200">Gestion des medias</span>
-            <span class="text-slate-500 text-sm ml-2">— WordPress</span>
-        </a>
-        <a href="wordpress/wordpress-plugins.html" class="card block rounded-lg bg-slate-800/60 px-5 py-4">
-            <span class="font-medium text-slate-200">Introduction aux plugins</span>
-            <span class="text-slate-500 text-sm ml-2">— WordPress</span>
-        </a>
+  <!-- 01 — WordPress -->
+  <section class="mb-20 animate-in" style="--accent: #0073aa; animation-delay: 0.08s">
+    <div class="flex items-start gap-5 mb-5">
+      <div class="section-line self-stretch min-h-[2.5rem]"></div>
+      <div>
+        <span class="section-num">01</span>
+        <h2 class="text-sm font-semibold uppercase tracking-[0.15em] text-slate-300">WordPress</h2>
+        <span class="text-xs text-slate-600 font-mono">ESIG 741 &mdash; Atelier CMS</span>
+      </div>
     </div>
-</section>
+    <div class="grid gap-2 pl-[1.65rem]">
+      <a href="wordpress/wordpress-gestion-medias.html" class="prez-card block rounded-md bg-white/[0.03] border border-white/[0.04] px-5 py-3.5 hover:bg-white/[0.06]">
+        <span class="font-medium text-slate-200 text-[0.95rem]">Gestion des medias</span>
+      </a>
+      <a href="wordpress/wordpress-plugins.html" class="prez-card block rounded-md bg-white/[0.03] border border-white/[0.04] px-5 py-3.5 hover:bg-white/[0.06]">
+        <span class="font-medium text-slate-200 text-[0.95rem]">Introduction aux plugins</span>
+      </a>
+    </div>
+  </section>
 
-<!-- DevJS -->
-<section class="mb-12">
-    <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-500 mb-4 flex items-center gap-2">
-        <span class="w-8 h-px bg-slate-700"></span>
-        Developpement JavaScript — ESIG
-    </h2>
-    <div class="grid gap-3">
-        <a href="devjs/js-intro.html" class="card block rounded-lg bg-slate-800/60 px-5 py-4">
-            <span class="font-medium text-slate-200">Introduction a JavaScript</span>
-        </a>
-        <a href="devjs/vue-intro.html" class="card block rounded-lg bg-slate-800/60 px-5 py-4">
-            <span class="font-medium text-slate-200">Introduction a Vue.js et Vuetify</span>
-        </a>
-        <a href="devjs/vue-composants.html" class="card block rounded-lg bg-slate-800/60 px-5 py-4">
-            <span class="font-medium text-slate-200">Composants Vue.js</span>
-            <span class="text-slate-500 text-sm ml-2">— Props, Emits & Slots</span>
-        </a>
-        <a href="devjs/vue-lifecycle-watchers.html" class="card block rounded-lg bg-slate-800/60 px-5 py-4">
-            <span class="font-medium text-slate-200">Cycle de vie & Watchers</span>
-            <span class="text-slate-500 text-sm ml-2">— Vue.js</span>
-        </a>
+  <!-- 02 — JavaScript & Vue.js -->
+  <section class="mb-20 animate-in" style="--accent: #f7df1e; animation-delay: 0.16s">
+    <div class="flex items-start gap-5 mb-5">
+      <div class="section-line self-stretch min-h-[2.5rem]"></div>
+      <div>
+        <span class="section-num">02</span>
+        <h2 class="text-sm font-semibold uppercase tracking-[0.15em] text-slate-300">JavaScript & Vue.js</h2>
+        <span class="text-xs text-slate-600 font-mono">ESIG 122 / 141</span>
+      </div>
     </div>
-</section>
+    <div class="grid gap-2 pl-[1.65rem]">
+      <a href="devjs/js-intro.html" class="prez-card block rounded-md bg-white/[0.03] border border-white/[0.04] px-5 py-3.5 hover:bg-white/[0.06]">
+        <span class="font-medium text-slate-200 text-[0.95rem]">Introduction a JavaScript</span>
+      </a>
+      <a href="devjs/vue-intro.html" class="prez-card block rounded-md bg-white/[0.03] border border-white/[0.04] px-5 py-3.5 hover:bg-white/[0.06]">
+        <span class="font-medium text-slate-200 text-[0.95rem]">Introduction a Vue.js et Vuetify</span>
+      </a>
+      <a href="devjs/vue-composants.html" class="prez-card block rounded-md bg-white/[0.03] border border-white/[0.04] px-5 py-3.5 hover:bg-white/[0.06]">
+        <span class="font-medium text-slate-200 text-[0.95rem]">Composants Vue.js</span>
+        <span class="text-slate-600 text-xs ml-2 font-mono">Props, Emits & Slots</span>
+      </a>
+      <a href="devjs/vue-lifecycle-watchers.html" class="prez-card block rounded-md bg-white/[0.03] border border-white/[0.04] px-5 py-3.5 hover:bg-white/[0.06]">
+        <span class="font-medium text-slate-200 text-[0.95rem]">Cycle de vie & Watchers</span>
+      </a>
+    </div>
+  </section>
 
-<!-- Cours mots de passe -->
-<section class="mb-12">
-    <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-500 mb-4 flex items-center gap-2">
-        <span class="w-8 h-px bg-slate-700"></span>
-        Securite — CEJEF
-    </h2>
-    <div class="grid gap-3">
-        <a href="cours-mots-de-passes/cours-mots-de-passes.html" class="card block rounded-lg bg-slate-800/60 px-5 py-4">
-            <span class="font-medium text-slate-200">ProtonPass</span>
-            <span class="text-slate-500 text-sm ml-2">— Gestionnaire de mots de passe</span>
-        </a>
+  <!-- 03 — Securite -->
+  <section class="mb-20 animate-in" style="--accent: #8b5cf6; animation-delay: 0.24s">
+    <div class="flex items-start gap-5 mb-5">
+      <div class="section-line self-stretch min-h-[2.5rem]"></div>
+      <div>
+        <span class="section-num">03</span>
+        <h2 class="text-sm font-semibold uppercase tracking-[0.15em] text-slate-300">Securite</h2>
+        <span class="text-xs text-slate-600 font-mono">CEJEF &mdash; Formation enseignants</span>
+      </div>
     </div>
-</section>
+    <div class="grid gap-2 pl-[1.65rem]">
+      <a href="cours-mots-de-passes/cours-mots-de-passes.html" class="prez-card block rounded-md bg-white/[0.03] border border-white/[0.04] px-5 py-3.5 hover:bg-white/[0.06]">
+        <span class="font-medium text-slate-200 text-[0.95rem]">ProtonPass</span>
+        <span class="text-slate-600 text-xs ml-2 font-mono">Gestionnaire de mots de passe</span>
+      </a>
+    </div>
+  </section>
 
-<!-- Referentiel logiciels -->
-<section class="mb-12">
-    <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-500 mb-4 flex items-center gap-2">
-        <span class="w-8 h-px bg-slate-700"></span>
-        Referentiel logiciels — CEJEF
-    </h2>
-    <div class="grid gap-3">
-        <a href="referentiel-logiciels/referentiel-logiciels.html" class="card block rounded-lg bg-slate-800/60 px-5 py-4">
-            <span class="font-medium text-slate-200">Referentiel Logiciels</span>
-            <span class="text-slate-500 text-sm ml-2">— GCN 22.01.2026</span>
-        </a>
-        <a href="referentiel-logiciels/referentiel-logiciels-copil.html" class="card block rounded-lg bg-slate-800/60 px-5 py-4">
-            <span class="font-medium text-slate-200">Classification LGPD des logiciels</span>
-            <span class="text-slate-500 text-sm ml-2">— Presentation COPIL</span>
-        </a>
-        <a href="referentiel-logiciels/referentiel-logiciels-sen.html" class="card block rounded-lg bg-slate-800/60 px-5 py-4">
-            <span class="font-medium text-slate-200">Referentiel logiciels</span>
-            <span class="text-slate-500 text-sm ml-2">— Presentation SEN</span>
-        </a>
-        <a href="referentiel-logiciels/site-cejef-copil.html" class="card block rounded-lg bg-slate-800/60 px-5 py-4">
-            <span class="font-medium text-slate-200">Refonte site CEJEF</span>
-            <span class="text-slate-500 text-sm ml-2">— Presentation COPIL</span>
-        </a>
+  <!-- 04 — Referentiel logiciels -->
+  <section class="mb-20 animate-in" style="--accent: #3b82f6; animation-delay: 0.32s">
+    <div class="flex items-start gap-5 mb-5">
+      <div class="section-line self-stretch min-h-[2.5rem]"></div>
+      <div>
+        <span class="section-num">04</span>
+        <h2 class="text-sm font-semibold uppercase tracking-[0.15em] text-slate-300">Referentiel logiciels</h2>
+        <span class="text-xs text-slate-600 font-mono">CEJEF &mdash; GCN / COPIL / SEN</span>
+      </div>
     </div>
-</section>
+    <div class="grid gap-2 pl-[1.65rem]">
+      <a href="referentiel-logiciels/referentiel-logiciels.html" class="prez-card block rounded-md bg-white/[0.03] border border-white/[0.04] px-5 py-3.5 hover:bg-white/[0.06]">
+        <span class="font-medium text-slate-200 text-[0.95rem]">Referentiel Logiciels</span>
+        <span class="text-slate-600 text-xs ml-2 font-mono">GCN 22.01.2026</span>
+      </a>
+      <a href="referentiel-logiciels/referentiel-logiciels-copil.html" class="prez-card block rounded-md bg-white/[0.03] border border-white/[0.04] px-5 py-3.5 hover:bg-white/[0.06]">
+        <span class="font-medium text-slate-200 text-[0.95rem]">Classification LGPD</span>
+        <span class="text-slate-600 text-xs ml-2 font-mono">COPIL</span>
+      </a>
+      <a href="referentiel-logiciels/referentiel-logiciels-sen.html" class="prez-card block rounded-md bg-white/[0.03] border border-white/[0.04] px-5 py-3.5 hover:bg-white/[0.06]">
+        <span class="font-medium text-slate-200 text-[0.95rem]">Referentiel logiciels</span>
+        <span class="text-slate-600 text-xs ml-2 font-mono">SEN</span>
+      </a>
+      <a href="referentiel-logiciels/site-cejef-copil.html" class="prez-card block rounded-md bg-white/[0.03] border border-white/[0.04] px-5 py-3.5 hover:bg-white/[0.06]">
+        <span class="font-medium text-slate-200 text-[0.95rem]">Refonte site CEJEF</span>
+        <span class="text-slate-600 text-xs ml-2 font-mono">COPIL</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="animate-in relative corner-mark pt-10 pb-6 px-4" style="animation-delay: 0.4s">
+    <div class="flex items-center justify-between text-slate-700 font-mono text-[0.65rem] tracking-wider uppercase">
+      <span>SFA-PRESENTATION</span>
+      <span>Self-hosted &middot; Zero CDN</span>
+    </div>
+  </footer>
 
 </div>
 </body>
