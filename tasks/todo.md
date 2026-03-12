@@ -7,7 +7,7 @@
 
 ## Améliorations
 - [ ] Ajouter un bouton retour au sommaire dans chaque présentation
-- [ ] Harmoniser la navigation clavier entre toutes les présentations (certaines utilisent scroll, d'autres flèches)
+- [x] Harmoniser la navigation clavier → `libs/slides.js` unifié (toggle + scroll)
 - [ ] Ajouter un mode impression / export PDF
 
 ## Maintenance

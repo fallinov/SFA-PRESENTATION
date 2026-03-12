@@ -24,10 +24,12 @@ SFA-PRESENTATION/
 ## Conventions
 
 ### Fichiers HTML
-- Un fichier HTML autonome par présentation (tout inline : CSS, JS, contenu)
-- Système de slides : classes `.slide` / `.slide.active` avec navigation clavier
+- Un fichier HTML par présentation, ne contient que le contenu + CSS custom (couleurs, gradients)
+- Système de slides unifié : `libs/slides.js` (navigation, clavier, touch, contraste) + `libs/slides.css`
+- Mode scroll (WordPress) : ajouter `data-nav="scroll"` sur `<body>`
+- Mode toggle (défaut) : `.slide` / `.slide.active`
 - Tailwind CSS local : `libs/tailwind.js`
-- Polices locales : Inter + JetBrains Mono dans `libs/fonts/` (CSS : `libs/fonts.css`)
+- Polices locales : Inter + JetBrains Mono dans `libs/fonts/`
 - Aucun CDN externe — tout est self-hosted
 
 ### Assets
@@ -36,11 +38,13 @@ SFA-PRESENTATION/
 - Depuis un sous-dossier de présentation, référencer avec `../assets/`
 
 ### Librairies (`libs/`)
+- `slides.js` — Moteur de slides unifié (navigation, clavier, touch, contraste, copie code)
+- `slides.css` — Styles communs (slides, animations, dots, coloration syntaxique, contraste)
 - `tailwind.js` — Tailwind CSS (script standalone)
 - `fonts.css` — Déclarations @font-face (latin + latin-ext)
 - `fonts/` — Fichiers woff2 (Inter, JetBrains Mono)
-- Depuis un sous-dossier : `../libs/tailwind.js`, `../libs/fonts.css`
-- Depuis la racine : `libs/tailwind.js`, `libs/fonts.css`
+- Depuis un sous-dossier : `../libs/slides.js`, `../libs/slides.css`, etc.
+- Depuis la racine : `libs/slides.js`, `libs/slides.css`, etc.
 
 ### Organisation
 - Un dossier par projet/cours
@@ -50,10 +54,14 @@ SFA-PRESENTATION/
 ## Ajouter une présentation
 
 1. Placer le HTML dans le dossier projet approprié (ou en créer un nouveau)
-2. Stocker les assets dans `assets/logos/` ou `assets/backgrounds/`
-3. Vérifier les chemins relatifs (`../assets/` depuis un sous-dossier)
-4. Mettre à jour `index.html` (sommaire) avec le lien vers la nouvelle présentation
-5. Commit + push → déploiement automatique sur GitHub Pages
+2. Dans `<head>` : référencer `tailwind.js`, `slides.css`, et optionnellement `fonts.css`
+3. Avant `</body>` : référencer `slides.js`
+4. Ne mettre dans `<style>` que le CSS custom (couleurs, gradients du thème)
+5. Pour le mode scroll : ajouter `data-nav="scroll"` sur `<body>`
+6. Éléments auto-détectés par `slides.js` : `#dots`, `#progress`, `#currentSlide`, `#totalSlides`
+7. Stocker les assets dans `assets/`
+8. Mettre à jour `index.html` (sommaire)
+9. Commit + push → déploiement automatique sur GitHub Pages
 
 ## Projets sources
 
