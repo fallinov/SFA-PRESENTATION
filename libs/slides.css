@@ -349,6 +349,7 @@ body.has-navigated .keyboard-hint { opacity: 0 !important; transition: opacity 0
 /* ============================================
    Mode contraste élevé (touche C)
    ============================================ */
+
 body.high-contrast { background: #fff !important; color: #000 !important; }
 body.high-contrast #contrast-indicator,
 body.high-contrast #contrast-badge { display: block; background: #333; color: #fff; }
@@ -437,3 +438,22 @@ body.high-contrast .keyboard-hint kbd {
   border-color: #999 !important;
   color: #000 !important;
 }
+
+/* Protéger les blocs de code — DOIT rester en dernier pour gagner sur .text-slate-* */
+body.high-contrast .code-block,
+body.high-contrast .code-block * {
+  background-color: #1e1e1e !important;
+  color: #cbd5e1 !important;
+}
+body.high-contrast .code-block .keyword  { color: #d4a0cf !important; }
+body.high-contrast .code-block .string   { color: #daa48e !important; }
+body.high-contrast .code-block .function { color: #dcdcaa !important; }
+body.high-contrast .code-block .comment  { color: #85b86e !important; }
+body.high-contrast .code-block .tag      { color: #74b3e8 !important; }
+body.high-contrast .code-block .attr     { color: #9cdcfe !important; }
+body.high-contrast .code-block .value    { color: #daa48e !important; }
+body.high-contrast .code-block .number   { color: #b5cea8 !important; }
+body.high-contrast .code-block .type     { color: #4ec9b0 !important; }
+body.high-contrast .code-block .variable { color: #9cdcfe !important; }
+body.high-contrast .code-block .php-tag  { color: #aaaaaa !important; }
+body.high-contrast .code-block .copy-btn { background: rgba(255,255,255,0.08) !important; color: #94a3b8 !important; }
