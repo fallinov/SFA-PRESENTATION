@@ -173,11 +173,11 @@ tailwind.config = {
             <div class="space-y-6">
                 <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
                     <p class="text-sm text-slate-300 mb-3 font-mono">Structure de fichiers</p>
-                    <div class="code-block rounded-xl p-4 font-mono text-sm"><code><span class="comment">wordpress/</span><br>├── wp-admin/<br>├── wp-content/<br>│&nbsp;&nbsp;&nbsp;├── plugins/<br>│&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── akismet/<br>│&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── <span class="function">mon-premier-plugin/</span><br>│&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── <span class="string">mon-premier-plugin.php</span></code></div>
+                    <div class="code-block"><code><span class="comment">wordpress/</span><br>├── wp-admin/<br>├── wp-content/<br>│&nbsp;&nbsp;&nbsp;├── plugins/<br>│&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── akismet/<br>│&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── <span class="function">mon-premier-plugin/</span><br>│&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── <span class="string">mon-premier-plugin.php</span></code></div>
                 </div>
                 <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
                     <p class="text-sm text-slate-300 mb-3 font-mono">mon-premier-plugin.php</p>
-                    <div class="code-block rounded-xl p-4 pr-20 font-mono text-sm overflow-x-auto" data-code="&lt;?php
+                    <div class="code-block pr-20" data-code="&lt;?php
 /*
 Plugin Name: Mon Premier Plugin
 Description: Un plugin de test
@@ -230,7 +230,7 @@ Author: Mon Nom
             <div class="space-y-6">
                 <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
                     <p class="text-sm text-slate-300 mb-3 font-mono">Exemple 1 — Ajouter une balise meta</p>
-                    <div class="code-block rounded-xl p-4 pr-20 font-mono text-sm overflow-x-auto" data-code="// Ajouter une meta dans &lt;head&gt;
+                    <div class="code-block pr-20" data-code="// Ajouter une meta dans &lt;head&gt;
 function mon_plugin_meta() {
     echo '&lt;meta name=&quot;author&quot; content=&quot;ESIG&quot; /&gt;';
 }
@@ -245,7 +245,7 @@ add_action('wp_head', 'mon_plugin_meta');">
                 </div>
                 <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
                     <p class="text-sm text-slate-300 mb-3 font-mono">Exemple 2 — Email à la suppression d'un article</p>
-                    <div class="code-block rounded-xl p-4 pr-20 font-mono text-sm overflow-x-auto" data-code="function mon_plugin_notif($post_id) {
+                    <div class="code-block pr-20" data-code="function mon_plugin_notif($post_id) {
     wp_mail(
         'admin@esig.ch',
         'Article supprimé',
@@ -297,7 +297,7 @@ add_action('delete_post', 'mon_plugin_notif');">
             <div class="space-y-6">
                 <div class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
                     <p class="text-sm text-white/70 mb-3 font-mono">Exemple — Remplacer "et" par "&amp;" dans les titres</p>
-                    <div class="code-block rounded-xl p-4 pr-20 font-mono text-sm overflow-x-auto" data-code="function mon_plugin_titre($title) {
+                    <div class="code-block pr-20" data-code="function mon_plugin_titre($title) {
     return str_replace(
         ' et ',
         ' &amp; ',
@@ -361,7 +361,7 @@ add_filter('the_title', 'mon_plugin_titre');">
             <div class="space-y-6">
                 <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
                     <p class="text-sm text-slate-300 mb-3 font-mono">Exemple — Shortcode [yoda]</p>
-                    <div class="code-block rounded-xl p-4 pr-20 font-mono text-sm overflow-x-auto" data-code="function mon_plugin_yoda() {
+                    <div class="code-block pr-20" data-code="function mon_plugin_yoda() {
     return '&lt;blockquote&gt;Que la force soit avec toi jeune padawan !&lt;/blockquote&gt;';
 }
 
@@ -429,7 +429,7 @@ add_shortcode('yoda', 'mon_plugin_yoda');">
             <div class="space-y-6">
                 <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
                     <p class="text-sm text-slate-300 mb-3 font-mono">Exemple — Shortcode [vador]</p>
-                    <div class="code-block rounded-xl p-4 pr-20 font-mono text-sm overflow-x-auto" data-code="function mon_plugin_vador($atts, $content, $tag) {
+                    <div class="code-block pr-20" data-code="function mon_plugin_vador($atts, $content, $tag) {
     $atts = shortcode_atts([
         'tag' =&gt; 'blockquote'
     ], $atts);
@@ -503,7 +503,7 @@ add_shortcode('vador', 'mon_plugin_vador');">
                 </div>
                 <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
                     <p class="text-sm text-slate-300 mb-3 font-mono">HTML généré</p>
-                    <div class="code-block rounded-xl p-4 pr-20 font-mono text-sm overflow-x-auto" data-code='&lt;img
+                    <div class="code-block pr-20" data-code='&lt;img
   src="...plugins/ico/img/home.png"
   alt="home"
   style="
@@ -545,12 +545,12 @@ add_shortcode('vador', 'mon_plugin_vador');">
                 <p class="text-lg text-slate-300 mb-6 leading-relaxed">Les shortcodes permettent d'intégrer des données provenant de <strong class="text-white">bases de données</strong>, d'<strong class="text-white">API externes</strong> ou de <strong class="text-white">fichiers de données</strong>.</p>
                 <div class="bg-slate-900/50 p-6 rounded-xl border border-slate-700 mb-6">
                     <p class="text-sm text-slate-300 mb-3 font-mono">Structure du plugin gest-cli</p>
-                    <div class="code-block rounded-xl p-4 font-mono text-sm"><code><span class="comment">wp-content/plugins/</span><br>└── <span class="function">gest-cli/</span><br>&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="string">gest-cli.php</span>&nbsp;&nbsp;<span class="comment">← principal</span><br>&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="string">config.php</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← connexion</span><br>&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="string">db.php</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← PDO</span><br>&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="string">client.php</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← métier</span></code></div>
+                    <div class="code-block"><code><span class="comment">wp-content/plugins/</span><br>└── <span class="function">gest-cli/</span><br>&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="string">gest-cli.php</span>&nbsp;&nbsp;<span class="comment">← principal</span><br>&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="string">config.php</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← connexion</span><br>&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="string">db.php</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← PDO</span><br>&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="string">client.php</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← métier</span></code></div>
                 </div>
                 <div class="space-y-4">
                     <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700">
                         <p class="text-sm text-slate-300 mb-2 font-mono">config.php</p>
-                        <div class="code-block rounded-xl p-3 pr-20 font-mono text-xs overflow-x-auto" data-code="define('DB_HOST', 'localhost');
+                        <div class="code-block pr-20" data-code="define('DB_HOST', 'localhost');
 define('DB_NAME', 'ma_base');
 define('DB_CHARSET', 'utf8');
 define('DB_USER', 'user');
@@ -571,7 +571,7 @@ define('DB_PASS', '****');">
             <div class="space-y-6">
                 <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
                     <p class="text-sm text-slate-300 mb-3 font-mono">db.php — Connexion PDO</p>
-                    <div class="code-block rounded-xl p-4 pr-20 font-mono text-sm overflow-x-auto" data-code="function getDB() {
+                    <div class="code-block pr-20" data-code="function getDB() {
     global $db;
     if ($db === null) {
         $db = new PDO(
@@ -592,7 +592,7 @@ define('DB_PASS', '****');">
                 </div>
                 <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
                     <p class="text-sm text-slate-300 mb-3 font-mono">gest-cli.php — Shortcode [clients]</p>
-                    <div class="code-block rounded-xl p-4 pr-20 font-mono text-sm overflow-x-auto" data-code="require_once __DIR__.'/config.php';
+                    <div class="code-block pr-20" data-code="require_once __DIR__.'/config.php';
 require_once __DIR__.'/db.php';
 require_once __DIR__.'/client.php';
 

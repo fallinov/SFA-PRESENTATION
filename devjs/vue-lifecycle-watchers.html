@@ -219,7 +219,7 @@
             <h2 class="text-4xl md:text-5xl font-bold mb-8"><span class="text-vue">onMounted</span>()</h2>
 
             <div class="grid md:grid-cols-2 gap-12 items-start">
-                <div class="code-block rounded-2xl p-6 font-mono text-sm overflow-x-auto border border-slate-700">
+                <div class="code-block">
                     <div class="flex items-center gap-2 mb-4 text-slate-400">
                         <div class="w-3 h-3 rounded-full bg-red-500"></div>
                         <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
@@ -297,7 +297,7 @@
             <h2 class="text-4xl md:text-5xl font-bold mb-8"><span class="text-vue">onUnmounted</span>()</h2>
 
             <div class="grid md:grid-cols-2 gap-12 items-start">
-                <div class="code-block rounded-2xl p-6 font-mono text-sm overflow-x-auto border border-slate-700">
+                <div class="code-block">
                     <div class="flex items-center gap-2 mb-4 text-slate-400">
                         <div class="w-3 h-3 rounded-full bg-red-500"></div>
                         <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
@@ -377,7 +377,7 @@
                         <span class="text-red-400">❌</span>
                         <span>Sans computed</span>
                     </h3>
-                    <div class="code-block rounded-xl p-4 font-mono text-sm">
+                    <div class="code-block">
                         <pre class="text-slate-300"><span class="comment">// Recalculé à chaque rendu ❌</span>
 <span class="keyword">function</span> <span class="function">getTotal</span>() {
   <span class="keyword">return</span> items.<span class="attr">value</span>
@@ -399,7 +399,7 @@
                         <span class="text-vue">✅</span>
                         <span>Avec computed</span>
                     </h3>
-                    <div class="code-block rounded-xl p-4 font-mono text-sm">
+                    <div class="code-block">
                         <pre class="text-slate-300"><span class="comment">// Mis en cache automatiquement ✅</span>
 <span class="keyword">const</span> total = <span class="function">computed</span>(() =&gt; {
   <span class="keyword">return</span> items.<span class="attr">value</span>
@@ -457,7 +457,7 @@
             <h2 class="text-4xl md:text-5xl font-bold mb-8"><span class="text-vue">watch</span>() — Réagir aux changements</h2>
 
             <div class="grid md:grid-cols-2 gap-12 items-start">
-                <div class="code-block rounded-2xl p-6 font-mono text-sm overflow-x-auto border border-slate-700">
+                <div class="code-block">
                     <div class="flex items-center gap-2 mb-4 text-slate-400">
                         <div class="w-3 h-3 rounded-full bg-red-500"></div>
                         <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
@@ -559,7 +559,7 @@
                         <span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-lg text-sm font-mono">watch()</span>
                         <span class="text-slate-400 text-sm font-normal">Explicite</span>
                     </h3>
-                    <div class="code-block rounded-xl p-4 font-mono text-sm mb-4">
+                    <div class="code-block mb-4">
                         <pre class="text-slate-300"><span class="function">watch</span>(search, <span class="keyword">async</span> (val) =&gt; {
   results.<span class="attr">value</span> =
     <span class="keyword">await</span> <span class="function">fetchAPI</span>(val)
@@ -586,7 +586,7 @@
                         <span class="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-lg text-sm font-mono">watchEffect()</span>
                         <span class="text-slate-400 text-sm font-normal">Automatique</span>
                     </h3>
-                    <div class="code-block rounded-xl p-4 font-mono text-sm mb-4">
+                    <div class="code-block mb-4">
                         <pre class="text-slate-300"><span class="function">watchEffect</span>(<span class="keyword">async</span> () =&gt; {
   results.<span class="attr">value</span> =
     <span class="keyword">await</span> <span class="function">fetchAPI</span>(search.<span class="attr">value</span>)
@@ -638,7 +638,7 @@
                     </div>
                     <p class="text-lg text-slate-300 mb-4">Transformer des données</p>
                     <p class="text-slate-400 italic mb-6">"Combien de Pokémon de type Feu ?"</p>
-                    <div class="code-block rounded-xl p-4 font-mono text-sm">
+                    <div class="code-block">
                         <pre class="text-slate-300"><span class="keyword">const</span> firePokemons = <span class="function">computed</span>(() =&gt;
   pokemons.<span class="attr">value</span>.<span class="function">filter</span>(
     p =&gt; p.<span class="attr">type</span> === <span class="string">'Feu'</span>
@@ -659,7 +659,7 @@
                     </div>
                     <p class="text-lg text-slate-300 mb-4">Réagir à un changement</p>
                     <p class="text-slate-400 italic mb-6">"Quand la recherche change, appeler l'API"</p>
-                    <div class="code-block rounded-xl p-4 font-mono text-sm">
+                    <div class="code-block">
                         <pre class="text-slate-300"><span class="function">watch</span>(search, <span class="keyword">async</span> (val) =&gt; {
   <span class="keyword">const</span> res = <span class="keyword">await</span> <span class="function">fetch</span>(
     <span class="string">`/api?q=${val}`</span>

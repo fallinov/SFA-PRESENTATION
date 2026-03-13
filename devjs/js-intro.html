@@ -558,12 +558,12 @@
                         <h3 class="text-xl font-bold">Dans la console</h3>
                     </div>
                     <p class="text-slate-400 mb-4">Idéal pour tester rapidement du code.</p>
-                    <div class="code-block rounded-xl p-4 font-mono text-sm">
+                    <div class="code-block">
                         <p class="text-slate-500 mb-2">// Ouvrir avec :</p>
                         <p class="text-slate-300"><span class="keyword">Ctrl</span> + <span class="keyword">Shift</span> + <span class="keyword">J</span> <span class="comment">// Windows</span></p>
                         <p class="text-slate-300"><span class="keyword">Cmd</span> + <span class="keyword">Option</span> + <span class="keyword">J</span> <span class="comment">// Mac</span></p>
                     </div>
-                    <div class="mt-4 code-block rounded-xl p-4 font-mono text-sm">
+                    <div class="mt-4 code-block">
                         <p class="text-slate-300"><span class="function">alert</span>(<span class="string">"Bonjour !"</span>);</p>
                     </div>
                 </div>
@@ -574,7 +574,7 @@
                         <h3 class="text-xl font-bold">Dans une page HTML</h3>
                     </div>
                     <p class="text-slate-400 mb-4">Code entre balises <code class="text-js">&lt;script&gt;</code>.</p>
-                    <div class="code-block rounded-xl p-4 font-mono text-sm overflow-x-auto">
+                    <div class="code-block">
                         <pre class="text-slate-300"><span class="tag">&lt;h1&gt;</span>Ma page<span class="tag">&lt;/h1&gt;</span>
 
 <span class="tag">&lt;script&gt;</span>
@@ -629,7 +629,7 @@
                         La <strong class="text-white">meilleure pratique</strong> est de séparer le JavaScript dans des fichiers <code class="text-js">.js</code> externes.
                     </p>
 
-                    <div class="code-block rounded-xl p-4 font-mono text-sm mb-6">
+                    <div class="code-block mb-6">
                         <p class="text-slate-500 mb-2">index.html</p>
                         <pre class="text-slate-300"><span class="tag">&lt;!DOCTYPE html&gt;</span>
 <span class="tag">&lt;html&gt;</span>
@@ -705,7 +705,7 @@
                         et d'arrêter le script à la moindre erreur.
                     </p>
 
-                    <div class="code-block rounded-xl p-4 font-mono text-sm mb-6">
+                    <div class="code-block mb-6">
                         <pre class="text-slate-300"><span class="string">"use strict"</span>;
 
 <span class="comment">// Erreur ! Variable non déclarée</span>
@@ -756,7 +756,7 @@ msg = <span class="string">"Bonjour"</span>;  <span class="comment">// ❌ Crash
                 <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
                     <h3 class="text-lg font-bold mb-4 text-js">camelCase</h3>
                     <p class="text-slate-400 text-sm mb-4">Variables, fonctions, méthodes</p>
-                    <div class="code-block rounded-xl p-4 font-mono text-sm">
+                    <div class="code-block">
                         <pre class="text-slate-300"><span class="keyword">let</span> userName = <span class="string">"Alice"</span>;
 <span class="keyword">let</span> totalPrice = <span class="number">99.90</span>;
 <span class="keyword">function</span> <span class="function">calculateTotal</span>() { }
@@ -767,7 +767,7 @@ msg = <span class="string">"Bonjour"</span>;  <span class="comment">// ❌ Crash
                 <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
                     <h3 class="text-lg font-bold mb-4 text-js">SCREAMING_SNAKE_CASE</h3>
                     <p class="text-slate-400 text-sm mb-4">Constantes globales</p>
-                    <div class="code-block rounded-xl p-4 font-mono text-sm">
+                    <div class="code-block">
                         <pre class="text-slate-300"><span class="keyword">const</span> MAX_USERS = <span class="number">100</span>;
 <span class="keyword">const</span> API_ENDPOINT = <span class="string">"/api"</span>;
 <span class="keyword">const</span> DEFAULT_TIMEOUT = <span class="number">5000</span>;</pre>
@@ -777,7 +777,7 @@ msg = <span class="string">"Bonjour"</span>;  <span class="comment">// ❌ Crash
                 <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
                     <h3 class="text-lg font-bold mb-4 text-js">PascalCase</h3>
                     <p class="text-slate-400 text-sm mb-4">Classes et constructeurs</p>
-                    <div class="code-block rounded-xl p-4 font-mono text-sm">
+                    <div class="code-block">
                         <pre class="text-slate-300"><span class="keyword">class</span> <span class="function">UserController</span> { }
 <span class="keyword">class</span> <span class="function">ProductModel</span> { }
 <span class="keyword">class</span> <span class="function">ShoppingCart</span> { }</pre>
@@ -787,7 +787,7 @@ msg = <span class="string">"Bonjour"</span>;  <span class="comment">// ❌ Crash
                 <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
                     <h3 class="text-lg font-bold mb-4 text-js">Éléments HTML</h3>
                     <p class="text-slate-400 text-sm mb-4">Préfixe descriptif + camelCase</p>
-                    <div class="code-block rounded-xl p-4 font-mono text-sm">
+                    <div class="code-block">
                         <pre class="text-slate-300"><span class="keyword">const</span> btnSubmit = document...
 <span class="keyword">const</span> inputEmail = document...
 <span class="keyword">const</span> divContainer = document...
