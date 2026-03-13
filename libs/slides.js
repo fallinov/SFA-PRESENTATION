@@ -5,7 +5,6 @@
  * Configuration via attributs data sur <body> :
  *   data-nav="scroll"  → navigation par scroll (WordPress style)
  *   (défaut)           → navigation par toggle (.slide.active)
- *   data-home="url"    → URL du bouton retour (défaut: auto-détecté)
  *
  * Éléments auto-détectés :
  *   .slide             → les slides
@@ -18,7 +17,6 @@
  *
  * Éléments auto-créés :
  *   .skip-link          → lien skip-to-content (accessibilité)
- *   .home-btn           → bouton retour au sommaire
  *   .keyboard-hint      → indication raccourcis clavier
  *   [aria-live]         → annonces pour lecteurs d'écran
  *
@@ -26,7 +24,6 @@
  *   ← → ↑ ↓ Espace Entrée  → navigation
  *   Home / End               → première / dernière slide
  *   C                        → mode contraste élevé
- *   Escape                   → retour au sommaire
  */
 document.addEventListener('DOMContentLoaded', () => {
   const body = document.body
@@ -103,20 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
     slides[0].focus()
   })
   body.insertBefore(skipLink, body.firstChild)
-
-  // --- Bouton retour sommaire ---
-  const homeUrl = body.dataset.home || detectHomeUrl()
-  if (homeUrl) {
-    const homeBtn = document.createElement('a')
-    homeBtn.href = homeUrl
-    homeBtn.className = 'home-btn'
-    homeBtn.setAttribute('aria-label', 'Retour au sommaire')
-    homeBtn.appendChild(createSvgIcon(['M19 12H5', 'M12 19l-7-7 7-7'], 14))
-    const span = document.createElement('span')
-    span.textContent = 'Sommaire'
-    homeBtn.appendChild(span)
-    body.appendChild(homeBtn)
-  }
 
   // --- Keyboard hint ---
   const hint = document.createElement('div')
@@ -275,9 +258,6 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault()
         go(total - 1)
         break
-      case 'Escape':
-        if (homeUrl) window.location.href = homeUrl
-        break
       case 'c':
       case 'C':
         if (!e.ctrlKey && !e.metaKey) toggleContrast()
@@ -381,16 +361,6 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     block.appendChild(btn)
   })
-
-  // --- Utilitaire : détection URL sommaire ---
-  function detectHomeUrl() {
-    const path = location.pathname
-    const parts = path.split('/').filter(Boolean)
-    if (parts.length >= 2) {
-      return '../'
-    }
-    return null
-  }
 
   // --- Init ---
   current = readHash()
