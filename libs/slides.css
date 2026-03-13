@@ -84,23 +84,35 @@ body[data-nav="scroll"] .slide {
 }
 
 /* --- Navigation dots --- */
-#dots { display: flex; flex-direction: column; gap: 0.5rem; }
+#dots {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 0.5rem 0.35rem;
+  border-radius: 9999px;
+}
 .nav-dot {
   width: 0.5rem;
   height: 0.5rem;
   border-radius: 9999px;
-  background: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.35);
   border: none;
   padding: 0;
   cursor: pointer;
   transition: all 0.3s ease;
 }
-.nav-dot:hover { background: rgba(255,255,255,0.45); }
+.nav-dot:hover {
+  background: rgba(255,255,255,0.65);
+}
 .nav-dot.active {
-  width: 0.625rem;
-  height: 0.625rem;
+  width: 0.6rem;
+  height: 0.6rem;
   background: var(--color-accent, #3b82f6);
-  box-shadow: 0 0 8px var(--color-accent, rgba(59,130,246,0.5));
+  box-shadow: 0 0 6px var(--color-accent, rgba(59,130,246,0.6));
 }
 .nav-dot:focus-visible {
   outline: 2px solid var(--color-accent, #3b82f6);
