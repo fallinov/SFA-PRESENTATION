@@ -221,19 +221,34 @@ body[data-nav="scroll"] .slide {
   .slide.slide-enter { animation: none; opacity: 1; transform: none; }
 }
 
-/* --- Coloration syntaxique --- */
-.code-block { background: #1e1e1e; position: relative; border-radius: 0.5rem; }
-.keyword  { color: #c586c0; }
-.string   { color: #ce9178; }
-.function { color: #dcdcaa; }
-.comment  { color: #6a9955; }
-.tag      { color: #569cd6; }
-.attr     { color: #9cdcfe; }
-.value    { color: #ce9178; }
-.number   { color: #b5cea8; }
-.type     { color: #4ec9b0; }
-.variable { color: #9cdcfe; }
-.php-tag  { color: #808080; }
+/* --- Blocs de code --- */
+.code-block {
+  background: #1e1e1e;
+  position: relative;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: #cbd5e1;
+  overflow-x: auto;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.code-block pre { margin: 0; color: inherit; }
+.code-block code { color: inherit; }
+
+/* Coloration syntaxique — toutes AAA (≥ 7:1) sur #1e1e1e */
+.keyword  { color: #d4a0cf; } /* 7.72:1 — mauve */
+.string   { color: #daa48e; } /* 7.69:1 — orange */
+.function { color: #dcdcaa; } /* 11.80:1 — jaune pâle */
+.comment  { color: #85b86e; font-style: italic; } /* 7.21:1 — vert */
+.tag      { color: #74b3e8; } /* 7.43:1 — bleu */
+.attr     { color: #9cdcfe; } /* 11.18:1 — bleu ciel */
+.value    { color: #daa48e; } /* 7.69:1 — orange */
+.number   { color: #b5cea8; } /* 9.81:1 — vert clair */
+.type     { color: #4ec9b0; } /* 8.18:1 — turquoise */
+.variable { color: #9cdcfe; } /* 11.18:1 — bleu ciel */
+.php-tag  { color: #aaaaaa; } /* 7.18:1 — gris */
 
 /* --- Cartes --- */
 .card-hover { transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
