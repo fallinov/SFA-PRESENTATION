@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Refonte site CEJEF - Pr&eacute;sentation COPIL</title>
     <script src="../libs/tailwind.js"></script>
+    <link rel="stylesheet" href="../libs/fonts.css">
     <link rel="stylesheet" href="../libs/slides.css">
     <style>
         .vote-btn.active.ok {
@@ -37,7 +38,7 @@
         }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen">
+<body class="font-sans bg-slate-900 text-slate-100 min-h-screen">
 
     <!-- Slide 1: Contexte & objectif -->
     <div class="slide active min-h-screen flex-col justify-center items-center p-12 relative overflow-hidden" data-slide="1">
@@ -698,11 +699,9 @@
         </div>
     </div>
 
-    <!-- Indicateur mode contrast&eacute; -->
-    <div id="contrast-indicator">MODE CONTRAST&Eacute; (C pour d&eacute;sactiver)</div>
-
-    <!-- Navigation - Dots verticaux &agrave; droite -->
-    <div class="fixed right-6 top-1/2 transform -translate-y-1/2 flex flex-col gap-3 z-50" id="dots"></div>
+    <!-- Navigation dots -->
+    <nav id="dots" class="fixed right-6 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col gap-3"></nav>
+    <div id="contrast-badge" style="display:none">Contraste élevé (C)</div>
 
     <script>
         function vote(btn, type) {

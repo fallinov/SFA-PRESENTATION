@@ -6,11 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ProtonPass - Cours gestionnaire de mots de passe</title>
     <script src="../libs/tailwind.js"></script>
+    <link rel="stylesheet" href="../libs/fonts.css">
     <link rel="stylesheet" href="../libs/slides.css">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
                     colors: {
                         proton: {
                             purple: '#6d4aff',
@@ -24,8 +29,6 @@
         }
     </script>
     <style>
-        @import url('../libs/fonts.css');
-
         .gradient-bg {
             background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%);
         }
@@ -90,11 +93,14 @@
     </style>
 </head>
 
-<body class="bg-proton-dark text-white overflow-hidden">
+<body class="font-sans bg-proton-dark text-white overflow-hidden">
     <!-- Progress Bar -->
     <div class="fixed top-0 left-0 w-full h-1 bg-gray-800 z-50">
         <div id="progress" class="progress-bar h-full bg-gradient-to-r from-proton-purple to-proton-accent"></div>
     </div>
+
+    <nav id="dots" class="fixed right-6 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col gap-3"></nav>
+    <div id="contrast-badge" style="display:none">Contraste élevé (C)</div>
 
     <!-- Navigation -->
     <nav class="fixed bottom-6 right-6 flex gap-3 z-50" aria-label="Navigation des slides">

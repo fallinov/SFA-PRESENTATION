@@ -49,19 +49,9 @@ tailwind.config = {
 </head>
 <body data-nav="scroll" class="font-sans bg-slate-900 text-white overflow-x-hidden">
 
-<!-- Navigation latérale -->
-<nav class="fixed right-6 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col gap-3">
-    <a href="#slide-1" class="nav-dot w-4 h-4 rounded-full bg-white/40 hover:bg-wpLight transition-all" title="Accueil"></a>
-    <a href="#slide-2" class="nav-dot w-4 h-4 rounded-full bg-white/40 hover:bg-wpLight transition-all" title="C'est quoi un plugin ?"></a>
-    <a href="#slide-3" class="nav-dot w-4 h-4 rounded-full bg-white/40 hover:bg-wpLight transition-all" title="Créer un plugin"></a>
-    <a href="#slide-4" class="nav-dot w-4 h-4 rounded-full bg-white/40 hover:bg-wpLight transition-all" title="Hooks : Actions"></a>
-    <a href="#slide-5" class="nav-dot w-4 h-4 rounded-full bg-white/40 hover:bg-wpLight transition-all" title="Hooks : Filtres"></a>
-    <a href="#slide-6" class="nav-dot w-4 h-4 rounded-full bg-white/40 hover:bg-wpLight transition-all" title="Shortcodes"></a>
-    <a href="#slide-7" class="nav-dot w-4 h-4 rounded-full bg-white/40 hover:bg-wpLight transition-all" title="Shortcodes avancés"></a>
-    <a href="#slide-8" class="nav-dot w-4 h-4 rounded-full bg-white/40 hover:bg-wpLight transition-all" title="Exercice [ico]"></a>
-    <a href="#slide-9" class="nav-dot w-4 h-4 rounded-full bg-white/40 hover:bg-wpLight transition-all" title="Shortcodes et BDD"></a>
-    <a href="#slide-10" class="nav-dot w-4 h-4 rounded-full bg-white/40 hover:bg-wpLight transition-all" title="Récapitulatif"></a>
-</nav>
+<!-- Navigation -->
+<nav id="dots" class="fixed right-6 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col gap-3"></nav>
+<div id="contrast-badge" style="display:none">Contraste élevé (C)</div>
 
 <!-- Slide 1: Titre -->
 <section id="slide-1" class="slide flex items-center justify-center gradient-wp relative overflow-hidden">
