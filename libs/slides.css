@@ -348,112 +348,228 @@ body.has-navigated .keyboard-hint { opacity: 0 !important; transition: opacity 0
 
 /* ============================================
    Mode contraste élevé (touche C)
+
+   Monochrome strict : noir #000, blanc #FFF,
+   gris #E0E0E0 (secondaire), #CCC (bordures).
+   Fond sombre — optimal pour projection en salle.
+   Aucune couleur d'accent.
    ============================================ */
 
-body.high-contrast { background: #fff !important; color: #000 !important; }
+/* --- Base --- */
+body.high-contrast {
+  background: #000 !important;
+  color: #fff !important;
+}
 body.high-contrast #contrast-indicator,
-body.high-contrast #contrast-badge { display: block; background: #333; color: #fff; }
-body.high-contrast .gradient-text { background: none !important; -webkit-text-fill-color: #000 !important; color: #000 !important; }
+body.high-contrast #contrast-badge {
+  display: block;
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 100;
+  background: #fff !important;
+  color: #000 !important;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  border: 2px solid #fff !important;
+}
 
-/* Arrière-plans */
-body.high-contrast .bg-slate-900,
-body.high-contrast .bg-slate-800,
-body.high-contrast .bg-slate-800\/80,
-body.high-contrast .bg-slate-800\/50,
-body.high-contrast [class*="from-slate-800"] { background: #f0f0f0 !important; }
+/* --- Slides : fond noir uniforme --- */
+body.high-contrast .slide {
+  background: #000 !important;
+  background-image: none !important;
+}
 
-/* Couleurs sémantiques — fonds */
-body.high-contrast [class*="bg-green-500/10"],
-body.high-contrast [class*="from-green-500"] { background: #d4edda !important; }
-body.high-contrast [class*="bg-orange-500/10"],
-body.high-contrast [class*="from-amber-500"],
-body.high-contrast [class*="from-orange-500"] { background: #fff3cd !important; }
-body.high-contrast [class*="bg-red-500/10"],
-body.high-contrast [class*="from-red-500"] { background: #f8d7da !important; }
-body.high-contrast [class*="bg-blue-500/10"],
-body.high-contrast [class*="from-blue-500"] { background: #cce5ff !important; }
-body.high-contrast [class*="bg-purple-500/10"],
-body.high-contrast [class*="from-purple-500"] { background: #e8d5f5 !important; }
+/* --- Tout texte → blanc --- */
+body.high-contrast .slide *:not(.code-block):not(.code-block *) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
 
-/* Couleurs sémantiques — texte */
-body.high-contrast .text-slate-100,
-body.high-contrast .text-slate-200,
-body.high-contrast .text-slate-300,
+/* --- Texte secondaire (gris clair, 15.3:1 sur noir) --- */
 body.high-contrast .text-slate-400,
-body.high-contrast .text-white { color: #000 !important; }
-body.high-contrast .text-green-300,
-body.high-contrast .text-green-400 { color: #155724 !important; }
-body.high-contrast .text-orange-300,
-body.high-contrast .text-orange-400,
-body.high-contrast .text-amber-400 { color: #856404 !important; }
-body.high-contrast .text-red-300,
-body.high-contrast .text-red-400 { color: #721c24 !important; }
-body.high-contrast .text-blue-400 { color: #004085 !important; }
-body.high-contrast .text-purple-400 { color: #4a1d8e !important; }
+body.high-contrast .text-slate-500,
+body.high-contrast .text-slate-600 {
+  color: #e0e0e0 !important;
+  -webkit-text-fill-color: #e0e0e0 !important;
+}
 
-/* Bordures */
-body.high-contrast [class*="border-green"] { border-color: #155724 !important; }
+/* --- Arrière-plans : tout en noir --- */
+body.high-contrast [class*="bg-slate"],
+body.high-contrast [class*="bg-js"],
+body.high-contrast [class*="from-slate"],
+body.high-contrast [class*="from-green"],
+body.high-contrast [class*="from-orange"],
+body.high-contrast [class*="from-amber"],
+body.high-contrast [class*="from-red"],
+body.high-contrast [class*="from-blue"],
+body.high-contrast [class*="from-purple"],
+body.high-contrast [class*="bg-green-500/10"],
+body.high-contrast [class*="bg-orange-500/10"],
+body.high-contrast [class*="bg-red-500/10"],
+body.high-contrast [class*="bg-blue-500/10"],
+body.high-contrast [class*="bg-purple-500/10"],
+body.high-contrast [class*="bg-wp"],
+body.high-contrast [class*="bg-vue"],
+body.high-contrast [class*="from-wp"],
+body.high-contrast [class*="from-vue"],
+body.high-contrast [class*="gradient-"] {
+  background: #000 !important;
+  background-image: none !important;
+}
+
+/* --- Cartes / surfaces surélevées --- */
+body.high-contrast [class*="bg-slate-900/"],
+body.high-contrast [class*="bg-slate-800/"],
+body.high-contrast [class*="bg-white/"],
+body.high-contrast [class*="bg-black/"] {
+  background: #1a1a1a !important;
+}
+body.high-contrast .slide a[class*="rounded"],
+body.high-contrast .slide div[class*="rounded"][class*="border"],
+body.high-contrast .slide div[class*="rounded"][class*="bg-"] {
+  background: #1a1a1a !important;
+  border: 2px solid #ccc !important;
+}
+
+/* --- Bordures : gris visible, 2px minimum --- */
+body.high-contrast [class*="border-green"],
 body.high-contrast [class*="border-orange"],
-body.high-contrast [class*="border-amber"] { border-color: #856404 !important; }
-body.high-contrast [class*="border-red"] { border-color: #721c24 !important; }
-body.high-contrast [class*="border-blue"] { border-color: #004085 !important; }
-body.high-contrast [class*="border-purple"] { border-color: #4a1d8e !important; }
-body.high-contrast [class*="border-slate"] { border-color: #ccc !important; }
+body.high-contrast [class*="border-amber"],
+body.high-contrast [class*="border-red"],
+body.high-contrast [class*="border-blue"],
+body.high-contrast [class*="border-purple"],
+body.high-contrast [class*="border-slate"],
+body.high-contrast [class*="border-js"],
+body.high-contrast [class*="border-wp"],
+body.high-contrast [class*="border-vue"] {
+  border-color: #ccc !important;
+}
 
-/* Badges sémantiques */
-body.high-contrast .bg-green-500 { background: #155724 !important; }
-body.high-contrast .bg-orange-500 { background: #b45309 !important; }
-body.high-contrast .bg-red-500 { background: #721c24 !important; }
+/* --- Badges / pills : monochrome --- */
+body.high-contrast .bg-green-500,
+body.high-contrast .bg-orange-500,
+body.high-contrast .bg-red-500,
+body.high-contrast .bg-blue-500,
+body.high-contrast .bg-purple-500 {
+  background: #333 !important;
+}
+body.high-contrast [class*="rounded-full"][class*="bg-"] {
+  background: #1a1a1a !important;
+  border: 1px solid #ccc !important;
+}
 
-/* Tableaux */
-body.high-contrast table thead { background: #ddd !important; }
-body.high-contrast table tr { border-color: #bbb !important; }
+/* --- Gradient text → blanc, pas de gradient --- */
+body.high-contrast .gradient-text {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  -webkit-text-fill-color: #fff !important;
+  color: #fff !important;
+}
 
-/* Liens */
-body.high-contrast a { color: #004085 !important; }
+/* --- Tableaux --- */
+body.high-contrast table { border: 2px solid #ccc !important; }
+body.high-contrast table thead { background: #1a1a1a !important; }
+body.high-contrast table th { border-bottom: 2px solid #ccc !important; color: #fff !important; }
+body.high-contrast table td { border-bottom: 1px solid #333 !important; color: #e0e0e0 !important; }
+body.high-contrast table tr { border-color: #333 !important; }
 
-/* Effets visuels */
+/* --- Liens : blanc souligné (pas de couleur) --- */
+body.high-contrast a {
+  color: #fff !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px;
+}
+
+/* --- Effets visuels : tout supprimer --- */
 body.high-contrast [class*="blur"] { filter: none !important; -webkit-filter: none !important; }
 body.high-contrast [class*="shadow"] { box-shadow: none !important; }
-body.high-contrast .glow { box-shadow: 0 0 0 2px #ccc !important; }
+body.high-contrast .glow { box-shadow: none !important; }
+body.high-contrast [class*="opacity-"] { opacity: 1 !important; }
+body.high-contrast .animate-pulse-slow { animation: none !important; }
 
-/* Dots en contraste */
-body.high-contrast .nav-dot { background: #ccc !important; }
-body.high-contrast .nav-dot.active { background: #000 !important; box-shadow: none !important; }
-body.high-contrast .nav-dot:focus-visible { outline-color: #000; }
-body.high-contrast #dots button { border: 2px solid #000 !important; }
-body.high-contrast #dots button.active-dot { background: #000 !important; }
+/* --- Dots --- */
+body.high-contrast #dots {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+body.high-contrast .nav-dot {
+  background: #333 !important;
+  border: 2px solid #fff !important;
+  box-shadow: none !important;
+}
+body.high-contrast .nav-dot.active {
+  background: #fff !important;
+  box-shadow: none !important;
+}
+body.high-contrast .nav-dot:focus-visible { outline-color: #fff; }
 
-/* Nav buttons en contraste */
+/* --- Nav prev/next --- */
 body.high-contrast .slide-nav-btn {
-  background: #eee !important;
-  color: #000 !important;
+  background: #1a1a1a !important;
+  color: #fff !important;
+  border: 2px solid #ccc !important;
+  backdrop-filter: none !important;
 }
-body.high-contrast .slide-progress { background: #ddd !important; }
-body.high-contrast .slide-progress-bar { background: #333 !important; }
-body.high-contrast .slide-counter { color: #000 !important; }
+body.high-contrast .slide-nav-btn:hover {
+  background: #333 !important;
+}
 
+/* --- Progress bar --- */
+body.high-contrast .slide-progress { background: #1a1a1a !important; }
+body.high-contrast .slide-progress-bar { background: #fff !important; }
+
+/* --- Counter --- */
+body.high-contrast .slide-counter { color: #e0e0e0 !important; }
+
+/* --- Keyboard hint --- */
 body.high-contrast .keyboard-hint kbd {
-  background: #eee !important;
-  border-color: #999 !important;
-  color: #000 !important;
+  background: #1a1a1a !important;
+  border-color: #ccc !important;
+  color: #e0e0e0 !important;
 }
 
-/* Protéger les blocs de code — DOIT rester en dernier pour gagner sur .text-slate-* */
+/* --- SVG icons : blanc --- */
+body.high-contrast svg { color: #fff !important; stroke: #fff !important; }
+
+/* --- Images : ne pas toucher --- */
+body.high-contrast img { filter: none !important; }
+
+/* --- Blocs de code — DOIT rester en dernier pour gagner sur .slide * --- */
 body.high-contrast .code-block,
 body.high-contrast .code-block * {
-  background-color: #1e1e1e !important;
-  color: #cbd5e1 !important;
+  background-color: #1a1a1a !important;
+  color: #e0e0e0 !important;
+  -webkit-text-fill-color: #e0e0e0 !important;
+  border-color: #ccc !important;
 }
-body.high-contrast .code-block .keyword  { color: #d4a0cf !important; }
-body.high-contrast .code-block .string   { color: #daa48e !important; }
-body.high-contrast .code-block .function { color: #dcdcaa !important; }
-body.high-contrast .code-block .comment  { color: #85b86e !important; }
-body.high-contrast .code-block .tag      { color: #74b3e8 !important; }
-body.high-contrast .code-block .attr     { color: #9cdcfe !important; }
-body.high-contrast .code-block .value    { color: #daa48e !important; }
-body.high-contrast .code-block .number   { color: #b5cea8 !important; }
-body.high-contrast .code-block .type     { color: #4ec9b0 !important; }
-body.high-contrast .code-block .variable { color: #9cdcfe !important; }
-body.high-contrast .code-block .php-tag  { color: #aaaaaa !important; }
-body.high-contrast .code-block .copy-btn { background: rgba(255,255,255,0.08) !important; color: #94a3b8 !important; }
+body.high-contrast .code-block {
+  border: 2px solid #ccc !important;
+}
+body.high-contrast .code-block .keyword  { color: #d4a0cf !important; -webkit-text-fill-color: #d4a0cf !important; }
+body.high-contrast .code-block .string   { color: #daa48e !important; -webkit-text-fill-color: #daa48e !important; }
+body.high-contrast .code-block .function { color: #dcdcaa !important; -webkit-text-fill-color: #dcdcaa !important; }
+body.high-contrast .code-block .comment  { color: #85b86e !important; -webkit-text-fill-color: #85b86e !important; }
+body.high-contrast .code-block .tag      { color: #74b3e8 !important; -webkit-text-fill-color: #74b3e8 !important; }
+body.high-contrast .code-block .attr     { color: #9cdcfe !important; -webkit-text-fill-color: #9cdcfe !important; }
+body.high-contrast .code-block .value    { color: #daa48e !important; -webkit-text-fill-color: #daa48e !important; }
+body.high-contrast .code-block .number   { color: #b5cea8 !important; -webkit-text-fill-color: #b5cea8 !important; }
+body.high-contrast .code-block .type     { color: #4ec9b0 !important; -webkit-text-fill-color: #4ec9b0 !important; }
+body.high-contrast .code-block .variable { color: #9cdcfe !important; -webkit-text-fill-color: #9cdcfe !important; }
+body.high-contrast .code-block .php-tag  { color: #aaaaaa !important; -webkit-text-fill-color: #aaaaaa !important; }
+body.high-contrast .code-block .copy-btn {
+  background: #333 !important;
+  color: #e0e0e0 !important;
+  -webkit-text-fill-color: #e0e0e0 !important;
+  border-color: #ccc !important;
+}
+
+/* --- Support OS forced-colors --- */
+@media (forced-colors: active) {
+  .code-block { forced-color-adjust: none; border: 2px solid ButtonText; }
+  .slide { forced-color-adjust: auto; }
+}
