@@ -119,23 +119,64 @@ body[data-nav="scroll"] .slide {
   outline-offset: 2px;
 }
 
-/* --- Barre de progression --- */
-#progress {
+/* --- Barre de progression (auto-créée) --- */
+.slide-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: rgba(255,255,255,0.08);
+  z-index: 100;
+}
+.slide-progress-bar {
+  height: 100%;
+  background: var(--color-accent, #3b82f6);
   transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* --- Indicateur slide courant (compteur) --- */
-.slide-counter {
+/* --- Boutons prev/next (auto-créés) --- */
+.slide-nav {
   position: fixed;
   bottom: 1.25rem;
   right: 1.25rem;
   z-index: 90;
+  display: flex;
+  gap: 0.5rem;
+}
+.slide-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  border: none;
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: rgba(255,255,255,0.5);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.slide-nav-btn:hover {
+  background: rgba(255,255,255,0.16);
+  color: rgba(255,255,255,0.9);
+}
+.slide-nav-btn:active {
+  transform: scale(0.92);
+}
+
+/* --- Compteur de slides (auto-créé) --- */
+.slide-counter {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 1.25rem;
+  z-index: 90;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   letter-spacing: 0.05em;
   color: rgba(255,255,255,0.35);
-  pointer-events: none;
-  transition: color 0.3s ease;
 }
 
 /* --- Animations --- */
@@ -284,7 +325,7 @@ body.has-navigated .keyboard-hint { opacity: 0 !important; transition: opacity 0
   body { overflow: visible !important; }
   .slide { display: flex !important; min-height: 100vh; page-break-after: always; break-after: page; }
   .slide.active { display: flex !important; }
-  #dots, .nav-dot, #progress, .copy-btn,
+  #dots, .nav-dot, .slide-progress, .slide-nav, .copy-btn,
   .keyboard-hint, .slide-counter, .skip-link,
   #contrast-indicator, #contrast-badge { display: none !important; }
   [class*="blur"] { filter: none !important; }
@@ -366,6 +407,15 @@ body.high-contrast .nav-dot.active { background: #000 !important; box-shadow: no
 body.high-contrast .nav-dot:focus-visible { outline-color: #000; }
 body.high-contrast #dots button { border: 2px solid #000 !important; }
 body.high-contrast #dots button.active-dot { background: #000 !important; }
+
+/* Nav buttons en contraste */
+body.high-contrast .slide-nav-btn {
+  background: #eee !important;
+  color: #000 !important;
+}
+body.high-contrast .slide-progress { background: #ddd !important; }
+body.high-contrast .slide-progress-bar { background: #333 !important; }
+body.high-contrast .slide-counter { color: #000 !important; }
 
 body.high-contrast .keyboard-hint kbd {
   background: #eee !important;

@@ -8,15 +8,15 @@
  *
  * Éléments auto-détectés :
  *   .slide             → les slides
- *   #dots              → conteneur des points de navigation (créés automatiquement)
- *   #progress          → barre de progression (largeur mise à jour)
- *   #currentSlide      → numéro de slide courant
- *   #totalSlides       → nombre total de slides
+ *   #dots              → conteneur des points de navigation (dots créés automatiquement)
  *   .code-block[data-code] → boutons copier ajoutés automatiquement
  *   #contrast-indicator ou #contrast-badge → indicateur mode contraste
  *
  * Éléments auto-créés :
  *   .skip-link          → lien skip-to-content (accessibilité)
+ *   .slide-progress     → barre de progression (haut de page)
+ *   .slide-nav          → boutons prev/next (bas droite)
+ *   .slide-counter      → compteur de slides (bas gauche)
  *   .keyboard-hint      → indication raccourcis clavier
  *   [aria-live]         → annonces pour lecteurs d'écran
  *
@@ -30,9 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const isScroll = body.dataset.nav === 'scroll'
   const slides = document.querySelectorAll('.slide')
   const dotsContainer = document.getElementById('dots')
-  const progressBar = document.getElementById('progress')
-  const currentSlideEl = document.getElementById('currentSlide')
-  const totalSlidesEl = document.getElementById('totalSlides')
   const contrastEl = document.getElementById('contrast-indicator') || document.getElementById('contrast-badge')
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
@@ -40,8 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let current = 0
   const total = slides.length
-
-  if (totalSlidesEl) totalSlidesEl.textContent = total
 
   // --- Utilitaire SVG sûr (pas de innerHTML) ---
   function createSvgIcon(paths, size) {
@@ -100,6 +95,48 @@ document.addEventListener('DOMContentLoaded', () => {
     slides[0].focus()
   })
   body.insertBefore(skipLink, body.firstChild)
+
+  // --- Progress bar (haut de page) ---
+  var progressWrap = document.createElement('div')
+  progressWrap.className = 'slide-progress'
+  var progressBar = document.createElement('div')
+  progressBar.className = 'slide-progress-bar'
+  progressWrap.appendChild(progressBar)
+  body.appendChild(progressWrap)
+
+  // --- Boutons prev/next (bas droite) ---
+  var slideNav = document.createElement('nav')
+  slideNav.className = 'slide-nav'
+  slideNav.setAttribute('aria-label', 'Navigation des slides')
+
+  var prevBtn = document.createElement('button')
+  prevBtn.className = 'slide-nav-btn'
+  prevBtn.setAttribute('aria-label', 'Slide précédente')
+  prevBtn.appendChild(createSvgIcon(['M15 19l-7-7 7-7'], 20))
+  prevBtn.addEventListener('click', function() { prev() })
+
+  var nextBtn = document.createElement('button')
+  nextBtn.className = 'slide-nav-btn'
+  nextBtn.setAttribute('aria-label', 'Slide suivante')
+  nextBtn.appendChild(createSvgIcon(['M9 5l7 7-7 7'], 20))
+  nextBtn.addEventListener('click', function() { next() })
+
+  slideNav.appendChild(prevBtn)
+  slideNav.appendChild(nextBtn)
+  body.appendChild(slideNav)
+
+  // --- Compteur de slides (bas gauche) ---
+  var counterWrap = document.createElement('div')
+  counterWrap.className = 'slide-counter'
+  var currentSlideEl = document.createElement('span')
+  currentSlideEl.textContent = '1'
+  var separator = document.createTextNode(' / ')
+  var totalSlideEl = document.createElement('span')
+  totalSlideEl.textContent = String(total)
+  counterWrap.appendChild(currentSlideEl)
+  counterWrap.appendChild(separator)
+  counterWrap.appendChild(totalSlideEl)
+  body.appendChild(counterWrap)
 
   // --- Keyboard hint ---
   const hint = document.createElement('div')
@@ -176,11 +213,8 @@ document.addEventListener('DOMContentLoaded', () => {
       })
     }
 
-    if (progressBar) {
-      progressBar.style.width = ((current + 1) / total * 100) + '%'
-    }
-
-    if (currentSlideEl) currentSlideEl.textContent = current + 1
+    progressBar.style.width = ((current + 1) / total * 100) + '%'
+    currentSlideEl.textContent = current + 1
 
     // Mise à jour de l'URL sans scroll
     const slideId = slides[current].id || 'slide-' + (current + 1)
