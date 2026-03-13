@@ -1,0 +1,35 @@
+/*
+ * Styles globaux Slidev — paddings réduits + overflow caché
+ * Fichier chargé automatiquement par Slidev (convention style.css à la racine)
+ */
+
+/* Réduire les paddings par défaut du layout pour gagner de l'espace vertical */
+.slidev-layout {
+  padding: 2rem 2.5rem !important;
+  overflow: hidden;
+  max-height: 100%;
+  box-sizing: border-box;
+}
+
+/* Titres h1 : marges réduites */
+.slidev-layout h1 {
+  margin-bottom: 0.25rem !important;
+}
+
+/* Titres h3 dans les cartes : marges réduites */
+.slidev-layout h3 {
+  margin-top: 0 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* Paragraphes : marges réduites */
+.slidev-layout p {
+  margin-top: 0.25rem !important;
+  margin-bottom: 0.25rem !important;
+}
+
+/* Blocs de code : compacts */
+.slidev-layout pre {
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
