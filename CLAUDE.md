@@ -38,8 +38,8 @@ SFA-PRESENTATION/
 - Depuis un sous-dossier de présentation, référencer avec `../assets/`
 
 ### Librairies (`libs/`)
-- `slides.js` — Moteur de slides unifié (navigation, clavier, touch, contraste, copie code)
-- `slides.css` — Styles communs (slides, animations, dots, coloration syntaxique, contraste)
+- `slides.js` — Moteur de slides unifié (navigation, clavier, touch, contraste, copie code, ARIA)
+- `slides.css` — Styles communs (slides, animations, dots, nav, progress bar, contraste)
 - `tailwind.js` — Tailwind CSS (script standalone)
 - `fonts.css` — Déclarations @font-face (latin + latin-ext)
 - `fonts/` — Fichiers woff2 (Inter, JetBrains Mono)
@@ -54,14 +54,21 @@ SFA-PRESENTATION/
 ## Ajouter une présentation
 
 1. Placer le HTML dans le dossier projet approprié (ou en créer un nouveau)
-2. Dans `<head>` : référencer `tailwind.js`, `slides.css`, et optionnellement `fonts.css`
+2. Dans `<head>` : référencer `tailwind.js`, `fonts.css`, `slides.css`
 3. Avant `</body>` : référencer `slides.js`
 4. Ne mettre dans `<style>` que le CSS custom (couleurs, gradients du thème)
 5. Pour le mode scroll : ajouter `data-nav="scroll"` sur `<body>`
-6. Éléments auto-détectés par `slides.js` : `#dots`, `#progress`, `#currentSlide`, `#totalSlides`
-7. Stocker les assets dans `assets/`
-8. Mettre à jour `index.html` (sommaire)
-9. Commit + push → déploiement automatique sur GitHub Pages
+6. Ajouter `<nav id="dots"></nav>` dans le HTML (les dots sont générés par JS)
+7. Optionnel : `<div id="contrast-badge">` pour l'indicateur de contraste
+8. Éléments auto-générés par `slides.js` (ne pas les coder en dur) :
+   - Barre de progression (`.slide-progress`)
+   - Boutons prev/next (`.slide-nav`)
+   - Compteur de slides (`.slide-counter`)
+   - Dots de navigation (dans `#dots`)
+   - Skip link, keyboard hints, ARIA live region
+9. Stocker les assets dans `assets/`
+10. Mettre à jour `index.html` (sommaire)
+11. Commit + push → déploiement automatique sur GitHub Pages
 
 ## Projets sources
 
