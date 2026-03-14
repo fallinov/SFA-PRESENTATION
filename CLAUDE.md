@@ -115,7 +115,7 @@ Directives par slide (commentaires HTML) :
 
 - Code fences → `.code-block[data-code]` avec coloration syntaxique (js, css, html, vue, php)
 - Slides sans `class:` → alternance `bg-slate-900` / `bg-slate-800`
-- Contenu non-titre → wrapper `<div class="max-w-6xl mx-auto px-6 w-full">` (sauf si commence par `<div`)
+- Contenu non-titre → wrapper `<div class="max-w-6xl mx-auto px-6 w-full">`
 - HTML inline passe tel quel (pour les layouts complexes)
 - Chemins `libs/` calculés automatiquement selon la profondeur du fichier
 

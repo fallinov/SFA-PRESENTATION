@@ -1,5 +1,14 @@
 # TODO — SFA-PRESENTATION
 
+## md2slides
+- [x] Créer le préprocesseur Markdown → HTML (`libs/md2slides.mjs`)
+- [x] Coloration syntaxique (js, css, html, vue, php)
+- [x] Directives par slide (class, layout, section, blurs)
+- [x] CSS `:not([class])` pour ne pas écraser les classes Tailwind inline
+- [x] Prévention du débordement vertical
+- [ ] Convertir les présentations existantes en Markdown
+- [ ] Ajouter le support des images locales (copie automatique)
+
 ## Souveraineté des données
 - [x] Télécharger Tailwind CSS et le servir localement → `libs/tailwind.js`
 - [x] Télécharger les polices Google Fonts (Inter, JetBrains Mono) → `libs/fonts/`
