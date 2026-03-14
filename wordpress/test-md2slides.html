@@ -1,19 +1,211 @@
----
-title: "Gestion des médias — WordPress"
-nav: scroll
-colors:
-  wp: "#0073aa"
-  wpDark: "#23282d"
-  wpLight: "#00a0d2"
-  wpOrange: "#d54e21"
-gradients:
-  gradient-wp: "linear-gradient(135deg, #0073aa 0%, #23282d 100%)"
-  gradient-wp-light: "linear-gradient(135deg, #00a0d2 0%, #0073aa 100%)"
----
-<!-- class: gradient-wp -->
-<!-- layout: title -->
-<!-- blurs -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des médias — WordPress</title>
+    <script src="../libs/tailwind.js"></script>
+    <link rel="stylesheet" href="../libs/fonts.css">
+    <link rel="stylesheet" href="../libs/slides.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                            "wp": "#0073aa",
+                            "wpDark": "#23282d",
+                            "wpLight": "#00a0d2",
+                            "wpOrange": "#d54e21"
+                        }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-wp { background: linear-gradient(135deg, #0073aa 0%, #23282d 100%); }
+        .gradient-wp-light { background: linear-gradient(135deg, #00a0d2 0%, #0073aa 100%); }
 
+        /* --- Styles Markdown : éléments SANS classe dans .slide ---
+             :not([class]) évite d'écraser les classes Tailwind inline */
+
+        /* Titres */
+        .slide h1:not([class]) {
+            font-size: clamp(2.5rem, 5vw, 3.75rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+        .slide h2:not([class]) {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 2rem;
+            line-height: 1.15;
+        }
+        .slide h3:not([class]) {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Paragraphes */
+        .slide p:not([class]) {
+            font-size: 1.125rem;
+            color: #cbd5e1;
+            line-height: 1.75;
+            margin-bottom: 1.5rem;
+        }
+        .slide p:not([class]):last-child { margin-bottom: 0; }
+        .slide p:not([class]) strong { color: #fff; }
+
+        /* Listes */
+        .slide ul:not([class]), .slide ol:not([class]) {
+            font-size: 1.125rem;
+            color: #cbd5e1;
+            line-height: 1.75;
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+        .slide ul:not([class]) { list-style: disc; }
+        .slide ol:not([class]) { list-style: decimal; }
+        .slide li:not([class]) { margin-bottom: 0.5rem; }
+        .slide li:not([class])::marker { color: #0073aa; }
+        .slide li:not([class]) strong { color: #fff; }
+
+        /* Inline code */
+        .slide code:not(.code-block code):not([class]) {
+            background: rgba(255,255,255,0.08);
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.25rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875em;
+            color: #0073aa;
+        }
+
+        /* Blockquote */
+        .slide blockquote {
+            border-left: 4px solid #0073aa;
+            padding-left: 1.5rem;
+            margin: 1.5rem 0;
+            font-style: italic;
+            color: #cbd5e1;
+        }
+        .slide blockquote p { font-size: 1.25rem; color: #cbd5e1; }
+
+        /* Tables */
+        .slide table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+        .slide th {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+            font-weight: 600;
+            color: #fff;
+        }
+        .slide td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            color: #cbd5e1;
+        }
+
+        /* Images */
+        .slide img:not([class]) { border-radius: 0.75rem; max-width: 100%; }
+
+        /* Liens */
+        .slide a:not([class]) {
+            color: #0073aa;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        /* Séparateur hr */
+        .slide hr {
+            border: none;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin: 2rem 0;
+        }
+
+        /* --- Slide titre --- */
+        .slide-title-content {
+            padding: 0 1.5rem;
+        }
+        .slide-title-content h1 {
+            font-size: clamp(3rem, 7vw, 4.5rem) !important;
+            margin-bottom: 1.5rem;
+            color: #fff;
+            animation: fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        .slide-title-content p:not([class]) {
+            font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.15s forwards;
+            opacity: 0;
+        }
+
+        /* Section label */
+        .slide-section-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            display: block;
+            color: #0073aa;
+        }
+
+        /* Code blocks — espacement */
+        .slide .code-block { margin: 1.5rem 0; }
+        .slide .code-block + p { margin-top: 1.5rem; }
+
+        /* Slides contenu : empêcher le débordement vertical */
+        .slide:not(.slide-title-wrap) > .max-w-6xl {
+            max-height: calc(720px - 6rem);
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+        .slide:not(.slide-title-wrap) > .max-w-6xl::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Scroll indicator (slide titre en mode scroll) */
+        .scroll-indicator {
+            margin-top: 4rem;
+            animation: pulse-slow 3s ease-in-out infinite;
+            color: rgba(255,255,255,0.8);
+            text-align: center;
+        }
+        .scroll-indicator svg {
+            width: 2rem;
+            height: 2rem;
+            margin: 0 auto;
+        }
+        .scroll-indicator p {
+            font-size: 0.875rem !important;
+            color: rgba(255,255,255,0.7) !important;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body data-nav="scroll" class="font-sans bg-slate-900 text-white overflow-x-hidden">
+
+    <!-- Navigation -->
+    <nav id="dots" class="fixed right-6 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col gap-3"></nav>
+    <div id="contrast-badge" style="display:none">Contraste élevé (C)</div>
+
+    <!-- Slide 1 -->
+    <section id="slide-1" class="slide flex items-center justify-center relative overflow-hidden gradient-wp">
+
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-20 left-20 w-64 h-64 bg-white rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 right-20 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+        </div>
+        <div class="relative z-10 text-center slide-title-content">
 <div class="mb-8 animate-fade-in-up">
 <svg class="w-32 h-32 mx-auto" viewBox="0 0 122.52 122.523" xmlns="http://www.w3.org/2000/svg">
 <g fill="#fff">
@@ -25,27 +217,26 @@ gradients:
 </g>
 </svg>
 </div>
+<h1>Gestion des médias</h1>
+<p>Optimiser vos images pour le web</p>
 
-# Gestion des médias
+<div class="scroll-indicator"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg><p>Défiler pour commencer</p></div>
+</div>
+    </section>
 
-Optimiser vos images pour le web
+    <!-- Slide 2 -->
+    <section id="slide-2" class="slide flex items-center py-12 bg-slate-800">
 
----
-<!-- section: 01 / Introduction -->
-
+        <div class="max-w-6xl mx-auto px-6 w-full">
+<span class="slide-section-label">01 / Introduction</span>
 <div class="grid md:grid-cols-2 gap-12 items-center">
 <div>
-
-## Pourquoi <span class="text-wp">optimiser</span> ses images ?
-
+<h2>Pourquoi <span class="text-wp">optimiser</span> ses images ?</h2>
 <blockquote class="text-xl text-slate-300 mb-6 leading-relaxed border-l-4 border-wp pl-6 italic">
 "Un bon croquis vaut mieux qu'un long discours"
 </blockquote>
-
-Une mauvaise gestion des images impacte le <strong class="text-white">référencement</strong> de votre site et la <strong class="text-wpOrange">patience</strong> de vos visiteurs.
-
-<strong class="text-wpOrange">3 secondes</strong> — c'est déjà une éternité pour un internaute !
-
+<p>Une mauvaise gestion des images impacte le <strong class="text-white">référencement</strong> de votre site et la <strong class="text-wpOrange">patience</strong> de vos visiteurs.</p>
+<p><strong class="text-wpOrange">3 secondes</strong> — c'est déjà une éternité pour un internaute !</p>
 </div>
 <div class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700">
 <h3 class="text-lg font-semibold mb-4 text-red-400 flex items-center gap-2">
@@ -91,12 +282,15 @@ Erreurs fréquentes
 </div>
 </div>
 </div>
+</div>
+    </section>
 
----
-<!-- section: 02 / Formats -->
+    <!-- Slide 3 -->
+    <section id="slide-3" class="slide flex items-center py-12 bg-slate-900">
 
-## Utiliser le <span class="text-wp">bon format</span>
-
+        <div class="max-w-6xl mx-auto px-6 w-full">
+<span class="slide-section-label">02 / Formats</span>
+<h2>Utiliser le <span class="text-wp">bon format</span></h2>
 <div class="grid md:grid-cols-3 gap-4 mb-6">
 <div class="bg-slate-900/50 p-5 rounded-2xl border border-slate-700 hover:border-wp/50 transition-colors">
 <div class="w-12 h-12 bg-yellow-500/20 rounded-xl flex items-center justify-center mb-3">
@@ -171,7 +365,6 @@ Erreurs fréquentes
 </ul>
 </div>
 </div>
-
 <div class="grid md:grid-cols-2 gap-4">
 <div class="bg-wp/10 border border-wp/30 p-4 rounded-2xl">
 <p class="text-wp font-medium">💡 Recommandation 2026</p>
@@ -186,19 +379,19 @@ Erreurs fréquentes
 </div>
 </div>
 </div>
+</div>
+    </section>
 
----
-<!-- section: 03 / Dimensions -->
+    <!-- Slide 4 -->
+    <section id="slide-4" class="slide flex items-center py-12 bg-slate-800">
 
-## <span class="text-wp">Redimensionner</span> ses images
-
+        <div class="max-w-6xl mx-auto px-6 w-full">
+<span class="slide-section-label">03 / Dimensions</span>
+<h2><span class="text-wp">Redimensionner</span> ses images</h2>
 <div class="grid md:grid-cols-2 gap-12 items-center">
 <div>
-
-Si vos images s'affichent au maximum sur <strong class="text-white">750px</strong> de large, pourquoi envoyer des images de <strong class="text-wpOrange">5000px</strong> ?
-
-Il est rare de voir des images de plus de <strong class="text-white">1800px</strong> de large sur un site web.
-
+<p>Si vos images s'affichent au maximum sur <strong class="text-white">750px</strong> de large, pourquoi envoyer des images de <strong class="text-wpOrange">5000px</strong> ?</p>
+<p>Il est rare de voir des images de plus de <strong class="text-white">1800px</strong> de large sur un site web.</p>
 <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700 mb-6">
 <h3 class="text-lg font-bold mb-3 flex items-center gap-2">
 <svg class="w-5 h-5 text-wp" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -211,12 +404,10 @@ Trouver la taille max utile
 <li><span class="text-wp font-bold">4.</span> Redimensionner à cette taille (ou légèrement plus pour le Retina)</li>
 </ol>
 </div>
-
 <div class="bg-wp/10 border border-wp/30 p-4 rounded-xl">
 <p class="text-wp font-medium">✨ Règle d'or</p>
 <p class="text-slate-300 text-sm mt-1">Toujours redimensionner <strong class="text-white">avant</strong> d'envoyer sur le serveur.</p>
 </div>
-
 </div>
 <div class="space-y-6">
 <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
@@ -257,3 +448,9 @@ Trouver la taille max utile
 </div>
 </div>
 </div>
+</div>
+    </section>
+
+    <script src="../libs/slides.js"></script>
+</body>
+</html>

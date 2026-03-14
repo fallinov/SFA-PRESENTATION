@@ -426,7 +426,7 @@ function buildHTML(frontmatter, slidesHtml, depth) {
 
         /* Slides contenu : empêcher le débordement vertical */
         .slide:not(.slide-title-wrap) > .max-w-6xl {
-            max-height: calc(100vh - 6rem);
+            max-height: calc(720px - 6rem);
             overflow-y: auto;
             scrollbar-width: none;
         }

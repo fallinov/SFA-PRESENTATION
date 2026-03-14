@@ -38,6 +38,65 @@ document.addEventListener('DOMContentLoaded', () => {
   let current = 0
   const total = slides.length
 
+  // --- Scaling : dimensionner les slides pour remplir le viewport ---
+  const REF_W = 1280
+  const REF_H = 720
+
+  function layoutSlides() {
+    const vpW = window.innerWidth
+    const vpH = window.innerHeight
+    const scale = Math.min(vpW / REF_W, vpH / REF_H)
+
+    slides.forEach(function(s) {
+      s.style.width = REF_W + 'px'
+      s.style.height = REF_H + 'px'
+      s.style.transform = 'scale(' + scale + ')'
+      s.style.transformOrigin = 'top left'
+
+      // Centrer horizontalement et verticalement
+      const scaledW = REF_W * scale
+      const scaledH = REF_H * scale
+      const marginLeft = Math.max(0, (vpW - scaledW) / 2)
+      const marginTop = Math.max(0, (vpH - scaledH) / 2)
+      s.style.marginLeft = marginLeft + 'px'
+      s.style.marginTop = marginTop + 'px'
+      s.style.marginBottom = '0'
+      s.style.marginRight = '0'
+
+      // Propager le fond sur le conteneur viewport (couvre le letterboxing)
+      const scaler = s.parentElement
+      if (scaler && scaler.classList.contains('slide-scaler')) {
+        scaler.style.width = vpW + 'px'
+        scaler.style.height = vpH + 'px'
+        scaler.style.background = getComputedStyle(s).background
+      }
+    })
+
+    // Mode toggle : fond du body = fond de la slide active
+    if (!isScroll) {
+      syncBodyBackground()
+    }
+  }
+
+  function syncBodyBackground() {
+    if (slides[current]) {
+      body.style.background = getComputedStyle(slides[current]).background
+    }
+  }
+
+  // Scroll mode : emballer chaque slide dans un .slide-scaler
+  if (isScroll) {
+    slides.forEach(function(s) {
+      const wrapper = document.createElement('div')
+      wrapper.className = 'slide-scaler'
+      s.parentNode.insertBefore(wrapper, s)
+      wrapper.appendChild(s)
+    })
+  }
+
+  layoutSlides()
+  window.addEventListener('resize', layoutSlides)
+
   // --- Utilitaire SVG sûr (pas de innerHTML) ---
   function createSvgIcon(paths, size) {
     const sz = size || 14
@@ -201,6 +260,8 @@ document.addEventListener('DOMContentLoaded', () => {
           }, { once: true })
         }
       })
+      // Mettre à jour le fond du body pour couvrir le letterboxing
+      syncBodyBackground()
     }
 
     if (dotsContainer) {

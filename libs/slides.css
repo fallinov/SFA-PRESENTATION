@@ -8,23 +8,32 @@ html { scroll-behavior: smooth; }
 html, body { margin: 0; height: 100vh; }
 body { overflow: hidden; font-family: 'Inter', system-ui, sans-serif; }
 
-/* Scroll mode : toutes les slides visibles, scroll vertical */
-body[data-nav="scroll"] { overflow-y: auto; scroll-snap-type: y mandatory; }
-body[data-nav="scroll"] .slide {
-  display: flex;
-  min-height: 100vh;
-  scroll-snap-align: start;
-  overflow: hidden;
-}
-
 /* --- Système de slides (mode toggle, défaut) --- */
-.slide { display: none; }
+.slide {
+  display: none;
+  position: relative;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none; /* Firefox */
+  /* Forcer l'alignement en haut — le centrage est géré par margin auto sur les enfants */
+  align-items: flex-start !important;
+}
+.slide::-webkit-scrollbar { display: none; /* Chrome/Safari */ }
+/* Centrage vertical via margin auto — centre quand il y a de la place, top-align quand ça déborde */
+.slide > * { margin-top: auto; margin-bottom: auto; }
 .slide.active {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 100vh;
-  overflow-y: auto;
+}
+
+/* Scroll mode : toutes les slides visibles, scroll vertical */
+body[data-nav="scroll"] { overflow-y: auto; scroll-snap-type: y mandatory; }
+body[data-nav="scroll"] .slide { display: flex; }
+body[data-nav="scroll"] .slide-scaler {
+  overflow: hidden;
+  scroll-snap-align: start;
 }
 
 /* Transition entre slides (mode toggle) */
