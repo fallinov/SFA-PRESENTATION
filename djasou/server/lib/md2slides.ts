@@ -1,125 +1,45 @@
-#!/usr/bin/env node
 /**
- * md2slides — Convertisseur Markdown → HTML pour SFA-PRESENTATION
+ * md2slides — Convertisseur Markdown → HTML pour Djasou.
+ * Port TypeScript de libs/md2slides.mjs (sans file I/O).
  *
- * Usage :
- *   node libs/md2slides.mjs wordpress/gestion-medias.md   # un fichier
- *   node libs/md2slides.mjs                                # tous les .md
- *   node libs/md2slides.mjs --watch                        # watch mode
+ * Expose renderPresentation(markdown) qui retourne le HTML complet.
  */
-import { readFileSync, writeFileSync, readdirSync, statSync, watchFile } from 'node:fs'
-import { resolve, dirname, extname, relative, join } from 'node:path'
 import matter from 'gray-matter'
 import markdownit from 'markdown-it'
+import { highlight } from './highlight'
 
 // ============================================================
-// Tokenizer syntaxique (regex-based)
+// Types
 // ============================================================
 
-const TOKENS = {
-  js: [
-    // Commentaires
-    { re: /(\/\/.*$)/gm, cls: 'comment' },
-    { re: /(\/\*[\s\S]*?\*\/)/g, cls: 'comment' },
-    // Strings (double, single, backtick)
-    { re: /("(?:[^"\\]|\\.)*")/g, cls: 'string' },
-    { re: /('(?:[^'\\]|\\.)*')/g, cls: 'string' },
-    { re: /(`(?:[^`\\]|\\.)*`)/g, cls: 'string' },
-    // Numbers
-    { re: /\b(\d+(?:\.\d+)?)\b/g, cls: 'number' },
-    // Keywords
-    { re: /\b(const|let|var|function|return|if|else|for|while|do|switch|case|break|continue|new|this|class|extends|import|export|from|default|async|await|try|catch|finally|throw|typeof|instanceof|in|of|yield|void|delete|true|false|null|undefined)\b/g, cls: 'keyword' },
-    // Functions (word followed by parenthesis)
-    { re: /\b([a-zA-Z_$][\w$]*)\s*\(/g, cls: 'function', group: 1 },
-    // Types (PascalCase)
-    { re: /\b([A-Z][a-zA-Z0-9]*)\b/g, cls: 'type' },
-  ],
-  css: [
-    { re: /(\/\*[\s\S]*?\*\/)/g, cls: 'comment' },
-    { re: /("(?:[^"\\]|\\.)*")/g, cls: 'string' },
-    { re: /('(?:[^'\\]|\\.)*')/g, cls: 'string' },
-    { re: /\b(\d+(?:\.\d+)?(?:px|em|rem|%|vh|vw|s|ms|deg|fr)?)\b/g, cls: 'number' },
-    { re: /(@(?:media|keyframes|import|font-face|supports|layer))\b/g, cls: 'keyword' },
-    { re: /([\w-]+)\s*:/g, cls: 'attr', group: 1 },
-    { re: /([.#][\w-]+)/g, cls: 'function' },
-  ],
-  html: [
-    { re: /(&lt;!--[\s\S]*?--&gt;)/g, cls: 'comment' },
-    { re: /("(?:[^"\\]|\\.)*")/g, cls: 'value' },
-    { re: /('(?:[^'\\]|\\.)*')/g, cls: 'value' },
-    { re: /(&lt;\/?)([\w-]+)/g, cls: null, replace: (_, bracket, tag) => `<span class="tag">${bracket}${tag}</span>` },
-    { re: /(\/?&gt;)/g, cls: 'tag' },
-    { re: /\b([\w-]+)(=)/g, cls: null, replace: (_, attr, eq) => `<span class="attr">${attr}</span>${eq}` },
-  ],
-  vue: 'html', // alias
-  php: [
-    { re: /(\/\/.*$)/gm, cls: 'comment' },
-    { re: /(\/\*[\s\S]*?\*\/)/g, cls: 'comment' },
-    { re: /(#.*$)/gm, cls: 'comment' },
-    { re: /("(?:[^"\\]|\\.)*")/g, cls: 'string' },
-    { re: /('(?:[^'\\]|\\.)*')/g, cls: 'string' },
-    { re: /(&lt;\?php|&lt;\?|\?&gt;)/g, cls: 'php-tag' },
-    { re: /\b(\d+(?:\.\d+)?)\b/g, cls: 'number' },
-    { re: /(\$[\w]+)/g, cls: 'variable' },
-    { re: /\b(function|return|if|else|elseif|for|foreach|while|do|switch|case|break|continue|new|class|extends|implements|public|private|protected|static|echo|print|require|include|require_once|include_once|use|namespace|as|true|false|null|array|isset|unset|empty)\b/g, cls: 'keyword' },
-    { re: /\b([a-zA-Z_][\w]*)\s*\(/g, cls: 'function', group: 1 },
-  ],
+interface Frontmatter {
+  title?: string
+  nav?: 'scroll' | ''
+  colors?: Record<string, string>
+  gradients?: Record<string, string>
 }
 
-/**
- * Applique la coloration syntaxique sur du code HTML-escaped.
- * Protège les zones déjà colorées pour éviter la double coloration.
- *
- * Utilise des placeholders « §PH_N§ » qui ne seront pas matchés
- * par les regex de nombres, keywords, etc.
- */
-function highlight(code, lang) {
-  let rules = TOKENS[lang]
-  if (!rules) return code
-  if (typeof rules === 'string') rules = TOKENS[rules]
+interface Directives {
+  class?: string
+  layout?: string
+  blurs?: boolean | string
+  section?: string
+  [key: string]: unknown
+}
 
-  const placeholders = []
-  const PH_START = '§PH_'
-  const PH_END = '§'
+// ============================================================
+// HTML utilities
+// ============================================================
 
-  function protect(span) {
-    const idx = placeholders.length
-    placeholders.push(span)
-    return `${PH_START}${idx}${PH_END}`
-  }
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+}
 
-  function hasPlaceholder(str) {
-    return str.includes(PH_START)
-  }
-
-  let result = code
-
-  for (const rule of rules) {
-    if (rule.replace) {
-      result = result.replace(rule.re, (...args) => {
-        if (hasPlaceholder(args[0])) return args[0]
-        return protect(rule.replace(...args))
-      })
-    } else if (rule.group !== undefined) {
-      result = result.replace(rule.re, (...args) => {
-        if (hasPlaceholder(args[0])) return args[0]
-        const captured = args[rule.group]
-        return args[0].replace(captured, protect(`<span class="${rule.cls}">${captured}</span>`))
-      })
-    } else {
-      result = result.replace(rule.re, (match) => {
-        if (hasPlaceholder(match)) return match
-        return protect(`<span class="${rule.cls}">${match}</span>`)
-      })
-    }
-  }
-
-  // Restaurer les placeholders (du dernier au premier pour éviter les conflits d'index)
-  let output = result
-  for (let i = placeholders.length - 1; i >= 0; i--) {
-    output = output.replaceAll(`${PH_START}${i}${PH_END}`, placeholders[i])
-  }
-  return output
+function attrEscape(str: string): string {
+  return escapeHtml(str).replace(/"/g, '&quot;')
 }
 
 // ============================================================
@@ -131,12 +51,13 @@ function highlight(code, lang) {
  * Empêche markdown-it de traiter le HTML indenté (4+ espaces)
  * comme des blocs de code indentés (CommonMark spec).
  */
-function capIndentation(content) {
+function capIndentation(content: string): string {
   const lines = content.split('\n')
-  const result = []
+  const result: string[] = []
   let inCodeFence = false
 
   for (const line of lines) {
+    // Détection code fence (0-3 espaces + ```)
     if (/^ {0,3}```/.test(line)) {
       inCodeFence = !inCodeFence
       result.push(line)
@@ -148,9 +69,10 @@ function capIndentation(content) {
       continue
     }
 
+    // Hors code fence : limiter l'indentation à 3 espaces
     const match = line.match(/^( {4,})(.+)$/)
     if (match) {
-      result.push(match[2])
+      result.push(match[2]!)
     } else {
       result.push(line)
     }
@@ -163,12 +85,11 @@ function capIndentation(content) {
 // Markdown-it configuration
 // ============================================================
 
-function createMd() {
+function createMd(): markdownit {
   const md = markdownit({ html: true, linkify: false, typographer: false })
 
-  // Override fence renderer : code-block avec coloration + data-code pour copier
   md.renderer.rules.fence = (tokens, idx) => {
-    const token = tokens[idx]
+    const token = tokens[idx]!
     const lang = token.info.trim()
     const str = token.content
     const escaped = escapeHtml(str).replace(/\n$/, '')
@@ -180,29 +101,18 @@ function createMd() {
   return md
 }
 
-function escapeHtml(str) {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-}
-
-function attrEscape(str) {
-  return escapeHtml(str).replace(/"/g, '&quot;')
-}
-
 // ============================================================
-// Parser de directives (commentaires HTML)
+// Parser de directives
 // ============================================================
 
-function parseDirectives(slideContent) {
-  const directives = {}
-  const lines = []
+function parseDirectives(slideContent: string): { directives: Directives; content: string } {
+  const directives: Directives = {}
+  const lines: string[] = []
 
   for (const line of slideContent.split('\n')) {
     const m = line.match(/^\s*<!--\s*(class|layout|blurs|section)\s*(?::\s*(.+?))?\s*-->/)
     if (m) {
-      const key = m[1]
+      const key = m[1]!
       const val = m[2] || true
       directives[key] = val
     } else {
@@ -217,7 +127,13 @@ function parseDirectives(slideContent) {
 // Wrapper de slide
 // ============================================================
 
-function wrapSlide(html, directives, index, totalSlides, frontmatterRef) {
+function wrapSlide(
+  html: string,
+  directives: Directives,
+  index: number,
+  _totalSlides: number,
+  frontmatter: Frontmatter,
+): string {
   const isTitle = directives.layout === 'title'
   const classes = ['slide', 'items-center']
 
@@ -225,12 +141,10 @@ function wrapSlide(html, directives, index, totalSlides, frontmatterRef) {
     classes.push('justify-center', 'relative', 'overflow-hidden')
   }
 
-  // py-12 pour les slides contenu (py-20 déborde avec du contenu dense)
   if (!isTitle) {
     classes.push('py-12')
   }
 
-  // Classe custom ou alternance bg
   if (directives.class) {
     classes.push(directives.class)
   } else {
@@ -239,7 +153,6 @@ function wrapSlide(html, directives, index, totalSlides, frontmatterRef) {
 
   const id = `slide-${index + 1}`
 
-  // Blurs décoratifs
   let blursHtml = ''
   if (directives.blurs) {
     blursHtml = `
@@ -249,20 +162,16 @@ function wrapSlide(html, directives, index, totalSlides, frontmatterRef) {
         </div>`
   }
 
-  // Section label
   let sectionHtml = ''
   if (directives.section) {
     sectionHtml = `<span class="slide-section-label">${directives.section}</span>\n`
   }
 
-  // Wrapper contenu pour slides non-titre
   let wrappedContent = html
   if (!isTitle) {
-    // Toujours envelopper dans max-w-6xl (comme les originaux)
     wrappedContent = `<div class="max-w-6xl mx-auto px-6 w-full">\n${sectionHtml}${html}\n</div>`
   } else {
-    // Titre : contenu centré avec z-10 + scroll indicator
-    const scrollIndicator = frontmatterRef?.nav === 'scroll'
+    const scrollIndicator = frontmatter?.nav === 'scroll'
       ? `\n<div class="scroll-indicator"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg><p>Défiler pour commencer</p></div>`
       : ''
     wrappedContent = `<div class="relative z-10 text-center slide-title-content">\n${sectionHtml}${html}${scrollIndicator}\n</div>`
@@ -279,20 +188,14 @@ ${blursHtml}
 // Générateur de template HTML
 // ============================================================
 
-function buildHTML(frontmatter, slidesHtml, depth) {
+function buildHTML(frontmatter: Frontmatter, slidesHtml: string, staticPath: string): string {
   const title = frontmatter.title || 'Présentation'
   const nav = frontmatter.nav || ''
   const colors = frontmatter.colors || {}
   const gradients = frontmatter.gradients || {}
 
-  // Chemin relatif vers libs/
-  const prefix = depth > 0 ? '../'.repeat(depth) : ''
-  const libsPath = `${prefix}libs/`
-
-  // Body attributes
   const bodyAttrs = nav === 'scroll' ? ' data-nav="scroll"' : ''
 
-  // Tailwind config (couleurs custom)
   let tailwindConfig = ''
   if (Object.keys(colors).length > 0) {
     const colorsLines = JSON.stringify(colors, null, 4)
@@ -315,22 +218,17 @@ function buildHTML(frontmatter, slidesHtml, depth) {
     </script>`
   }
 
-  // CSS custom (gradients + styles Markdown)
   const gradientRules = Object.entries(gradients)
     .map(([cls, val]) => `.${cls} { background: ${val}; }`)
     .join('\n        ')
 
-  // Première couleur custom comme accent, sinon bleu par défaut
   const accentColor = Object.values(colors)[0] || '#3b82f6'
 
   const customCSS = `
     <style>
         ${gradientRules}
 
-        /* --- Styles Markdown : éléments SANS classe dans .slide ---
-             :not([class]) évite d'écraser les classes Tailwind inline */
-
-        /* Titres */
+        /* --- Styles Markdown : éléments SANS classe dans .slide --- */
         .slide h1:not([class]) {
             font-size: clamp(2.5rem, 5vw, 3.75rem);
             font-weight: 700;
@@ -348,8 +246,6 @@ function buildHTML(frontmatter, slidesHtml, depth) {
             font-weight: 700;
             margin-bottom: 0.75rem;
         }
-
-        /* Paragraphes */
         .slide p:not([class]) {
             font-size: 1.125rem;
             color: #cbd5e1;
@@ -358,8 +254,6 @@ function buildHTML(frontmatter, slidesHtml, depth) {
         }
         .slide p:not([class]):last-child { margin-bottom: 0; }
         .slide p:not([class]) strong { color: #fff; }
-
-        /* Listes */
         .slide ul:not([class]), .slide ol:not([class]) {
             font-size: 1.125rem;
             color: #cbd5e1;
@@ -372,8 +266,6 @@ function buildHTML(frontmatter, slidesHtml, depth) {
         .slide li:not([class]) { margin-bottom: 0.5rem; }
         .slide li:not([class])::marker { color: ${accentColor}; }
         .slide li:not([class]) strong { color: #fff; }
-
-        /* Inline code */
         .slide code:not(.code-block code):not([class]) {
             background: rgba(255,255,255,0.08);
             padding: 0.15rem 0.4rem;
@@ -382,8 +274,6 @@ function buildHTML(frontmatter, slidesHtml, depth) {
             font-size: 0.875em;
             color: ${accentColor};
         }
-
-        /* Blockquote */
         .slide blockquote {
             border-left: 4px solid ${accentColor};
             padding-left: 1.5rem;
@@ -392,8 +282,6 @@ function buildHTML(frontmatter, slidesHtml, depth) {
             color: #cbd5e1;
         }
         .slide blockquote p { font-size: 1.25rem; color: #cbd5e1; }
-
-        /* Tables */
         .slide table {
             width: 100%;
             border-collapse: collapse;
@@ -412,25 +300,17 @@ function buildHTML(frontmatter, slidesHtml, depth) {
             border-bottom: 1px solid rgba(255,255,255,0.06);
             color: #cbd5e1;
         }
-
-        /* Images */
         .slide img:not([class]) { border-radius: 0.75rem; max-width: 100%; }
-
-        /* Liens */
         .slide a:not([class]) {
             color: ${accentColor};
             text-decoration: underline;
             text-underline-offset: 3px;
         }
-
-        /* Séparateur hr */
         .slide hr {
             border: none;
             border-top: 1px solid rgba(255,255,255,0.1);
             margin: 2rem 0;
         }
-
-        /* --- Slide titre --- */
         .slide-title-content {
             padding: 0 1.5rem;
         }
@@ -447,8 +327,6 @@ function buildHTML(frontmatter, slidesHtml, depth) {
             animation: fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.15s forwards;
             opacity: 0;
         }
-
-        /* Section label */
         .slide-section-label {
             font-family: 'JetBrains Mono', monospace;
             font-size: 1rem;
@@ -456,12 +334,8 @@ function buildHTML(frontmatter, slidesHtml, depth) {
             display: block;
             color: ${accentColor};
         }
-
-        /* Code blocks — espacement */
         .slide .code-block { margin: 1.5rem 0; }
         .slide .code-block + p { margin-top: 1.5rem; }
-
-        /* Slides contenu : empêcher le débordement vertical */
         .slide:not(.slide-title-wrap) > .max-w-6xl {
             max-height: calc(720px - 6rem);
             overflow-y: auto;
@@ -470,8 +344,6 @@ function buildHTML(frontmatter, slidesHtml, depth) {
         .slide:not(.slide-title-wrap) > .max-w-6xl::-webkit-scrollbar {
             display: none;
         }
-
-        /* Scroll indicator (slide titre en mode scroll) */
         .scroll-indicator {
             margin-top: 4rem;
             animation: pulse-slow 3s ease-in-out infinite;
@@ -496,9 +368,9 @@ function buildHTML(frontmatter, slidesHtml, depth) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${escapeHtml(title)}</title>
-    <script src="${libsPath}tailwind.js"></script>
-    <link rel="stylesheet" href="${libsPath}fonts.css">
-    <link rel="stylesheet" href="${libsPath}slides.css">${tailwindConfig}${customCSS}
+    <script src="${staticPath}tailwind.js"></script>
+    <link rel="stylesheet" href="${staticPath}fonts.css">
+    <link rel="stylesheet" href="${staticPath}slides.css">${tailwindConfig}${customCSS}
 </head>
 <body${bodyAttrs} class="font-sans bg-slate-900 text-white overflow-x-hidden">
 
@@ -507,132 +379,58 @@ function buildHTML(frontmatter, slidesHtml, depth) {
     <div id="contrast-badge" style="display:none">Contraste élevé (C)</div>
 
 ${slidesHtml}
-    <script src="${libsPath}slides.js"></script>
+    <script src="${staticPath}slides.js"></script>
 </body>
 </html>
 `
 }
 
 // ============================================================
-// Pipeline principal
+// API publique
 // ============================================================
 
-function convert(inputPath) {
-  const raw = readFileSync(inputPath, 'utf-8')
-  const { data: frontmatter, content: body } = matter(raw)
+/**
+ * Convertit du Markdown (avec frontmatter) en HTML complet pour les slides.
+ * @param markdown - Contenu Markdown avec frontmatter YAML
+ * @param staticPath - Chemin vers les assets statiques (défaut: '/static/')
+ */
+export function renderPresentation(markdown: string, staticPath = '/static/'): string {
+  const { data: frontmatter, content: body } = matter(markdown) as { data: Frontmatter; content: string }
 
-  // Calculer la profondeur pour les chemins relatifs
-  const projectRoot = findProjectRoot(inputPath)
-  const relPath = relative(projectRoot, dirname(inputPath))
-  const depth = relPath ? relPath.split('/').length : 0
-
-  // Séparer les slides par ---
-  // On doit ignorer le premier --- du frontmatter (déjà retiré par gray-matter)
   const rawSlides = body.split(/\n---\n/).filter(s => s.trim())
-
   const md = createMd()
-  const slidesHtml = []
+  const slidesHtml: string[] = []
 
   for (let i = 0; i < rawSlides.length; i++) {
-    const { directives, content } = parseDirectives(rawSlides[i])
+    const { directives, content } = parseDirectives(rawSlides[i]!)
     const html = md.render(capIndentation(content))
     slidesHtml.push(wrapSlide(html, directives, i, rawSlides.length, frontmatter))
   }
 
-  const fullHtml = buildHTML(frontmatter, slidesHtml.join('\n'), depth)
-
-  // Écrire le fichier HTML (même nom, extension .html)
-  const outputPath = inputPath.replace(/\.md$/, '.html')
-  writeFileSync(outputPath, fullHtml, 'utf-8')
-
-  const relOut = relative(projectRoot, outputPath)
-  console.log(`  ✓ ${relOut} (${rawSlides.length} slides)`)
-  return outputPath
+  return buildHTML(frontmatter, slidesHtml.join('\n'), staticPath)
 }
 
-// ============================================================
-// Utilitaires fichiers
-// ============================================================
-
-function findProjectRoot(filePath) {
-  let dir = dirname(resolve(filePath))
-  while (dir !== '/') {
-    try {
-      statSync(join(dir, 'libs', 'slides.js'))
-      return dir
-    } catch {
-      dir = dirname(dir)
-    }
-  }
-  return process.cwd()
+/**
+ * Extrait les slides individuels du Markdown (pour édition par slide).
+ */
+export function splitSlides(markdown: string): string[] {
+  const { content: body } = matter(markdown)
+  return body.split(/\n---\n/).filter(s => s.trim())
 }
 
-function findMarkdownFiles(dir) {
-  const files = []
-  for (const entry of readdirSync(dir)) {
-    if (entry === 'node_modules' || entry === '.git' || entry === 'slidev-test') continue
-    const full = join(dir, entry)
-    const stat = statSync(full)
-    if (stat.isDirectory()) {
-      files.push(...findMarkdownFiles(full))
-    } else if (extname(entry) === '.md' && entry !== 'README.md' && entry !== 'CLAUDE.md') {
-      files.push(full)
-    }
-  }
-  return files
+/**
+ * Reconstruit le Markdown complet à partir du frontmatter et des slides.
+ */
+export function joinSlides(frontmatterStr: string, slides: string[]): string {
+  return `${frontmatterStr}\n${slides.join('\n\n---\n\n')}\n`
 }
 
-// ============================================================
-// CLI
-// ============================================================
-
-const args = process.argv.slice(2)
-const projectRoot = findProjectRoot(import.meta.filename || process.cwd())
-
-if (args.includes('--watch')) {
-  // Watch mode
-  const files = findMarkdownFiles(projectRoot)
-  if (files.length === 0) {
-    console.log('Aucun fichier .md trouvé.')
-    process.exit(0)
-  }
-  console.log(`md2slides — watch mode (${files.length} fichiers)\n`)
-  for (const f of files) {
-    convert(f)
-    watchFile(f, { interval: 500 }, () => {
-      console.log(`\n  ↻ ${relative(projectRoot, f)} modifié`)
-      try {
-        convert(f)
-      } catch (err) {
-        console.error(`  ✗ Erreur: ${err.message}`)
-      }
-    })
-  }
-  console.log('\nEn attente de modifications... (Ctrl+C pour quitter)')
-} else if (args.length > 0) {
-  // Fichiers spécifiques
-  console.log('md2slides — conversion\n')
-  for (const arg of args) {
-    const p = resolve(arg)
-    try {
-      convert(p)
-    } catch (err) {
-      console.error(`  ✗ ${arg}: ${err.message}`)
-    }
-  }
-} else {
-  // Tous les .md
-  const files = findMarkdownFiles(projectRoot)
-  if (files.length === 0) {
-    console.log('Aucun fichier .md trouvé.')
-    process.exit(0)
-  }
-  console.log(`md2slides — conversion de ${files.length} fichier(s)\n`)
-  for (const f of files) {
-    try {
-      convert(f)
-    } catch (err) {
-      console.error(`  ✗ ${relative(projectRoot, f)}: ${err.message}`)
-    }
-  }
+/**
+ * Extrait le frontmatter brut (string YAML) du Markdown.
+ */
+export function extractFrontmatter(markdown: string): { raw: string; data: Frontmatter } {
+  const { data, matter: raw } = matter(markdown) as { data: Frontmatter; matter: string }
+  // gray-matter stocke le YAML brut dans .matter
+  const frontmatterBlock = raw ? `---\n${raw}\n---\n` : ''
+  return { raw: frontmatterBlock, data: data as Frontmatter }
 }
