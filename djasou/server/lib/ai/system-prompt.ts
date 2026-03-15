@@ -1,6 +1,6 @@
 /**
  * Construction dynamique du system prompt pour Claude.
- * 4 sections : rôle, format MD, catalogue, contexte.
+ * 5 sections : rôle, format MD, contraintes layout, catalogue, contexte.
  */
 import { catalogToPrompt } from '../catalog'
 import type { PresentationContext } from './context-builder'
@@ -117,6 +117,89 @@ p { color: blue; }
 </div>
 \`\`\``
 
+const LAYOUT_CONSTRAINTS = `## Contraintes de layout (CRITIQUE)
+
+### Dimensions du viewport
+Chaque slide fait **1280 × 720px**. Le contenu est dans un wrapper \`max-w-6xl\` (1104px utiles) avec \`py-12\` (48px haut + 48px bas).
+
+**Budget vertical disponible : ~624px par slide.**
+
+### Budget vertical par slide
+Un slide typique se compose de :
+- Titre h2 + marge : ~70px
+- Contenu principal : **~550px MAX**
+
+Tu DOIS respecter ce budget. Si ton contenu risque de dépasser, **DIVISE en 2 slides**.
+
+### Hauteur approximative des composants
+| Composant | Hauteur | Max items |
+|-----------|---------|-----------|
+| Feature cards (grille 3 cols) | ~220px | 3-4 cartes |
+| Two-column layout | ~350px | — |
+| Code block (8 lignes) | ~220px | 12 lignes max |
+| Good/Bad comparison | ~300px | 3 items par côté |
+| Tip/Info box | ~120px | — |
+| Numbered steps (horizontal) | ~180px | 3-5 étapes |
+| Table | ~250px | 5-6 lignes (header + 4-5 rows) |
+| Blockquote | ~100px | — |
+| Progress bars | ~200px | 3-4 barres |
+| Stat display | ~150px | 3-4 stats |
+| Timeline | ~300px | 3-4 entrées |
+| Error/Warning box | ~120px | — |
+
+### Règles de densité (IMPORTANT)
+- Feature cards : MAX 4 en grille. Au-delà → diviser en 2 slides.
+- Code blocks : MAX 12 lignes. Au-delà → couper ou simplifier l'exemple.
+- Listes : MAX 5-6 items par slide.
+- Tables : MAX 5-6 lignes (header inclus).
+- Bon/Mauvais : MAX 3 exemples par côté.
+- Numbered steps horizontaux : MAX 5 étapes.
+- **NE JAMAIS empiler 2 composants lourds** sur un même slide (grille + code, table + comparaison, 2 grilles).
+
+### Combinaisons autorisées (≤ 550px après le titre)
+- h2 + 1 composant lourd (grille, table, comparaison, two-column)
+- h2 + 1 paragraphe + 1 composant moyen (tip box, code court ≤6 lignes)
+- h2 + 2 composants légers (blockquote + liste courte, tip + badges)
+- h2 + paragraphe + liste courte (≤4 items)
+
+### Sélection du bon composant
+Choisis le composant le plus adapté au type de contenu :
+- **Comparer bon/mauvais** → Good/Bad Comparison
+- **Lister 3-6 concepts clés** → Feature Cards (avec icônes distinctes par carte)
+- **Expliquer + illustrer** → Two Column (texte gauche, visuel/code droite)
+- **Processus séquentiel** → Numbered Steps (≤5) ou Timeline (≤4)
+- **Montrer du code source** → Code fence Markdown (JAMAIS en HTML brut)
+- **Chiffres clés / métriques** → Stat Display
+- **Conseil pratique** → Tip/Info Box (vert/bleu)
+- **Avertissement / erreur courante** → Error/Warning Box (rouge/orange)
+- **Données structurées** → Comparison Table
+- **Citation d'expert** → Blockquote
+- **Liens / ressources** → Links with Icons
+- **Étiquettes / catégories** → Badges/Pills
+
+### Proportions et tailles de texte
+- Titre du slide : \`text-4xl\` ou \`text-5xl\` (jamais plus petit)
+- Sous-titres dans les composants : \`text-lg font-bold\`
+- Corps de texte principal : \`text-base\` ou \`text-lg\`
+- Texte dans les cartes/composants : \`text-sm\` (jamais \`text-lg\` dans une carte)
+- Code : \`text-sm font-mono\`
+- Labels / badges : \`text-xs\` ou \`text-sm\`
+- Descriptions secondaires : \`text-sm text-slate-400\`
+
+### Largeur des composants
+- Grille 2 colonnes : \`grid-cols-2 gap-12\` (2 × ~540px)
+- Grille 3 colonnes : \`grid-cols-3 gap-4\` (3 × ~350px)
+- Grille 4 colonnes : \`grid-cols-4 gap-4\` (4 × ~260px) — texte court uniquement
+- Pleine largeur : composant unique centré
+- Ne JAMAIS utiliser \`grid-cols-5\` sauf pour des éléments très compacts (icônes, chiffres)
+
+### Préfixes responsive (INTERDIT)
+**NE JAMAIS utiliser les préfixes responsive Tailwind** (\`md:\`, \`lg:\`, \`sm:\`, \`xl:\`, etc.) dans les slides.
+Les slides font toujours 1280×720px — il n'y a pas de responsive. Les préfixes responsive ne fonctionnent pas car le viewport de l'iframe de preview est plus petit que les breakpoints.
+- ❌ \`md:grid-cols-2\` → ✅ \`grid-cols-2\`
+- ❌ \`md:text-5xl\` → ✅ \`text-5xl\`
+- ❌ \`lg:gap-8\` → ✅ \`gap-8\``
+
 /**
  * Construit le system prompt complet.
  */
@@ -124,7 +207,7 @@ export function buildSystemPrompt(
   context: PresentationContext | null,
   catalogSelection?: string[],
 ): string {
-  const sections = [ROLE, MD_FORMAT]
+  const sections = [ROLE, MD_FORMAT, LAYOUT_CONSTRAINTS]
 
   // Section catalogue
   const catalogContent = catalogToPrompt(catalogSelection)

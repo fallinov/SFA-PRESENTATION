@@ -11,10 +11,10 @@ Présenter une chronologie, une évolution historique ou une progression dans le
 ## Template
 
 ```html
-<h2 class="text-4xl md:text-5xl font-bold mb-12">Évolution</h2>
+<h2 class="text-4xl text-5xl font-bold mb-12">Évolution</h2>
 
 <!-- Timeline horizontale en grille -->
-<div class="grid md:grid-cols-4 gap-4">
+<div class="grid grid-cols-4 gap-4">
   <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
     <span class="text-2xl font-bold text-blue-500">1995</span>
     <h3 class="text-lg font-bold mt-2 mb-2">Première version</h3>

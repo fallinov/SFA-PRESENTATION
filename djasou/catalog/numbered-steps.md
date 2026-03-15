@@ -11,10 +11,10 @@ Présenter un processus séquentiel, des instructions pas-à-pas ou un workflow.
 ## Template
 
 ```html
-<h2 class="text-4xl md:text-5xl font-bold mb-12">Checklist</h2>
+<h2 class="text-4xl text-5xl font-bold mb-12">Checklist</h2>
 
 <!-- Variante grille horizontale (3-5 étapes) -->
-<div class="grid md:grid-cols-5 gap-4 mb-12">
+<div class="grid grid-cols-5 gap-4 mb-12">
   <div class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
     <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
       <span class="text-2xl font-bold">1</span>

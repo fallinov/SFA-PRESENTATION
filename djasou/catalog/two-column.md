@@ -12,9 +12,9 @@ Layout principal pour les slides de contenu. Colonne gauche pour le texte explic
 
 ```html
 <span class="text-blue-500 font-mono text-base mb-4 block">01 / Section</span>
-<h2 class="text-4xl md:text-5xl font-bold mb-6">Titre avec <span class="text-blue-500">accent</span></h2>
+<h2 class="text-4xl text-5xl font-bold mb-6">Titre avec <span class="text-blue-500">accent</span></h2>
 
-<div class="grid md:grid-cols-2 gap-12 items-center">
+<div class="grid grid-cols-2 gap-12 items-center">
   <div>
     <p class="text-lg text-slate-300 mb-6 leading-relaxed">
       Paragraphe explicatif avec des mots en <strong class="text-white">gras blanc</strong>

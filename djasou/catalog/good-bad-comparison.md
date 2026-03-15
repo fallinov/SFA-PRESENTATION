@@ -11,9 +11,9 @@ Comparer de bonnes et mauvaises pratiques, des exemples corrects et incorrects, 
 ## Template
 
 ```html
-<h2 class="text-4xl md:text-5xl font-bold mb-8">Titre de la <span class="text-blue-500">comparaison</span></h2>
+<h2 class="text-4xl text-5xl font-bold mb-8">Titre de la <span class="text-blue-500">comparaison</span></h2>
 
-<div class="grid md:grid-cols-2 gap-12 items-start">
+<div class="grid grid-cols-2 gap-12 items-start">
   <div class="space-y-6">
     <div class="bg-red-500/10 p-6 rounded-2xl border border-red-500/30">
       <h3 class="text-lg font-bold mb-4 text-red-400 flex items-center gap-2">

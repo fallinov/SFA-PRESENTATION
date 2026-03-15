@@ -11,9 +11,9 @@ Afficher des fonctionnalités, des concepts ou des options sous forme de cartes 
 ## Template
 
 ```html
-<h2 class="text-4xl md:text-5xl font-bold mb-12">Titre de la <span class="text-blue-500">section</span></h2>
+<h2 class="text-4xl text-5xl font-bold mb-12">Titre de la <span class="text-blue-500">section</span></h2>
 
-<div class="grid md:grid-cols-3 gap-4">
+<div class="grid grid-cols-3 gap-4">
   <div class="bg-slate-900/50 p-5 rounded-2xl border border-slate-700 hover:border-blue-500/50 transition-colors">
     <div class="w-12 h-12 bg-yellow-500/20 rounded-xl flex items-center justify-center mb-3">
       <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

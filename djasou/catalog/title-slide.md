@@ -22,8 +22,8 @@ Première slide d'une présentation. Affiche le titre principal, un sous-titre, 
       <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
     </svg>
   </div>
-  <h1 class="text-5xl md:text-7xl font-bold mb-6">Titre de la présentation</h1>
-  <p class="text-xl md:text-2xl text-white/90 mb-8">Sous-titre ou description courte</p>
+  <h1 class="text-5xl text-7xl font-bold mb-6">Titre de la présentation</h1>
+  <p class="text-xl text-2xl text-white/90 mb-8">Sous-titre ou description courte</p>
   <div class="flex flex-wrap gap-4 justify-center">
     <span class="px-4 py-2 bg-white/20 rounded-full text-sm backdrop-blur-sm">Thème 1</span>
     <span class="px-4 py-2 bg-white/20 rounded-full text-sm backdrop-blur-sm">Thème 2</span>

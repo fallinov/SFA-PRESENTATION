@@ -14,7 +14,7 @@ Mettre en avant des chiffres clés, des statistiques ou des métriques important
 <h2 class="text-4xl font-bold mb-4 text-center">Titre de la section</h2>
 <p class="text-xl text-slate-400 text-center mb-12">Sous-titre explicatif</p>
 
-<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="grid grid-cols-1 grid-cols-3 gap-8">
   <div class="text-center">
     <div class="text-6xl font-bold text-blue-500 mb-4">81%</div>
     <p class="text-slate-300">des violations de données sont dues à des mots de passe faibles</p>

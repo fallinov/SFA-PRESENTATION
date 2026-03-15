@@ -11,10 +11,10 @@ Comparer des solutions, des technologies ou des options dans un tableau structur
 ## Template
 
 ```html
-<h2 class="text-3xl md:text-4xl font-bold mb-8 text-center">Comparatif des solutions</h2>
+<h2 class="text-3xl text-4xl font-bold mb-8 text-center">Comparatif des solutions</h2>
 
-<div class="overflow-x-auto bg-black/40 backdrop-blur-md rounded-xl p-3 md:p-6 shadow-2xl">
-  <table class="min-w-[600px] w-full text-left text-sm md:text-base">
+<div class="overflow-x-auto bg-black/40 backdrop-blur-md rounded-xl p-3 p-6 shadow-2xl">
+  <table class="min-w-[600px] w-full text-left text-sm text-base">
     <thead>
       <tr class="border-b border-slate-700">
         <th class="p-4 text-slate-400">Solution</th>
