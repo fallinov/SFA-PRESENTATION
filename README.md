@@ -22,6 +22,7 @@ SFA-PRESENTATION/
 │   ├── tailwind.js                           # Tailwind CSS (script standalone, local)
 │   ├── fonts.css                             # Déclarations @font-face
 │   └── fonts/                                # Fichiers woff2 (Inter, JetBrains Mono)
+├── djasou/                                   # App Nuxt 4 — chat IA pour créer des présentations
 ├── wordpress/                                # ESIG 741 — WordPress
 │   ├── wordpress-gestion-medias.html
 │   └── wordpress-plugins.html

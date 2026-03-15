@@ -18,8 +18,13 @@ App web conversationnelle pour créer des présentations HTML via IA (Claude).
 djasou/
 ├── app/                        # Code client Nuxt 4
 │   ├── assets/css/main.css     # Tailwind v4 + Nuxt UI
-│   ├── components/             # Composants Vue
-│   ├── composables/            # useChat, usePresentation, etc.
+│   ├── components/
+│   │   ├── catalog/            # CatalogPanel (USlideover)
+│   │   ├── chat/               # ChatPanel, ChatInput, ChatMessage, ChatModeSelector
+│   │   ├── editor/             # EditorLayout, SlideNavigator
+│   │   ├── presentation/       # PresentationCard
+│   │   └── preview/            # PreviewPanel, PreviewIframe, PreviewToolbar
+│   ├── composables/            # useChat, usePresentation, usePreview, useCatalog, useSlideNavigation
 │   ├── layouts/                # default, editor, auth
 │   ├── middleware/auth.ts      # Protection des routes
 │   └── pages/                  # index, login, editor/[slug]
@@ -47,6 +52,24 @@ djasou/
     ├── users.json              # Utilisateurs
     └── tags.json               # Tags disponibles
 ```
+
+## Architecture éditeur
+
+```
+[slug].vue (page)
+├─ ChatPanel.vue (slot left)
+│   ├─ props: slug, currentSlide, totalSlides
+│   ├─ ChatModeSelector → chat.setSlideMode() (toggle présentation/slide)
+│   ├─ CatalogPanel (USlideover) → chat.setCatalogSelection()
+│   └─ useChat(slug) → streaming SSE vers /api/chat
+└─ PreviewPanel.vue (slot right)
+    ├─ expose: refresh, currentSlide, totalSlides
+    └─ useSlideNavigation(iframeRef) → bridge postMessage avec l'iframe
+```
+
+- **Mode présentation** : l'IA édite toute la présentation
+- **Mode slide** : l'IA cible un slide spécifique (via `slideIndex`)
+- **Catalogue** : 15 composants dans `catalog/*.md`, injectés dans le system prompt quand sélectionnés
 
 ## Conventions
 
