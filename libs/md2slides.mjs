@@ -265,7 +265,7 @@ function wrapSlide(html, directives, index, totalSlides, frontmatterRef) {
     const scrollIndicator = frontmatterRef?.nav === 'scroll'
       ? `\n<div class="scroll-indicator"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg><p>Défiler pour commencer</p></div>`
       : ''
-    wrappedContent = `<div class="relative z-10 text-center slide-title-content">\n${sectionHtml}${html}${scrollIndicator}\n</div>`
+    wrappedContent = `<div class="relative z-10 text-center w-full slide-title-content">\n${sectionHtml}${html}${scrollIndicator}\n</div>`
   }
 
   return `    <!-- Slide ${index + 1} -->
