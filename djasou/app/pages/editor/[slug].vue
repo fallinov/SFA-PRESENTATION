@@ -11,7 +11,12 @@
   <EditorLayout v-else :initial-split="40">
     <!-- Panel gauche : chat -->
     <template #left>
-      <ChatPanel ref="chatPanelRef" :slug="slug" />
+      <ChatPanel
+        ref="chatPanelRef"
+        :slug="slug"
+        :current-slide="currentSlide"
+        :total-slides="totalSlides"
+      />
     </template>
 
     <!-- Panel droit : preview -->
@@ -33,6 +38,9 @@ const slug = route.params.slug as string
 const notFound = ref(false)
 const chatPanelRef = ref<InstanceType<typeof ChatPanelType>>()
 const previewRef = ref<InstanceType<typeof PreviewPanelType>>()
+
+const currentSlide = computed(() => previewRef.value?.currentSlide ?? 0)
+const totalSlides = computed(() => previewRef.value?.totalSlides ?? 0)
 
 // Vérifier que la présentation existe
 onMounted(async () => {

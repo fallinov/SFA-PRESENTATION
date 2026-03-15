@@ -50,5 +50,7 @@ function onIframeReady() {
 
 defineExpose({
   refresh: preview.refresh,
+  currentSlide: slideNav.currentSlide,
+  totalSlides: slideNav.totalSlides,
 })
 </script>
