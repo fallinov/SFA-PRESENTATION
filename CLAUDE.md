@@ -15,6 +15,8 @@ Dépôt centralisé de présentations HTML pour les cours ESIG et projets CEJEF.
 SFA-PRESENTATION/
 ├── index.html          # Sommaire — page d'accueil avec liens vers toutes les présentations
 ├── assets/             # Fichiers partagés (logos SVG, backgrounds PNG)
+├── libs/               # Librairies partagées (slides.js, slides.css, md2slides, etc.)
+├── djasou/             # App Nuxt 4 — générateur de présentations via chat IA (voir djasou/CLAUDE.md)
 ├── wordpress/          # ESIG 741 — Atelier CMS
 ├── devjs/              # ESIG 122/141 — JavaScript & Vue.js
 ├── cours-mots-de-passes/ # CEJEF — Formation sécurité
@@ -40,6 +42,7 @@ SFA-PRESENTATION/
 ### Librairies (`libs/`)
 - `slides.js` — Moteur de slides unifié (navigation, clavier, touch, contraste, copie code, ARIA)
 - `slides.css` — Styles communs (slides, animations, dots, nav, progress bar, contraste)
+- `md2slides.mjs` — Convertisseur Markdown → HTML (voir section dédiée ci-dessous)
 - `tailwind.js` — Tailwind CSS (script standalone)
 - `fonts.css` — Déclarations @font-face (latin + latin-ext)
 - `fonts/` — Fichiers woff2 (Inter, JetBrains Mono)
@@ -69,6 +72,59 @@ SFA-PRESENTATION/
 9. Stocker les assets dans `assets/`
 10. Mettre à jour `index.html` (sommaire)
 11. Commit + push → déploiement automatique sur GitHub Pages
+
+## md2slides — Préprocesseur Markdown → HTML
+
+Convertisseur qui génère le même HTML que les présentations existantes à partir de fichiers Markdown.
+
+### Commandes
+
+```bash
+node libs/md2slides.mjs wordpress/gestion-medias.md   # un fichier
+node libs/md2slides.mjs                                # tous les .md
+node libs/md2slides.mjs --watch                        # watch mode
+npm run build                                          # alias (tous les .md)
+npm run watch                                          # alias (watch)
+```
+
+### Format Markdown
+
+Frontmatter YAML en tête de fichier :
+
+```yaml
+---
+title: "Titre de la présentation"
+nav: scroll          # optionnel, "scroll" ou omis (toggle)
+colors:
+  wp: "#0073aa"
+gradients:
+  gradient-wp: "linear-gradient(135deg, #0073aa 0%, #23282d 100%)"
+---
+```
+
+Séparateur de slides : `---`
+
+Directives par slide (commentaires HTML) :
+
+```markdown
+<!-- class: gradient-wp -->   # classes CSS sur la <section>
+<!-- layout: title -->        # layout titre (centré, z-10)
+<!-- blurs -->                 # divs décoratives blur
+<!-- section: 01 / Intro -->  # label de section
+```
+
+### Comportements automatiques
+
+- Code fences → `.code-block[data-code]` avec coloration syntaxique (js, css, html, vue, php)
+- Slides sans `class:` → alternance `bg-slate-900` / `bg-slate-800`
+- Contenu non-titre → wrapper `<div class="max-w-6xl mx-auto px-6 w-full">`
+- HTML inline passe tel quel (pour les layouts complexes)
+- Chemins `libs/` calculés automatiquement selon la profondeur du fichier
+
+### Dépendances
+
+- `markdown-it` (~30 KB) — parsing Markdown
+- `gray-matter` (~10 KB) — frontmatter YAML
 
 ## Projets sources
 

@@ -11,9 +11,18 @@ Dépôt centralisé des présentations HTML utilisées dans les cours ESIG et le
 ```
 SFA-PRESENTATION/
 ├── index.html                                # Sommaire (page d'accueil)
+├── package.json                              # Dépendances (markdown-it, gray-matter)
 ├── assets/
 │   ├── logos/                                # Logos SVG (20 fichiers)
 │   └── backgrounds/                          # Arrière-plans PNG (6 fichiers)
+├── libs/
+│   ├── slides.js                             # Moteur de slides (navigation, clavier, touch, ARIA)
+│   ├── slides.css                            # Styles communs (slides, animations, dots, nav)
+│   ├── md2slides.mjs                         # Convertisseur Markdown → HTML
+│   ├── tailwind.js                           # Tailwind CSS (script standalone, local)
+│   ├── fonts.css                             # Déclarations @font-face
+│   └── fonts/                                # Fichiers woff2 (Inter, JetBrains Mono)
+├── djasou/                                   # App Nuxt 4 — chat IA pour créer des présentations
 ├── wordpress/                                # ESIG 741 — WordPress
 │   ├── wordpress-gestion-medias.html
 │   └── wordpress-plugins.html
@@ -33,12 +42,27 @@ SFA-PRESENTATION/
 
 ## Stack technique
 
-Toutes les présentations utilisent le même pattern :
+- **HTML** statique autonome (un fichier par présentation)
+- **Tailwind CSS** local (`libs/tailwind.js`) pour le style
+- **slides.js** — moteur de slides unifié (navigation clavier, touch, contraste, copie code, ARIA)
+- **slides.css** — styles communs (animations, dots, progress bar, nav)
+- **md2slides.mjs** — préprocesseur Markdown → HTML (optionnel, pour écrire les slides en Markdown)
+- **Polices** self-hosted : Inter + JetBrains Mono (`libs/fonts/`)
+- Aucun CDN externe — tout est self-hosted
 
-- **HTML** statique autonome (un seul fichier par présentation)
-- **Tailwind CSS** (CDN) pour le style
-- **JavaScript** natif pour la navigation clavier (flèches, espace)
-- Système de slides personnalisé (classes `.slide` / `.slide.active`)
+## md2slides — Écrire en Markdown
+
+Les présentations peuvent être écrites en Markdown et converties en HTML identique aux versions codées à la main.
+
+```bash
+node libs/md2slides.mjs wordpress/gestion-medias.md   # un fichier
+node libs/md2slides.mjs                                # tous les .md
+node libs/md2slides.mjs --watch                        # watch mode
+npm run build                                          # alias
+npm run watch                                          # alias
+```
+
+Voir `CLAUDE.md` pour le format Markdown détaillé (frontmatter, directives, comportements automatiques).
 
 ## Provenance
 
@@ -51,8 +75,18 @@ Toutes les présentations utilisent le même pattern :
 
 ## Ajouter une présentation
 
-1. Créer un sous-dossier par projet (ou utiliser un existant)
-2. Placer le fichier HTML dans le sous-dossier
-3. Stocker les assets (images, SVG) dans `assets/`
-4. Mettre à jour le sommaire dans `index.html`
-5. Si la présentation référence des assets, utiliser des chemins relatifs vers `../assets/`
+### Option 1 : HTML direct
+
+1. Placer le fichier HTML dans le sous-dossier projet
+2. Dans `<head>` : référencer `tailwind.js`, `fonts.css`, `slides.css`
+3. Avant `</body>` : référencer `slides.js`
+4. Stocker les assets dans `assets/`
+5. Mettre à jour `index.html` (sommaire)
+
+### Option 2 : Markdown (recommandé)
+
+1. Créer un fichier `.md` dans le sous-dossier projet
+2. Ajouter le frontmatter YAML (titre, couleurs, gradients)
+3. Écrire les slides séparées par `---`
+4. `npm run build` pour générer le HTML
+5. Mettre à jour `index.html` (sommaire)

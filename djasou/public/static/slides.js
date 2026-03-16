@@ -277,9 +277,11 @@ document.addEventListener('DOMContentLoaded', () => {
     progressBar.style.width = ((current + 1) / total * 100) + '%'
     currentSlideEl.textContent = current + 1
 
-    // Mise à jour de l'URL sans scroll
-    const slideId = slides[current].id || 'slide-' + (current + 1)
-    history.replaceState(null, '', '#' + slideId)
+    // Mise à jour de l'URL sans scroll (try/catch pour iframe srcdoc)
+    try {
+      const slideId = slides[current].id || 'slide-' + (current + 1)
+      history.replaceState(null, '', '#' + slideId)
+    } catch { /* iframe srcdoc — replaceState non supporté */ }
 
     // Annonce pour lecteurs d'écran
     if (announce) {

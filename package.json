@@ -1,0 +1,14 @@
+{
+  "name": "sfa-presentation",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node libs/md2slides.mjs",
+    "watch": "node libs/md2slides.mjs --watch"
+  },
+  "dependencies": {
+    "gray-matter": "^4.0.3",
+    "markdown-it": "^14.1.0"
+  }
+}
