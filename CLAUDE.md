@@ -16,7 +16,6 @@ SFA-PRESENTATION/
 ├── index.html          # Sommaire — page d'accueil avec liens vers toutes les présentations
 ├── assets/             # Fichiers partagés (logos SVG, backgrounds PNG)
 ├── libs/               # Librairies partagées (slides.js, slides.css, md2slides, etc.)
-├── djasou/             # App Nuxt 4 — générateur de présentations via chat IA (voir djasou/CLAUDE.md)
 ├── wordpress/          # ESIG 741 — Atelier CMS
 ├── devjs/              # ESIG 122/141 — JavaScript & Vue.js
 ├── cours-mots-de-passes/ # CEJEF — Formation sécurité
