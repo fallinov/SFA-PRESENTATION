@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M113 - Fiches Projets Personnels ESIG1</title>
+    <script src="../libs/tailwind.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563eb',
+                        secondary: '#7c3aed',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .slide-enter { animation: slideIn 0.4s ease-out; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .card-glow:hover { box-shadow: 0 0 40px rgba(37, 99, 235, 0.15); }
+        .progress-ring { transition: stroke-dashoffset 0.5s ease; }
+        .screenshot-frame {
+            background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
+        }
+        .screenshot-frame::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 12px;
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+            box-shadow: 14px 0 0 #fbbf24, 28px 0 0 #22c55e;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-white/95 backdrop-blur-lg sticky top-0 z-50 shadow-lg border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 py-3">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <!-- Logo & Title -->
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                        113
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-slate-800">Projets Personnels</h1>
+                        <p class="text-sm text-slate-500">HTML/CSS - ESIG1 2025-2026</p>
+                    </div>
+                </div>
+
+                <!-- Stats Pills -->
+                <div class="flex flex-wrap gap-2">
+                    <div class="bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        Moyenne: <span class="font-bold">16.0/20</span>
+                    </div>
+                    <div class="bg-amber-50 text-amber-700 px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        Max: <span class="font-bold">20/20</span>
+                    </div>
+                    <div class="bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        <span class="font-bold">16</span> élèves
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="flex items-center gap-3">
+                    <button id="prevBtn" onclick="changeSlide(-1)" class="w-10 h-10 bg-slate-100 hover:bg-primary hover:text-white rounded-full flex items-center justify-center transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-slate-100 disabled:hover:text-slate-800">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    </button>
+                    <div class="bg-slate-100 px-4 py-2 rounded-full font-mono text-sm">
+                        <span id="currentSlide" class="font-bold text-primary">1</span>
+                        <span class="text-slate-400">/</span>
+                        <span id="totalSlides">16</span>
+                    </div>
+                    <button id="nextBtn" onclick="changeSlide(1)" class="w-10 h-10 bg-slate-100 hover:bg-primary hover:text-white rounded-full flex items-center justify-center transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-slate-100 disabled:hover:text-slate-800">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        <div id="slidesContainer"></div>
+
+        <!-- Thumbnail Navigation -->
+        <div class="mt-8 bg-white/10 backdrop-blur rounded-2xl p-4">
+            <div class="flex items-center gap-2 mb-3">
+                <svg class="w-5 h-5 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                <span class="text-white/60 text-sm font-medium">Navigation rapide</span>
+            </div>
+            <div id="thumbnailNav" class="flex flex-wrap gap-2 justify-center"></div>
+        </div>
+    </main>
+
+    <!-- Keyboard hint -->
+    <div class="fixed bottom-4 right-4 bg-black/50 backdrop-blur text-white/70 px-4 py-2 rounded-full text-sm hidden lg:flex items-center gap-2">
+        <kbd class="bg-white/20 px-2 py-0.5 rounded text-xs">←</kbd>
+        <kbd class="bg-white/20 px-2 py-0.5 rounded text-xs">→</kbd>
+        <span>pour naviguer</span>
+    </div>
+
+    <script>
+        const eleves = [
+            {
+                nom: "Borgeaud Sophie",
+                theme: "The Office US",
+                dossier: "c113-projet-personnel-SophieBorgeaud",
+                note: 18.5,
+                structure: 4, responsive: 4, design: 3.5, qualite: 3, performance: 2, bonus: 2,
+                points_positifs: ["Structure sémantique impeccable", "Design immersif The Office", "Variables CSS nombreuses (7 couleurs)", "Polices locales", "README exemplaire"],
+                points_negatifs: ["Plusieurs images > 900Ko", "Améliorer le contraste de la navigation"],
+                penalite: 0
+            },
+            {
+                nom: "Denikola Ali-Alain",
+                theme: "ProConnect",
+                dossier: "c113-projet-personnel-ADenikola",
+                note: 16.5,
+                structure: 3.5, responsive: 4, design: 3.5, qualite: 2.5, performance: 2, bonus: 1,
+                points_positifs: ["Structure sémantique exemplaire", "Responsive bien implémenté", "Accessibilité soignée"],
+                points_negatifs: ["Erreurs syntaxe CSS à corriger", "Une seule police utilisée", "Images cassées (noms fichiers .png.png)"],
+                penalite: 0
+            },
+            {
+                nom: "Dobric Brian",
+                theme: "CV Personnel",
+                dossier: "c113-projet-personnel-Brian-Dobric",
+                note: 17,
+                structure: 4, responsive: 3, design: 4, qualite: 3, performance: 1, bonus: 2,
+                points_positifs: ["Structure exemplaire avec skip-link", "Accessibilité soignée", "Code bien organisé", "README excellent"],
+                points_negatifs: ["Images très lourdes (total 10Mo!)", "Un seul breakpoint (768px)"],
+                penalite: 0
+            },
+            {
+                nom: "Frein Joshua",
+                theme: "PCSmart",
+                dossier: "c113-projet-personnel-JoshuaFrein",
+                note: 11.5,
+                structure: 2.5, responsive: 3, design: 3, qualite: 2, performance: 1.5, bonus: 1.5,
+                points_positifs: ["Design moderne", "Transitions soignées", "Utilisation Grid/Flexbox"],
+                points_negatifs: ["Plusieurs h1 par page", "CDN FontAwesome + JavaScript", "Variables CSS définies mais non utilisées", "2 images > 1Mo"],
+                penalite: -2
+            },
+            {
+                nom: "Henz Noé",
+                theme: "Gold'n Gainz",
+                dossier: "c113-projet-personnel-noehenz",
+                note: 15.5,
+                structure: 4, responsive: 2.5, design: 3.5, qualite: 2.5, performance: 3, bonus: 0,
+                points_positifs: ["Structure HTML5 exemplaire", "Images WebP optimisées", "Thème original noir/or", "Lazy loading"],
+                points_negatifs: ["Un seul breakpoint", "Approche desktop-first", "Polices mal déclarées", "Contenu très limité (1 seule page)"],
+                penalite: 0
+            },
+            {
+                nom: "Lehmann Lennie",
+                theme: "Lennie Nails",
+                dossier: "c113-projet-personnel-lennie0312",
+                note: 16.5,
+                structure: 3.5, responsive: 2.5, design: 4, qualite: 1.5, performance: 3, bonus: 2,
+                points_positifs: ["Design très soigné et professionnel", "Flexbox/Grid bien utilisés", "Ressources locales", "README excellent"],
+                points_negatifs: ["Pas de variables CSS", "h2 dans le footer", "Breakpoints non standards"],
+                penalite: 0
+            },
+            {
+                nom: "Lehmann Lou",
+                theme: "The Gentlemen's Golf",
+                dossier: "c113-projet-personnel-Louleh",
+                note: 16,
+                structure: 3, responsive: 3, design: 3, qualite: 3, performance: 3, bonus: 1,
+                points_positifs: ["Design élégant et professionnel", "6 variables CSS couleurs", "2 breakpoints (768px, 1024px)", "Polices Merriweather locale (woff2)", "Images optimisées avec lazy loading"],
+                points_negatifs: ["Pas de skip-link", "Pas d'attributs aria-label", "Approche desktop-first"],
+                penalite: 0,
+                note_speciale: "Vue.js autorisé par le professeur"
+            },
+            {
+                nom: "Loehle Nils",
+                theme: "Judas Priest",
+                dossier: "c113-projet-personnel-G4rv13l",
+                note: 14.5,
+                structure: 3.5, responsive: 2.5, design: 3.5, qualite: 1.5, performance: 2, bonus: 1.5,
+                points_positifs: ["Menu burger CSS pur", "Accordéon CSS sans JS", "Thème original métal"],
+                points_negatifs: ["Pas de variables CSS", "Media queries vides", "Image fond 1.6Mo"],
+                penalite: 0
+            },
+            {
+                nom: "Morgado Jessica",
+                theme: "Winter Tales",
+                dossier: "c113-projet-personnel-sweetfallrain",
+                note: 18,
+                structure: 4, responsive: 4, design: 4, qualite: 3, performance: 2, bonus: 1,
+                points_positifs: ["Structure parfaite avec sr-only", "Variables CSS nombreuses (6 couleurs, 5 espacements)", "Responsive complet (4 breakpoints)", "Documentation exemplaire", "README excellent"],
+                points_negatifs: ["2 images > 1Mo", "Pas d'animations/transitions"],
+                penalite: 0
+            },
+            {
+                nom: "Mouttet Loïc",
+                theme: "FC Barcelone",
+                dossier: "c113-projet-personnel-LoicMouttet",
+                note: 17,
+                structure: 4, responsive: 2.5, design: 4, qualite: 3, performance: 2, bonus: 1.5,
+                points_positifs: ["Variables CSS exemplaires", "Design professionnel thème Barça", "Transitions soignées", "Sticky header, smooth scroll"],
+                points_negatifs: ["Approche desktop-first", "campnou.jpg 1.7Mo"],
+                penalite: 0
+            },
+            {
+                nom: "Piquerez Lionel",
+                theme: "Demon Slayer",
+                dossier: "c113-projet-personnel-LionelPI",
+                note: 16.5,
+                structure: 4, responsive: 4, design: 3.5, qualite: 3, performance: 1, bonus: 1,
+                points_positifs: ["Structure exemplaire avec ARIA", "Responsive complet (4 breakpoints)", "Accessibilité soignée"],
+                points_negatifs: ["Image fond 16.5Mo!"],
+                penalite: 0
+            },
+            {
+                nom: "Ramusi Endrit",
+                theme: "2Wavy Cuts",
+                dossier: "c113-projet-personnel-EndritRamusi2504",
+                note: 15,
+                structure: 3, responsive: 3, design: 3.5, qualite: 2, performance: 2, bonus: 1.5,
+                points_positifs: ["Design professionnel barber shop", "7 variables couleurs + 4 espacements", "Skip-link, aria-labelledby", "Mobile-first, 2 breakpoints"],
+                points_negatifs: ["Balises </ul></div> manquantes", "Image hero déformée (width:800%)", "object-fit:center top invalide", "Contenu répétitif (services = tarifs)", "olo.jpeg 1.13Mo"],
+                penalite: 0
+            },
+            {
+                nom: "Vanguelov Cyril",
+                theme: "FacturePro",
+                dossier: "c113-projet-personnel-CyrilVanguelovESIG",
+                note: 13,
+                structure: 3, responsive: 2.5, design: 3.5, qualite: 3, performance: 0, bonus: 2,
+                points_positifs: ["Variables CSS bien organisées", "README très détaillé (21 semaines)", "Transitions soignées"],
+                points_negatifs: ["Images sur CDN externes", "Bug footer (bg et color blancs)", "Pas de menu mobile"],
+                penalite: -1
+            },
+            {
+                nom: "Voisard Ana Maria",
+                theme: "Portfolio CV",
+                dossier: "Portfolio_Voisard_Ana_Maria_WEB",
+                depot_special: "https://github.com/Vassagia/Portfolio_Voisard_Ana_Maria_WEB",
+                site_special: "https://vassagia.github.io/Portfolio_Voisard_Ana_Maria_WEB/",
+                note: 20,
+                structure: 4, responsive: 4, design: 4, qualite: 3, performance: 3, bonus: 2,
+                points_positifs: ["Dark mode complet (unique!)", "Structure HTML5 parfaite", "CSS modulaire (5 fichiers)", "20+ variables CSS", "Polices locales woff2", "Lighthouse 100% perf", "Documentation exemplaire"],
+                points_negatifs: ["Projet rendu dans un dépôt séparé"],
+                penalite: 0,
+                note_speciale: "Meilleur projet de la classe!"
+            },
+            {
+                nom: "Walzer Nicolas",
+                theme: "Helldivers",
+                dossier: "c113-projet-personnel-NicolasW1990",
+                note: 14.5,
+                structure: 3.5, responsive: 2, design: 3, qualite: 3, performance: 2, bonus: 1,
+                points_positifs: ["Thème Helldivers immersif", "6 variables couleurs, 4 espacements", "4 pages complètes", "Images optimisées", "Polices locales"],
+                points_negatifs: ["Un seul breakpoint (768px)", "Approche desktop-first", "Alt images peu descriptifs"],
+                penalite: 0
+            },
+            {
+                nom: "Zahrane Néhémie",
+                theme: "Marvel Stats",
+                dossier: "c113-projet-personnel-nehemie-z",
+                note: 13.5,
+                structure: 3.5, responsive: 2, design: 3.5, qualite: 3, performance: 1, bonus: 1.5,
+                points_positifs: ["Variables CSS complètes (3 couleurs, 2 polices, 3 espacements)", "Images WebP optimisées", "Barres de stats créatives", "Design Marvel cohérent", "CSS Grid responsive (auto-fit)"],
+                points_negatifs: ["CDN normalize.css", "Desktop-first", "Breakpoint 680px non standard"],
+                penalite: -1,
+                note_speciale: "3 pages demandées, 3 réalisées"
+            }
+        ];
+
+        let currentIndex = 0;
+
+        function getScoreColor(score, max) {
+            const percent = (score / max) * 100;
+            if (percent >= 90) return { bg: 'bg-emerald-100', text: 'text-emerald-700', ring: 'ring-emerald-500' };
+            if (percent >= 70) return { bg: 'bg-blue-100', text: 'text-blue-700', ring: 'ring-blue-500' };
+            if (percent >= 50) return { bg: 'bg-amber-100', text: 'text-amber-700', ring: 'ring-amber-500' };
+            return { bg: 'bg-red-100', text: 'text-red-700', ring: 'ring-red-500' };
+        }
+
+        function calculateNote6(note20) {
+            return ((note20 / 20) * 5 + 1).toFixed(1);
+        }
+
+        function getGradeColor(note) {
+            if (note >= 18) return 'from-emerald-500 to-teal-600';
+            if (note >= 16) return 'from-blue-500 to-indigo-600';
+            if (note >= 14) return 'from-amber-500 to-orange-600';
+            return 'from-red-500 to-rose-600';
+        }
+
+        function getThumbStyle(note) {
+            if (note >= 18) return 'bg-emerald-500/80 hover:bg-emerald-500';
+            if (note >= 16) return 'bg-blue-500/80 hover:bg-blue-500';
+            if (note >= 14) return 'bg-amber-500/80 hover:bg-amber-500';
+            return 'bg-red-500/80 hover:bg-red-500';
+        }
+
+        function generateSlides() {
+            const container = document.getElementById('slidesContainer');
+            const thumbNav = document.getElementById('thumbnailNav');
+
+            eleves.forEach((eleve, index) => {
+                const siteUrl = eleve.site_special || `https://esig-jura.github.io/${eleve.dossier}/`;
+                const depotUrl = eleve.depot_special || `https://github.com/esig-jura/${eleve.dossier}`;
+                const note6 = calculateNote6(eleve.note);
+                const gradeColor = getGradeColor(eleve.note);
+
+                const slide = document.createElement('div');
+                slide.className = `slide ${index === 0 ? '' : 'hidden'}`;
+                slide.innerHTML = `
+                    <div class="slide-enter">
+                        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden card-glow transition-all duration-300">
+
+                            <!-- Header Card -->
+                            <div class="bg-gradient-to-r ${gradeColor} p-6 lg:p-8">
+                                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                                    <div class="space-y-3">
+                                        <div class="flex items-center gap-3 flex-wrap">
+                                            <span class="bg-white/20 backdrop-blur px-3 py-1 rounded-full text-white/90 text-sm font-medium">
+                                                #${index + 1}
+                                            </span>
+                                            ${eleve.note_speciale ? `<span class="bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>${eleve.note_speciale}</span>` : ''}
+                                            ${eleve.penalite !== 0 ? `<span class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">Pénalité: ${eleve.penalite} pt</span>` : ''}
+                                        </div>
+                                        <h2 class="text-3xl lg:text-4xl font-bold text-white">${eleve.nom}</h2>
+                                        <div class="flex items-center gap-2">
+                                            <span class="bg-white/20 backdrop-blur px-4 py-2 rounded-xl text-white font-medium">
+                                                ${eleve.theme}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Score Display -->
+                                    <div class="flex items-center gap-6">
+                                        <div class="text-center">
+                                            <div class="text-6xl lg:text-7xl font-black text-white drop-shadow-lg">${eleve.note}</div>
+                                            <div class="text-white/80 font-medium">sur 20 points</div>
+                                        </div>
+                                        <div class="w-px h-20 bg-white/30 hidden lg:block"></div>
+                                        <div class="bg-white/20 backdrop-blur rounded-2xl p-4 text-center">
+                                            <div class="text-3xl font-bold text-white">${note6}</div>
+                                            <div class="text-white/80 text-sm">Note /6</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Body -->
+                            <div class="p-6 lg:p-8 space-y-8">
+
+                                <!-- Screenshots -->
+                                <div class="grid lg:grid-cols-5 gap-6">
+                                    <!-- Desktop -->
+                                    <div class="lg:col-span-3">
+                                        <div class="screenshot-frame relative rounded-xl overflow-hidden shadow-xl">
+                                            <div class="bg-slate-800 px-4 py-3 flex items-center gap-3">
+                                                <div class="flex gap-1.5">
+                                                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                                </div>
+                                                <div class="flex-1 bg-slate-700 rounded-md px-3 py-1 text-xs text-slate-400 truncate">
+                                                    ${siteUrl}
+                                                </div>
+                                            </div>
+                                            <div class="bg-white h-64 lg:h-80">
+                                                <iframe src="${siteUrl}" class="w-full h-full border-0" loading="lazy" sandbox="allow-same-origin"></iframe>
+                                            </div>
+                                        </div>
+                                        <p class="text-center text-slate-500 text-sm mt-2 flex items-center justify-center gap-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                                            Vue Desktop
+                                        </p>
+                                    </div>
+
+                                    <!-- Mobile -->
+                                    <div class="lg:col-span-2 flex flex-col items-center">
+                                        <div class="w-48 bg-slate-900 rounded-[2rem] p-2 shadow-xl">
+                                            <div class="bg-slate-800 rounded-t-[1.5rem] pt-4 pb-2">
+                                                <div class="w-16 h-1 bg-slate-700 rounded-full mx-auto"></div>
+                                            </div>
+                                            <div class="bg-white rounded-b-[1.5rem] h-72 overflow-hidden">
+                                                <iframe src="${siteUrl}" class="w-[375px] h-[667px] border-0 origin-top-left" style="transform: scale(0.48);" loading="lazy" sandbox="allow-same-origin"></iframe>
+                                            </div>
+                                        </div>
+                                        <p class="text-center text-slate-500 text-sm mt-3 flex items-center justify-center gap-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                            Vue Mobile
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Evaluation Grid -->
+                                <div>
+                                    <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                        <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                                        Évaluation détaillée
+                                    </h3>
+                                    <div class="grid grid-cols-2 lg:grid-cols-6 gap-3">
+                                        ${[
+                                            { label: 'Structure', score: eleve.structure, max: 4, icon: '🏗️' },
+                                            { label: 'Responsive', score: eleve.responsive, max: 4, icon: '📱' },
+                                            { label: 'Design', score: eleve.design, max: 4, icon: '🎨' },
+                                            { label: 'Qualité', score: eleve.qualite, max: 3, icon: '✨' },
+                                            { label: 'Perf.', score: eleve.performance, max: 3, icon: '⚡' },
+                                            { label: 'Bonus', score: eleve.bonus, max: 2, icon: '🎁' }
+                                        ].map(item => {
+                                            const colors = getScoreColor(item.score, item.max);
+                                            return `
+                                                <div class="${colors.bg} rounded-xl p-4 text-center transition-transform hover:scale-105">
+                                                    <div class="text-2xl mb-1">${item.icon}</div>
+                                                    <div class="text-xs text-slate-600 font-medium mb-1">${item.label}</div>
+                                                    <div class="text-xl font-bold ${colors.text}">${item.score}<span class="text-sm font-normal text-slate-400">/${item.max}</span></div>
+                                                </div>
+                                            `;
+                                        }).join('')}
+                                    </div>
+                                </div>
+
+                                <!-- Feedback -->
+                                <div class="grid lg:grid-cols-2 gap-6">
+                                    <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-5">
+                                        <h4 class="font-bold text-emerald-800 mb-3 flex items-center gap-2">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            Points positifs
+                                        </h4>
+                                        <ul class="space-y-2">
+                                            ${eleve.points_positifs.map(p => `
+                                                <li class="flex items-start gap-2 text-sm text-emerald-700">
+                                                    <svg class="w-4 h-4 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                                    ${p}
+                                                </li>
+                                            `).join('')}
+                                        </ul>
+                                    </div>
+                                    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+                                        <h4 class="font-bold text-amber-800 mb-3 flex items-center gap-2">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                            À améliorer
+                                        </h4>
+                                        <ul class="space-y-2">
+                                            ${eleve.points_negatifs.map(p => `
+                                                <li class="flex items-start gap-2 text-sm text-amber-700">
+                                                    <svg class="w-4 h-4 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                                                    ${p}
+                                                </li>
+                                            `).join('')}
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <!-- Links -->
+                                <div class="flex flex-wrap gap-3 pt-4 border-t border-slate-200">
+                                    <a href="${siteUrl}" target="_blank" class="inline-flex items-center gap-2 bg-primary hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-medium transition-all hover:shadow-lg hover:-translate-y-0.5">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                                        Voir le site
+                                    </a>
+                                    <a href="${depotUrl}" target="_blank" class="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-5 py-3 rounded-xl font-medium transition-all hover:shadow-lg hover:-translate-y-0.5">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path></svg>
+                                        Dépôt GitHub
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(slide);
+
+                // Thumbnail
+                const thumb = document.createElement('button');
+                thumb.className = `${getThumbStyle(eleve.note)} ${index === 0 ? 'ring-2 ring-white ring-offset-2 ring-offset-transparent' : ''} text-white w-12 h-12 rounded-xl font-bold text-sm transition-all hover:scale-110 flex items-center justify-center`;
+                thumb.textContent = eleve.nom.split(' ')[0].substring(0, 3);
+                thumb.title = `${eleve.nom} - ${eleve.note}/20`;
+                thumb.onclick = () => goToSlide(index);
+                thumbNav.appendChild(thumb);
+            });
+
+            document.getElementById('totalSlides').textContent = eleves.length;
+        }
+
+        function updateSlide() {
+            const slides = document.querySelectorAll('.slide');
+            const thumbs = document.querySelectorAll('#thumbnailNav button');
+
+            slides.forEach((slide, i) => {
+                if (i === currentIndex) {
+                    slide.classList.remove('hidden');
+                    slide.querySelector('.slide-enter')?.classList.remove('slide-enter');
+                    void slide.offsetWidth;
+                    slide.querySelector('div')?.classList.add('slide-enter');
+                } else {
+                    slide.classList.add('hidden');
+                }
+            });
+
+            thumbs.forEach((thumb, i) => {
+                if (i === currentIndex) {
+                    thumb.classList.add('ring-2', 'ring-white', 'ring-offset-2');
+                } else {
+                    thumb.classList.remove('ring-2', 'ring-white', 'ring-offset-2');
+                }
+            });
+
+            document.getElementById('currentSlide').textContent = currentIndex + 1;
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === eleves.length - 1;
+        }
+
+        function changeSlide(direction) {
+            currentIndex += direction;
+            if (currentIndex < 0) currentIndex = 0;
+            if (currentIndex >= eleves.length) currentIndex = eleves.length - 1;
+            updateSlide();
+        }
+
+        function goToSlide(index) {
+            currentIndex = index;
+            updateSlide();
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+        });
+
+        // Touch swipe support
+        let touchStartX = 0;
+        document.addEventListener('touchstart', e => touchStartX = e.touches[0].clientX);
+        document.addEventListener('touchend', e => {
+            const diff = touchStartX - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 50) changeSlide(diff > 0 ? 1 : -1);
+        });
+
+        // Initialize
+        generateSlides();
+    </script>
+</body>
+</html>

@@ -19,6 +19,7 @@ SFA-PRESENTATION/
 ├── wordpress/          # ESIG 741 — Atelier CMS
 ├── devjs/              # ESIG 122/141 — JavaScript & Vue.js
 ├── cours-mots-de-passes/ # CEJEF — Formation sécurité
+├── fiches-eleves/         # ESIG 113 — Fiches projets personnels (framework custom, pas slides.js)
 └── referentiel-logiciels/ # CEJEF — GCN, COPIL, SEN
 ```
 
@@ -134,4 +135,5 @@ Les présentations proviennent de ces dépôts (où elles ont été supprimées)
 | `wordpress/` | `~/ESIG/741/` + [2026-sfa-wordpress-gestion-medias](https://github.com/fallinov/2026-sfa-wordpress-gestion-medias) (archivé) |
 | `devjs/` | `~/WebstormProjects/devjs/` |
 | `cours-mots-de-passes/` | `~/WebstormProjects/2026-cours-mots-de-passes/` |
+| `fiches-eleves/` | `~/ESIG/113/examens/2025-2026/projets perssonels/` |
 | `referentiel-logiciels/` | `~/WebstormProjects/2025-cns-sfa-referentiel-logiciels-cejef/` + `~/CNS/` |
