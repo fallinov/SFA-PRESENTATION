@@ -32,6 +32,8 @@ SFA-PRESENTATION/
 │   └── vue-lifecycle-watchers.html
 ├── cours-mots-de-passes/                     # CEJEF — Sécurité
 │   └── cours-mots-de-passes.html
+├── fiches-eleves/                            # ESIG 113 — Projets personnels
+│   └── fiches-eleves.html
 └── referentiel-logiciels/                    # CEJEF — GCN / COPIL / SEN
     ├── referentiel-logiciels.html
     ├── referentiel-logiciels-copil.html
@@ -70,6 +72,7 @@ Voir `CLAUDE.md` pour le format Markdown détaillé (frontmatter, directives, co
 | `wordpress/` | ESIG/741, 2026-sfa-wordpress-gestion-medias | Atelier CMS (ESIG2) |
 | `devjs/` | devjs (devjs.ch) | Cours 122/141 (ESIG1-2) |
 | `cours-mots-de-passes/` | 2026-cours-mots-de-passes | Formation ProtonPass (CEJEF) |
+| `fiches-eleves/` | ESIG/113 (projets personnels) | M113 HTML/CSS (ESIG1) |
 | `referentiel-logiciels/` | 2025-cns-sfa-referentiel-logiciels-cejef | Projet CNS / GCN |
 
 ## Ajouter une présentation
