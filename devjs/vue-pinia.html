@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pinia — Centraliser les données</title>
+    <script src="../libs/tailwind.js"></script>
+    <link rel="stylesheet" href="../libs/fonts.css">
+    <link rel="stylesheet" href="../libs/slides.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        vue: '#42b883',
+                        vueDark: '#35495e',
+                        vuetify: '#1867C0',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-vue { background: linear-gradient(135deg, #42b883 0%, #35495e 100%); }
+        .gradient-vuetify { background: linear-gradient(135deg, #1867C0 0%, #5CBBF6 100%); }
+    </style>
+</head>
+<body class="font-sans bg-slate-900 text-white">
+
+    <!-- Navigation latérale (générée en JS) -->
+    <nav id="dots" class="fixed right-6 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col gap-3"></nav>
+    <div id="contrast-badge" style="display:none">Contraste élevé (C)</div>
+
+    <!-- Slide 1: Titre -->
+    <section id="slide-1" class="slide active items-center justify-center gradient-vue relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-20 left-20 w-64 h-64 bg-white rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 right-20 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+        </div>
+        <div class="text-center px-6 relative z-10">
+            <div class="mb-8 animate-fade-in-up">
+                <svg class="w-32 h-32 mx-auto" viewBox="0 0 261.76 226.69" xmlns="http://www.w3.org/2000/svg">
+                    <path d="m161.096.001-30.224 52.35L100.647.002H0L130.872 226.69 261.76 0z" fill="#41b883"/>
+                    <path d="m161.096.001-30.224 52.35L100.647.002H52.33l78.542 136.01L209.398.001z" fill="#35495e"/>
+                </svg>
+            </div>
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-6 animate-fade-in-up delay-100">
+                Pinia — Centraliser les données
+            </h1>
+            <p class="text-xl md:text-2xl text-white/80 mb-4 animate-fade-in-up delay-200">
+                State management pour Vue.js
+            </p>
+            <p class="text-lg text-white/60 mb-8 animate-fade-in-up delay-200">
+                C141 — Séance 9 — 1er avril 2026
+            </p>
+            <div class="flex flex-wrap gap-4 justify-center animate-fade-in-up delay-300">
+                <span class="px-4 py-2 bg-white/20 rounded-full text-sm backdrop-blur-sm">State</span>
+                <span class="px-4 py-2 bg-white/20 rounded-full text-sm backdrop-blur-sm">Getters</span>
+                <span class="px-4 py-2 bg-white/20 rounded-full text-sm backdrop-blur-sm">Actions</span>
+                <span class="px-4 py-2 bg-white/20 rounded-full text-sm backdrop-blur-sm">storeToRefs</span>
+            </div>
+            <div class="mt-16 animate-pulse-slow">
+                <svg class="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                </svg>
+                <p class="text-sm text-white/70 mt-2">Flèches pour naviguer</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 2: Objectifs -->
+    <section id="slide-2" class="slide items-center bg-slate-900 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">01 / Objectifs</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-12">Objectifs de la <span class="text-vue">séance</span></h2>
+
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <div class="bg-slate-800/50 p-8 rounded-2xl border border-slate-700 hover:border-vue/50 transition-colors">
+                    <div class="w-14 h-14 bg-vue/20 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-vue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Prop drilling</h3>
+                    <p class="text-slate-400">Comprendre le problème des données piégées dans un composant</p>
+                </div>
+
+                <div class="bg-slate-800/50 p-8 rounded-2xl border border-slate-700 hover:border-vue/50 transition-colors">
+                    <div class="w-14 h-14 bg-vue/20 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-vue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Store Pinia</h3>
+                    <p class="text-slate-400">Créer un store avec state, getters et actions</p>
+                </div>
+
+                <div class="bg-slate-800/50 p-8 rounded-2xl border border-slate-700 hover:border-vue/50 transition-colors">
+                    <div class="w-14 h-14 bg-vue/20 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-vue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">storeToRefs</h3>
+                    <p class="text-slate-400">Destructurer un store sans perdre la réactivité</p>
+                </div>
+            </div>
+
+            <div class="bg-vue/10 border border-vue/30 p-4 rounded-2xl">
+                <p class="text-vue font-medium">💡 Pour le projet Pokédex</p>
+                <p class="text-slate-300 text-sm mt-2">Ces concepts sont essentiels : le store centralisera les Pokémon pour les rendre accessibles partout dans l'application.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 3: Le problème — prop drilling -->
+    <section id="slide-3" class="slide items-center bg-slate-800 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">02 / Le problème</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">Le <span class="text-vue">prop drilling</span></h2>
+
+            <div class="grid md:grid-cols-2 gap-12 items-start">
+                <!-- Schéma prop drilling -->
+                <div>
+                    <p class="text-slate-300 text-lg mb-8">Les données passent de composant en composant via props, comme un seau d'eau qu'on se passe de main en main.</p>
+
+                    <div class="space-y-4">
+                        <div class="bg-slate-900/50 p-4 rounded-xl border-2 border-vue text-center">
+                            <span class="text-vue font-bold">App</span>
+                            <span class="text-slate-400 text-sm block">pokemons = [...]</span>
+                        </div>
+                        <div class="flex justify-center text-vue text-2xl">↓ <span class="text-sm text-slate-400 ml-2">:pokemons</span></div>
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-600 text-center">
+                            <span class="text-slate-200 font-bold">PageAccueil</span>
+                        </div>
+                        <div class="flex justify-center text-vue text-2xl">↓ <span class="text-sm text-slate-400 ml-2">:pokemons</span></div>
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-600 text-center">
+                            <span class="text-slate-200 font-bold">PokemonCard</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Problème -->
+                <div>
+                    <p class="text-slate-300 text-lg mb-8">Et si <code class="text-vue">PageDetail</code> a aussi besoin des données ? Il faut tout remonter dans <code class="text-vue">App</code> et redescendre...</p>
+
+                    <div class="space-y-4">
+                        <div class="bg-slate-900/50 p-4 rounded-xl border-2 border-red-500/50 text-center">
+                            <span class="text-red-400 font-bold">App</span>
+                            <span class="text-slate-400 text-sm block">Doit stocker TOUTES les données</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <div class="flex justify-center text-red-400 text-xl mb-2">↓</div>
+                                <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-600 text-center text-sm">
+                                    <span class="text-slate-200">PageAccueil</span>
+                                    <div class="text-red-400 text-xl mt-1">↓</div>
+                                    <span class="text-slate-200">PokemonCard</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-center text-red-400 text-xl mb-2">↓</div>
+                                <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-600 text-center text-sm">
+                                    <span class="text-slate-200">PageDetail</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 bg-red-500/10 border border-red-500/30 p-4 rounded-xl">
+                        <p class="text-red-400 font-medium">⚠️ Problème</p>
+                        <p class="text-slate-400 text-sm mt-1">C'est comme si chaque pièce de la maison avait sa propre réserve de nourriture au lieu d'un frigo central.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 4: La solution — un store -->
+    <section id="slide-4" class="slide items-center bg-slate-900 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">03 / La solution</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">Un <span class="text-vue">store</span> central</h2>
+
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <!-- Schéma store -->
+                <div class="flex flex-col items-center">
+                    <div class="grid grid-cols-3 gap-4 mb-8 w-full">
+                        <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-600 text-center">
+                            <span class="text-slate-200 font-medium text-sm">PageAccueil</span>
+                        </div>
+                        <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-600 text-center">
+                            <span class="text-slate-200 font-medium text-sm">PageDetail</span>
+                        </div>
+                        <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-600 text-center">
+                            <span class="text-slate-200 font-medium text-sm">PokemonCard</span>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center gap-8 text-vue text-2xl mb-4">
+                        <span>↑↓</span>
+                        <span>↑↓</span>
+                        <span>↑↓</span>
+                    </div>
+
+                    <div class="bg-vue/20 p-6 rounded-2xl border-2 border-vue text-center w-full">
+                        <span class="text-vue font-bold text-xl">🗄️ Store Pinia</span>
+                        <span class="text-slate-300 text-sm block mt-1">Source unique de vérité</span>
+                    </div>
+                </div>
+
+                <!-- Explication -->
+                <div>
+                    <div class="space-y-6">
+                        <div class="flex items-start gap-4">
+                            <span class="text-vue text-2xl">✓</span>
+                            <div>
+                                <p class="text-white font-medium">Accès direct</p>
+                                <p class="text-slate-400 text-sm">Chaque composant accède directement aux données, sans passer par les parents</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <span class="text-vue text-2xl">✓</span>
+                            <div>
+                                <p class="text-white font-medium">Source unique</p>
+                                <p class="text-slate-400 text-sm">Les données ne sont stockées qu'à un seul endroit</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <span class="text-vue text-2xl">✓</span>
+                            <div>
+                                <p class="text-white font-medium">Réactif</p>
+                                <p class="text-slate-400 text-sm">Quand le store change, tous les composants se mettent à jour automatiquement</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 bg-vue/10 border border-vue/30 p-4 rounded-xl">
+                        <p class="text-vue font-medium">💡 Pinia</p>
+                        <p class="text-slate-300 text-sm mt-2">Bibliothèque <strong class="text-white">officielle</strong> de Vue.js pour le state management. Elle remplace Vuex (l'ancien gestionnaire d'état).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 5: Anatomie d'un store -->
+    <section id="slide-5" class="slide items-center bg-slate-800 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">04 / Anatomie</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-12">Les <span class="text-vue">3 parties</span> d'un store</h2>
+
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <div class="bg-slate-900/50 p-8 rounded-2xl border border-slate-700 hover:border-vue/50 transition-colors text-center">
+                    <div class="text-5xl mb-6">📦</div>
+                    <h3 class="text-2xl font-bold mb-3 text-vue">State</h3>
+                    <p class="text-slate-300 mb-4">Les données</p>
+                    <p class="text-slate-400 text-sm">Comme <code class="text-vue">ref()</code> mais partagé entre tous les composants</p>
+                    <div class="mt-4 bg-slate-800/50 px-3 py-2 rounded-lg">
+                        <code class="text-vue text-sm font-mono">pokemons, isLoading</code>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 p-8 rounded-2xl border border-slate-700 hover:border-vue/50 transition-colors text-center">
+                    <div class="text-5xl mb-6">🧮</div>
+                    <h3 class="text-2xl font-bold mb-3 text-vue">Getters</h3>
+                    <p class="text-slate-300 mb-4">Données calculées</p>
+                    <p class="text-slate-400 text-sm">Comme <code class="text-vue">computed()</code> mais dans le store</p>
+                    <div class="mt-4 bg-slate-800/50 px-3 py-2 rounded-lg">
+                        <code class="text-vue text-sm font-mono">totalPokemons</code>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 p-8 rounded-2xl border border-slate-700 hover:border-vue/50 transition-colors text-center">
+                    <div class="text-5xl mb-6">⚡</div>
+                    <h3 class="text-2xl font-bold mb-3 text-vue">Actions</h3>
+                    <p class="text-slate-300 mb-4">Fonctions</p>
+                    <p class="text-slate-400 text-sm">Modifient le state (sync ou async)</p>
+                    <div class="mt-4 bg-slate-800/50 px-3 py-2 rounded-lg">
+                        <code class="text-vue text-sm font-mono">fetchPokemons()</code>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-vue/10 border border-vue/30 p-6 rounded-2xl text-center">
+                <p class="text-vue font-bold text-lg mb-2">💡 Analogie</p>
+                <p class="text-slate-300 text-lg">Le <strong class="text-white">State</strong> c'est le frigo, les <strong class="text-white">Getters</strong> sont les recettes, et les <strong class="text-white">Actions</strong> sont le cuisinier.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 6: Créer un store -->
+    <section id="slide-6" class="slide items-center bg-slate-900 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">05 / Créer un store</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">Créer un <span class="text-vue">store</span></h2>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <p class="text-slate-400 text-sm mb-3 font-mono">📄 stores/pokemonStore.js</p>
+                    <div class="code-block">
+                        <pre class="text-slate-300"><span class="keyword">import</span> { <span class="function">defineStore</span> } <span class="keyword">from</span> <span class="string">'pinia'</span>
+
+<span class="keyword">export const</span> <span class="function">usePokemonStore</span> =
+  <span class="function">defineStore</span>(<span class="string">'pokemon'</span>, {
+
+  <span class="comment">// 📦 State — les données</span>
+  <span class="function">state</span>: () =&gt; ({
+    pokemons: [],
+    isLoading: <span class="keyword">false</span>,
+    error: <span class="keyword">null</span>,
+  }),
+
+  <span class="comment">// 🧮 Getters — données calculées</span>
+  getters: {
+    <span class="function">totalPokemons</span>: (state) =&gt;
+      state.pokemons.length,
+
+    <span class="function">getPokemonById</span>: (state) =&gt; {
+      <span class="keyword">return</span> (id) =&gt;
+        state.pokemons.<span class="function">find</span>(
+          p =&gt; p.id === id
+        )
+    },
+  },
+
+  <span class="comment">// ⚡ Actions — fonctions</span>
+  actions: {
+    <span class="keyword">async</span> <span class="function">fetchPokemons</span>() {
+      <span class="keyword">this</span>.isLoading = <span class="keyword">true</span>
+      <span class="keyword">this</span>.error = <span class="keyword">null</span>
+      <span class="keyword">try</span> {
+        <span class="keyword">const</span> res = <span class="keyword">await</span> <span class="function">fetch</span>(
+          <span class="string">'http://localhost:3535/pokemons'</span>
+        )
+        <span class="keyword">this</span>.pokemons =
+          <span class="keyword">await</span> res.<span class="function">json</span>()
+      } <span class="keyword">catch</span> (err) {
+        <span class="keyword">this</span>.error =
+          <span class="string">'Impossible de charger'</span>
+      } <span class="keyword">finally</span> {
+        <span class="keyword">this</span>.isLoading = <span class="keyword">false</span>
+      }
+    },
+  },
+})</pre>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-slate-800/50 p-5 rounded-2xl border border-slate-700">
+                        <h4 class="text-vue font-bold mb-2">1. defineStore</h4>
+                        <p class="text-slate-300 text-sm">Crée le store avec un <strong class="text-white">identifiant unique</strong> (<code class="text-vue">'pokemon'</code>) et un objet de configuration.</p>
+                    </div>
+                    <div class="bg-slate-800/50 p-5 rounded-2xl border border-slate-700">
+                        <h4 class="text-vue font-bold mb-2">2. Convention de nom</h4>
+                        <p class="text-slate-300 text-sm">Le nom commence par <code class="text-vue">use</code> et finit par <code class="text-vue">Store</code> : <code class="text-vue">usePokemonStore</code></p>
+                    </div>
+                    <div class="bg-slate-800/50 p-5 rounded-2xl border border-slate-700">
+                        <h4 class="text-vue font-bold mb-2">3. state est une fonction</h4>
+                        <p class="text-slate-300 text-sm">Le state retourne un <strong class="text-white">objet</strong> (comme <code class="text-vue">data()</code> en Options API). Chaque propriété doit être initialisée.</p>
+                    </div>
+                    <div class="bg-slate-800/50 p-5 rounded-2xl border border-slate-700">
+                        <h4 class="text-vue font-bold mb-2">4. this dans les actions</h4>
+                        <p class="text-slate-300 text-sm">Les actions accèdent au state via <code class="text-vue">this</code> (pas besoin de <code class="text-slate-500">.value</code>).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 7: State -->
+    <section id="slide-7" class="slide items-center bg-slate-800 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">06 / State</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">Le <span class="text-vue">state</span> — les données</h2>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <div>
+                    <p class="text-slate-300 text-lg mb-6">Le state est une <strong class="text-white">fonction</strong> qui retourne un objet contenant toutes les données du store.</p>
+
+                    <div class="code-block">
+                        <pre class="text-slate-300"><span class="function">state</span>: () =&gt; ({
+  <span class="comment">// Tableau de Pokémon</span>
+  pokemons: [],
+
+  <span class="comment">// Indicateur de chargement</span>
+  isLoading: <span class="keyword">false</span>,
+
+  <span class="comment">// Message d'erreur</span>
+  error: <span class="keyword">null</span>,
+
+  <span class="comment">// Filtre de recherche</span>
+  searchQuery: <span class="string">''</span>,
+})</pre>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-slate-900/50 p-5 rounded-2xl border border-slate-700">
+                        <h4 class="font-bold mb-2 flex items-center gap-2">
+                            <span class="text-vue">✓</span>
+                            Toujours initialiser
+                        </h4>
+                        <p class="text-slate-400 text-sm">Chaque propriété doit avoir une valeur par défaut : tableau vide <code class="text-vue">[]</code>, booléen <code class="text-vue">false</code>, ou <code class="text-vue">null</code>.</p>
+                    </div>
+                    <div class="bg-slate-900/50 p-5 rounded-2xl border border-slate-700">
+                        <h4 class="font-bold mb-2 flex items-center gap-2">
+                            <span class="text-vue">✓</span>
+                            Réactif automatiquement
+                        </h4>
+                        <p class="text-slate-400 text-sm">Pinia rend le state réactif — les composants qui l'utilisent se mettent à jour automatiquement.</p>
+                    </div>
+                    <div class="bg-slate-900/50 p-5 rounded-2xl border border-slate-700">
+                        <h4 class="font-bold mb-2 flex items-center gap-2">
+                            <span class="text-vue">✓</span>
+                            Partagé partout
+                        </h4>
+                        <p class="text-slate-400 text-sm">Tous les composants accèdent aux <strong class="text-white">mêmes données</strong>. Plus besoin de props pour passer les données.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-red-500/10 border border-red-500/30 p-4 rounded-xl">
+                <p class="text-red-400 font-medium">⚠️ Règle importante</p>
+                <p class="text-slate-400 text-sm mt-1">Ne jamais modifier le state directement depuis un composant — toujours passer par une <strong class="text-white">action</strong> du store.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 8: Getters -->
+    <section id="slide-8" class="slide items-center bg-slate-900 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">07 / Getters</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">Les <span class="text-vue">getters</span> — données calculées</h2>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <!-- Getter simple -->
+                <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <span class="px-3 py-1 bg-vue/20 text-vue rounded-lg text-sm font-mono">Getter simple</span>
+                    </h3>
+                    <p class="text-slate-400 text-sm mb-4">S'utilise comme une propriété (sans parenthèses)</p>
+                    <div class="code-block mb-4">
+                        <pre class="text-slate-300"><span class="comment">// Définition</span>
+getters: {
+  <span class="function">totalPokemons</span>: (state) =&gt;
+    state.pokemons.length,
+}</pre>
+                    </div>
+                    <div class="code-block">
+                        <pre class="text-slate-300"><span class="comment">// Utilisation dans le template</span>
+<span class="tag">&lt;p&gt;</span>{{ store.<span class="attr">totalPokemons</span> }} Pokémon<span class="tag">&lt;/p&gt;</span></pre>
+                    </div>
+                </div>
+
+                <!-- Getter avec paramètre -->
+                <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <span class="px-3 py-1 bg-vue/20 text-vue rounded-lg text-sm font-mono">Getter avec paramètre</span>
+                    </h3>
+                    <p class="text-slate-400 text-sm mb-4">Retourne une <strong class="text-white">fonction</strong> qu'on appelle avec un argument</p>
+                    <div class="code-block mb-4">
+                        <pre class="text-slate-300"><span class="comment">// Définition</span>
+getters: {
+  <span class="function">getPokemonById</span>: (state) =&gt; {
+    <span class="keyword">return</span> (id) =&gt;
+      state.pokemons.<span class="function">find</span>(
+        p =&gt; p.id === id
+      )
+  },
+}</pre>
+                    </div>
+                    <div class="code-block">
+                        <pre class="text-slate-300"><span class="comment">// Utilisation</span>
+<span class="keyword">const</span> pikachu =
+  store.<span class="function">getPokemonById</span>(<span class="string">25</span>)</pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-vue/10 border border-vue/30 p-4 rounded-xl">
+                <p class="text-vue font-medium">💡 Réactivité automatique</p>
+                <p class="text-slate-300 text-sm mt-2">Les getters se recalculent automatiquement quand le state change — exactement comme <code class="text-vue">computed()</code>.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 9: Actions -->
+    <section id="slide-9" class="slide items-center bg-slate-800 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">08 / Actions</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">Les <span class="text-vue">actions</span> — modifier le state</h2>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <div>
+                    <p class="text-slate-300 text-lg mb-6">Les actions sont des <strong class="text-white">fonctions</strong> qui modifient le state. Elles peuvent être synchrones ou asynchrones.</p>
+
+                    <div class="code-block">
+                        <pre class="text-slate-300">actions: {
+  <span class="keyword">async</span> <span class="function">fetchPokemons</span>() {
+    <span class="comment">// 1. Début du chargement</span>
+    <span class="keyword">this</span>.isLoading = <span class="keyword">true</span>
+    <span class="keyword">this</span>.error = <span class="keyword">null</span>
+
+    <span class="keyword">try</span> {
+      <span class="comment">// 2. Appel API</span>
+      <span class="keyword">const</span> res = <span class="keyword">await</span> <span class="function">fetch</span>(
+        <span class="string">'http://localhost:3535/pokemons'</span>
+      )
+      <span class="comment">// 3. Stocker les données</span>
+      <span class="keyword">this</span>.pokemons =
+        <span class="keyword">await</span> res.<span class="function">json</span>()
+
+    } <span class="keyword">catch</span> (err) {
+      <span class="comment">// 4. Gérer l'erreur</span>
+      <span class="keyword">this</span>.error =
+        <span class="string">'Impossible de charger'</span>
+
+    } <span class="keyword">finally</span> {
+      <span class="comment">// 5. Fin du chargement</span>
+      <span class="keyword">this</span>.isLoading = <span class="keyword">false</span>
+    }
+  },
+}</pre>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-slate-900/50 p-5 rounded-2xl border border-vue/30">
+                        <h4 class="text-vue font-bold mb-2">Pattern loading / error / data</h4>
+                        <p class="text-slate-400 text-sm">Schéma classique pour les appels API :</p>
+                        <div class="mt-3 space-y-2">
+                            <div class="flex items-center gap-3">
+                                <span class="w-6 h-6 bg-vue/20 rounded-full flex items-center justify-center text-vue text-xs font-bold">1</span>
+                                <span class="text-slate-300 text-sm"><code class="text-vue">isLoading = true</code></span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="w-6 h-6 bg-vue/20 rounded-full flex items-center justify-center text-vue text-xs font-bold">2</span>
+                                <span class="text-slate-300 text-sm">Appel <code class="text-vue">fetch()</code></span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="w-6 h-6 bg-vue/20 rounded-full flex items-center justify-center text-vue text-xs font-bold">3</span>
+                                <span class="text-slate-300 text-sm">Stocker dans <code class="text-vue">this.pokemons</code></span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="w-6 h-6 bg-red-500/20 rounded-full flex items-center justify-center text-red-400 text-xs font-bold">4</span>
+                                <span class="text-slate-300 text-sm">Ou erreur dans <code class="text-vue">this.error</code></span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="w-6 h-6 bg-slate-600/50 rounded-full flex items-center justify-center text-slate-300 text-xs font-bold">5</span>
+                                <span class="text-slate-300 text-sm"><code class="text-vue">isLoading = false</code></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900/50 p-5 rounded-2xl border border-slate-700">
+                        <h4 class="font-bold mb-2 flex items-center gap-2">
+                            <span class="text-vue">this</span>
+                            <span class="text-slate-400 text-sm font-normal">= le store</span>
+                        </h4>
+                        <p class="text-slate-400 text-sm">Dans une action, <code class="text-vue">this</code> fait référence au store. Pas besoin de <code class="text-slate-500">.value</code> comme avec <code class="text-vue">ref()</code>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 10: Utiliser le store -->
+    <section id="slide-10" class="slide items-center bg-slate-900 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">09 / Utiliser le store</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">Utiliser le store dans un <span class="text-vue">composant</span></h2>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <div>
+                    <p class="text-slate-400 text-sm mb-3 font-mono">📄 pages/PageAccueil.vue</p>
+                    <div class="code-block">
+                        <pre class="text-slate-300"><span class="tag">&lt;script setup&gt;</span>
+<span class="keyword">import</span> { <span class="function">usePokemonStore</span> }
+  <span class="keyword">from</span> <span class="string">'@/stores/pokemonStore'</span>
+<span class="keyword">import</span> { <span class="function">storeToRefs</span> }
+  <span class="keyword">from</span> <span class="string">'pinia'</span>
+<span class="keyword">import</span> { <span class="function">onMounted</span> }
+  <span class="keyword">from</span> <span class="string">'vue'</span>
+
+<span class="comment">// 1. Instancier le store</span>
+<span class="keyword">const</span> pokemonStore =
+  <span class="function">usePokemonStore</span>()
+
+<span class="comment">// 2. Extraire le state (réactif !)</span>
+<span class="keyword">const</span> { pokemons, isLoading, error } =
+  <span class="function">storeToRefs</span>(pokemonStore)
+
+<span class="comment">// 3. Charger les données au montage</span>
+<span class="function">onMounted</span>(() =&gt; {
+  pokemonStore.<span class="function">fetchPokemons</span>()
+})
+<span class="tag">&lt;/script&gt;</span></pre>
+                    </div>
+                </div>
+
+                <div>
+                    <p class="text-slate-400 text-sm mb-3 font-mono">📄 template</p>
+                    <div class="code-block mb-6">
+                        <pre class="text-slate-300"><span class="tag">&lt;template&gt;</span>
+  <span class="tag">&lt;div&gt;</span>
+    <span class="comment">&lt;!-- Chargement --&gt;</span>
+    <span class="tag">&lt;p</span> <span class="attr">v-if</span>=<span class="string">"isLoading"</span><span class="tag">&gt;</span>
+      Chargement...
+    <span class="tag">&lt;/p&gt;</span>
+
+    <span class="comment">&lt;!-- Erreur --&gt;</span>
+    <span class="tag">&lt;p</span> <span class="attr">v-else-if</span>=<span class="string">"error"</span><span class="tag">&gt;</span>
+      {{ error }}
+    <span class="tag">&lt;/p&gt;</span>
+
+    <span class="comment">&lt;!-- Données --&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attr">v-else</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;PokemonCard</span>
+        <span class="attr">v-for</span>=<span class="string">"p in pokemons"</span>
+        <span class="attr">:key</span>=<span class="string">"p.id"</span>
+        <span class="attr">:pokemon</span>=<span class="string">"p"</span>
+      <span class="tag">/&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/template&gt;</span></pre>
+                    </div>
+
+                    <div class="bg-vue/10 border border-vue/30 p-4 rounded-xl">
+                        <p class="text-vue font-medium">💡 Remarquez</p>
+                        <p class="text-slate-300 text-sm mt-2">Grâce à <code class="text-vue">storeToRefs</code>, on utilise <code class="text-vue">pokemons</code> directement dans le template, sans <code class="text-slate-500">store.pokemons</code>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 11: storeToRefs -->
+    <section id="slide-11" class="slide items-center bg-slate-800 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">10 / storeToRefs</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-8"><span class="text-vue">storeToRefs</span> — pourquoi ?</h2>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <!-- SANS storeToRefs -->
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-red-500/30">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <span class="px-3 py-1 bg-red-500/20 text-red-400 rounded-lg text-sm font-mono">❌ Sans storeToRefs</span>
+                    </h3>
+                    <div class="code-block mb-4">
+                        <pre class="text-slate-300"><span class="keyword">const</span> store = <span class="function">usePokemonStore</span>()
+
+<span class="comment">// ❌ PERD la réactivité !</span>
+<span class="keyword">const</span> { pokemons } = store
+
+<span class="comment">// pokemons est une copie figée</span>
+<span class="comment">// Le template ne se met plus à jour</span></pre>
+                    </div>
+                    <p class="text-red-400 text-sm">La destructuration casse le lien réactif avec le store. La variable <code class="text-white">pokemons</code> est une simple valeur, pas une ref.</p>
+                </div>
+
+                <!-- AVEC storeToRefs -->
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-vue/30">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <span class="px-3 py-1 bg-vue/20 text-vue rounded-lg text-sm font-mono">✅ Avec storeToRefs</span>
+                    </h3>
+                    <div class="code-block mb-4">
+                        <pre class="text-slate-300"><span class="keyword">import</span> { <span class="function">storeToRefs</span> } <span class="keyword">from</span> <span class="string">'pinia'</span>
+
+<span class="keyword">const</span> store = <span class="function">usePokemonStore</span>()
+
+<span class="comment">// ✅ GARDE la réactivité !</span>
+<span class="keyword">const</span> { pokemons } =
+  <span class="function">storeToRefs</span>(store)
+
+<span class="comment">// pokemons est une ref réactive</span></pre>
+                    </div>
+                    <p class="text-vue text-sm">Chaque propriété destructurée reste une <code class="text-white">ref</code> réactive. Le template se met à jour quand le store change.</p>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 mb-8">
+                <h3 class="text-lg font-bold mb-4 text-slate-200">La règle à retenir</h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="flex items-start gap-4 p-4 bg-vue/10 rounded-xl border border-vue/20">
+                        <span class="text-2xl">📦</span>
+                        <div>
+                            <p class="font-medium text-vue">State et Getters</p>
+                            <p class="text-sm text-slate-400 mt-1">→ <code class="text-vue">storeToRefs(store)</code></p>
+                            <p class="text-xs text-slate-500 mt-1">pokemons, isLoading, totalPokemons</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4 p-4 bg-vue/10 rounded-xl border border-vue/20">
+                        <span class="text-2xl">⚡</span>
+                        <div>
+                            <p class="font-medium text-vue">Actions</p>
+                            <p class="text-sm text-slate-400 mt-1">→ <code class="text-vue">store.fetchPokemons()</code></p>
+                            <p class="text-xs text-slate-500 mt-1">Appel direct sur le store</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-red-500/10 border border-red-500/30 p-4 rounded-xl">
+                <p class="text-red-400 font-medium">⚠️ Erreur la plus fréquente avec Pinia</p>
+                <p class="text-slate-400 text-sm mt-1">Oublier <code class="text-vue">storeToRefs</code> est la source de bugs #1 chez les débutants. Si votre template ne se met pas à jour, vérifiez ça en premier !</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 12: Quand utiliser un store ? -->
+    <section id="slide-12" class="slide items-center bg-slate-900 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">11 / Quand utiliser</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-12">Quand utiliser un <span class="text-vue">store</span> ?</h2>
+
+            <div class="grid md:grid-cols-3 gap-6 mb-12">
+                <div class="bg-vue/10 p-6 rounded-2xl border border-vue/30">
+                    <h3 class="text-vue font-bold text-lg mb-4">✅ Store</h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-start gap-2">
+                            <span class="text-vue mt-0.5">•</span>
+                            <span class="text-slate-300">Données partagées entre <strong class="text-white">plusieurs pages</strong></span>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="text-vue mt-0.5">•</span>
+                            <span class="text-slate-300">État global : authentification, panier, favoris</span>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="text-vue mt-0.5">•</span>
+                            <span class="text-slate-300">Données d'API utilisées par plusieurs composants</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-blue-500/10 p-6 rounded-2xl border border-blue-500/30">
+                    <h3 class="text-blue-400 font-bold text-lg mb-4">✅ Props / Emits</h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-start gap-2">
+                            <span class="text-blue-400 mt-0.5">•</span>
+                            <span class="text-slate-300">Données locales à un composant <strong class="text-white">et son enfant direct</strong></span>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="text-blue-400 mt-0.5">•</span>
+                            <span class="text-slate-300">Communication parent ↔ enfant simple</span>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="text-blue-400 mt-0.5">•</span>
+                            <span class="text-slate-300">Données qui ne sortent pas du composant</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-red-500/10 p-6 rounded-2xl border border-red-500/30">
+                    <h3 class="text-red-400 font-bold text-lg mb-4">❌ Pas un store</h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-start gap-2">
+                            <span class="text-red-400 mt-0.5">•</span>
+                            <span class="text-slate-300">État d'un formulaire</span>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="text-red-400 mt-0.5">•</span>
+                            <span class="text-slate-300">Toggle d'un menu / modal</span>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="text-red-400 mt-0.5">•</span>
+                            <span class="text-slate-300">État UI temporaire (hover, focus...)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-vue/10 border border-vue/30 p-6 rounded-2xl text-center">
+                <p class="text-vue font-bold text-xl mb-2">Règle d'or</p>
+                <p class="text-slate-300 text-lg">Si <strong class="text-white">2+ composants non-liés</strong> ont besoin de la même donnée → <strong class="text-vue">store</strong></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 13: Récapitulatif -->
+    <section id="slide-13" class="slide items-center bg-slate-800 py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full">
+            <span class="text-vue font-mono text-sm mb-4 block">12 / Récap</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-12">Ce qu'on a <span class="text-vue">appris</span></h2>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-12">
+                <div class="space-y-4">
+                    <div class="flex items-start gap-4 bg-slate-900/50 p-5 rounded-xl border border-slate-700">
+                        <span class="text-2xl">🔗</span>
+                        <div>
+                            <h4 class="font-bold text-white">Prop drilling</h4>
+                            <p class="text-slate-400 text-sm">Passer des données via props à travers plusieurs niveaux de composants est fragile et pénible.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4 bg-slate-900/50 p-5 rounded-xl border border-slate-700">
+                        <span class="text-2xl">🗄️</span>
+                        <div>
+                            <h4 class="font-bold text-white">Store Pinia</h4>
+                            <p class="text-slate-400 text-sm"><code class="text-vue">defineStore</code> avec <strong>state</strong> (données), <strong>getters</strong> (calculé), <strong>actions</strong> (fonctions).</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4 bg-slate-900/50 p-5 rounded-xl border border-slate-700">
+                        <span class="text-2xl">📦</span>
+                        <div>
+                            <h4 class="font-bold text-white">State</h4>
+                            <p class="text-slate-400 text-sm">Fonction qui retourne un objet. Toujours initialiser chaque propriété.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex items-start gap-4 bg-slate-900/50 p-5 rounded-xl border border-slate-700">
+                        <span class="text-2xl">🧮</span>
+                        <div>
+                            <h4 class="font-bold text-white">Getters</h4>
+                            <p class="text-slate-400 text-sm">Comme <code class="text-vue">computed()</code>. Simple = propriété. Avec paramètre = fonction qui retourne une fonction.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4 bg-slate-900/50 p-5 rounded-xl border border-slate-700">
+                        <span class="text-2xl">⚡</span>
+                        <div>
+                            <h4 class="font-bold text-white">Actions</h4>
+                            <p class="text-slate-400 text-sm">Fonctions sync/async qui modifient le state via <code class="text-vue">this</code>. Pattern loading/error/data.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4 bg-slate-900/50 p-5 rounded-xl border border-slate-700">
+                        <span class="text-2xl">🔑</span>
+                        <div>
+                            <h4 class="font-bold text-white">storeToRefs</h4>
+                            <p class="text-slate-400 text-sm">Obligatoire pour destructurer state/getters. Actions = appel direct sur le store.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-vue/10 border border-vue/30 p-6 rounded-2xl">
+                <p class="text-vue font-bold text-lg mb-2">📋 Checklist projet Pokédex</p>
+                <div class="grid md:grid-cols-2 gap-4 mt-4 text-sm">
+                    <div class="flex items-center gap-2 text-slate-300">
+                        <span class="text-vue">□</span> Créer <code class="text-vue">stores/pokemonStore.js</code>
+                    </div>
+                    <div class="flex items-center gap-2 text-slate-300">
+                        <span class="text-vue">□</span> Déplacer le <code class="text-vue">fetch()</code> dans une action
+                    </div>
+                    <div class="flex items-center gap-2 text-slate-300">
+                        <span class="text-vue">□</span> Ajouter les getters utiles
+                    </div>
+                    <div class="flex items-center gap-2 text-slate-300">
+                        <span class="text-vue">□</span> Utiliser <code class="text-vue">storeToRefs</code> dans les pages
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 14: Ressources -->
+    <section id="slide-14" class="slide items-center gradient-vue py-20">
+        <div class="max-w-6xl mx-auto px-6 w-full text-center">
+            <span class="font-mono text-sm mb-4 block text-white/70">13 / Pour aller plus loin</span>
+            <h2 class="text-4xl md:text-5xl font-bold mb-12">Ressources</h2>
+
+            <div class="grid md:grid-cols-3 gap-6 mb-12">
+                <a href="https://devjs.ch/pinia/" target="_blank" class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl hover:bg-white/20 transition-colors block">
+                    <div class="text-4xl mb-4">📚</div>
+                    <h3 class="text-xl font-bold mb-2">devjs.ch/pinia</h3>
+                    <p class="text-white/70 text-sm">Support de cours Pinia</p>
+                </a>
+
+                <a href="https://pinia.vuejs.org/" target="_blank" class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl hover:bg-white/20 transition-colors block">
+                    <div class="text-4xl mb-4">🍍</div>
+                    <h3 class="text-xl font-bold mb-2">Documentation Pinia</h3>
+                    <p class="text-white/70 text-sm">pinia.vuejs.org</p>
+                </a>
+
+                <a href="https://devjs.ch/exercices/pokedex-vuetify" target="_blank" class="bg-white/10 backdrop-blur-sm p-6 rounded-2xl hover:bg-white/20 transition-colors block">
+                    <div class="text-4xl mb-4">💻</div>
+                    <h3 class="text-xl font-bold mb-2">Exercice Pokédex</h3>
+                    <p class="text-white/70 text-sm">Mise en pratique</p>
+                </a>
+            </div>
+
+            <div class="bg-white/10 backdrop-blur-sm p-8 rounded-2xl max-w-2xl mx-auto mb-12">
+                <h3 class="text-2xl font-bold mb-4">Prochaine séance</h3>
+                <p class="text-white/80 mb-2">Axios, .env et robustesse API</p>
+                <p class="text-white/60 text-sm">Remplacer fetch par Axios, variables d'environnement, gestion d'erreurs avancée</p>
+            </div>
+
+            <div class="flex justify-center gap-4">
+                <a href="https://devjs.ch/pinia/01-introduction" target="_blank" class="px-8 py-4 bg-white text-vueDark font-bold rounded-xl hover:bg-white/90 transition-colors">
+                    Voir le cours complet
+                </a>
+                <a href="https://devjs.ch/exercices/pokedex-vuetify" target="_blank" class="px-8 py-4 bg-white/20 font-bold rounded-xl hover:bg-white/30 transition-colors">
+                    Exercice Pokédex
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script src="../libs/slides.js"></script>
+</body>
+</html>
