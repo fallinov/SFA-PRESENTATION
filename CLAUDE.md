@@ -33,6 +33,7 @@ SFA-PRESENTATION/
 - Tailwind CSS local : `libs/tailwind.js`
 - Polices locales : Inter + JetBrains Mono dans `libs/fonts/`
 - Aucun CDN externe — tout est self-hosted
+- **Viewport de référence** : `slides.js` force chaque slide à **1280×720px** avec `transform: scale()`. Ne jamais utiliser `min-h-screen`, `100vh` ou d'autres unités viewport — le budget vertical est fixe (720px - padding). Chaque `.slide` doit avoir un fond explicite (`bg-slate-900`) car le scaling empêche l'héritage du body
 
 ### Assets
 - Tous les assets partagés dans `assets/` à la racine

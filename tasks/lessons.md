@@ -21,6 +21,13 @@
 **Correction** : Changé le format de placeholder en `§PH_N§` — le caractère `§` n'est pas un word character (`\w`), donc `\b` ne matche pas à la frontière
 **Règle** : Quand on utilise des placeholders dans un pipeline de regex, choisir des délimiteurs qui ne peuvent pas être matchés par les autres regex du pipeline
 
+## 2026-03-30 — Présentation avec framework custom (pas slides.js)
+
+**Contexte** : Ajout de fiches-eleves.html (ESIG 113) qui utilise son propre système de slides (pas slides.js/slides.css)
+**Erreur** : Le fichier source utilisait `cdn.tailwindcss.com` — violation de la règle souveraineté
+**Correction** : Remplacé par `../libs/tailwind.js` (lib locale)
+**Règle** : Toute présentation importée doit être auditée pour les CDN externes avant ajout. Remplacer systématiquement par les libs locales
+
 ## 2026-03-14 — Spécificité CSS : styles globaux écrasent Tailwind inline
 
 **Contexte** : Les styles `.slide p { color: #cbd5e1; font-size: 1.125rem; }` écrasaient les classes Tailwind comme `text-sm` sur le HTML inline dans les slides
