@@ -8,7 +8,7 @@
   Cours 113 — séances 1 et 2 (histoire du web, IA, HTML, Git & GitHub)
   Moteur : deckadence (caméra sur un plan infini, anime.js v4 self-hosted)
   Design : « Ardoise DevJS » — charte devjs.ch (slate + teal, Inter + JetBrains Mono)
-  Navigation : flèches/Espace · O = vue d'ensemble · #sN = lien direct
+  Navigation : flèches/Espace · Home/End = début/fin · O = vue d'ensemble · #sN = lien direct (l'URL suit la station courante)
 -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
 <link rel="stylesheet" href="../libs/fonts.css">
@@ -33,10 +33,11 @@
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--ink); }
+  /* clip (pas hidden) : interdit le scroll natif vers les ancres #sN, qui désynchroniserait la caméra */
+  html, body { height: 100%; overflow: clip; background: var(--bg); color: var(--ink); }
   body { font-family: var(--font-body); -webkit-font-smoothing: antialiased; }
 
-  #viewport { position: fixed; inset: 0; overflow: hidden; background: var(--bg); transition: background-color .55s var(--ease-expo); }
+  #viewport { position: fixed; inset: 0; overflow: clip; background: var(--bg); transition: background-color .55s var(--ease-expo); }
   body.invert-hud, body.invert-hud #viewport { background: var(--ink); }
   #world { position: absolute; top: 0; left: 0; transform-origin: 0 0; will-change: transform; }
 
@@ -83,8 +84,9 @@
   #hud .counter { font-variant-numeric: tabular-nums; opacity: .65; }
   #hud .station-name { text-transform: uppercase; opacity: .5; }
   #rail { display: flex; gap: 10px; pointer-events: auto; }
-  #rail .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; opacity: .22; cursor: pointer; transition: opacity .3s, transform .3s; }
+  #rail .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; opacity: .22; cursor: pointer; transition: opacity .3s, transform .3s; border: 0; padding: 0; }
   #rail .dot:hover { opacity: .6; }
+  #rail .dot:focus-visible { opacity: 1; outline: 2px solid currentColor; outline-offset: 3px; }
   #rail .dot.active { opacity: 1; transform: scale(1.35); }
   #railtip {
     position: fixed; bottom: 52px; transform: translateX(-50%); z-index: 51;
@@ -238,7 +240,7 @@
       <div class="eyebrow" data-fade>Votre formateur</div>
       <h2 class="display md" data-split="lines">Steve Fallet</h2>
       <div class="moi">
-        <div class="ligne" data-fade>Informaticien de gestion HES — passionné de développement web et de nouvelles technologies</div>
+        <div class="ligne" data-fade>Informaticien de gestion HES — techno-enthousiaste</div>
         <div class="ligne" data-fade>Enseignant d'informatique à l'ESIG — HTML &amp; CSS, JavaScript, Vue.js, WordPress</div>
         <div class="ligne" data-fade>Responsable pédagogique au Service de la formation postobligatoire</div>
         <div class="ligne" data-fade>Marié, une fille — habite à Porrentruy</div>
@@ -323,7 +325,7 @@
           <div class="detail">Sans ordinateur, sans notes : il faut savoir écrire du HTML et du CSS de tête. Un examen blanc en décembre te dira où tu en es.</div>
         </div>
       </div>
-      <div class="ex-head" data-fade>Deux projets de la volée passée — parties de zéro, comme toi. <span class="accent">Scanne.</span></div>
+      <div class="ex-head" data-fade>Deux projets de la volée passée — partis de zéro, comme toi. <span class="accent">Scanne.</span></div>
       <div class="exemple" data-fade>
         <div class="ex-item">
           <div class="qr-card mini">
@@ -413,15 +415,19 @@
       <div class="cols">
         <div class="oui" data-fade>
           <h3>✓ Bon usage</h3>
-          <li>Se faire expliquer un concept difficile</li>
-          <li>Explorer des alternatives de design</li>
-          <li>Se challenger, se faire questionner</li>
+          <ul>
+            <li>Se faire expliquer un concept difficile</li>
+            <li>Explorer des alternatives de design</li>
+            <li>Se challenger, se faire questionner</li>
+          </ul>
         </div>
         <div class="non" data-fade>
           <h3>✗ Piège</h3>
-          <li>Générer son code sans le comprendre</li>
-          <li>L'illusion de la compétence</li>
-          <li>Le réflexe « IA d'abord » — la dépendance</li>
+          <ul>
+            <li>Générer son code sans le comprendre</li>
+            <li>L'illusion de la compétence</li>
+            <li>Le réflexe « IA d'abord » — la dépendance</li>
+          </ul>
         </div>
       </div>
     </section>
@@ -532,7 +538,7 @@
         <div data-fade class="dead">site-final-2.html</div>
         <div data-fade class="last">site-VRAIMENT-final-corrige.html</div>
       </div>
-      <div class="verdict" data-fade>Git règle ça. <span class="accent">Définitivement.</span></div>
+      <h2 class="verdict" data-fade>Git règle ça. <span class="accent">Définitivement.</span></h2>
     </section>
 
     <section class="station" id="s24" data-name="Trois mots" data-x="27600" data-y="15950">
@@ -624,15 +630,21 @@
   const rail = document.getElementById('rail');
   const railtip = document.createElement('div'); railtip.id = 'railtip'; document.body.appendChild(railtip);
   stations.forEach((s, i) => {
-    const d = document.createElement('div'); d.className = 'dot' + (i ? '' : ' active');
+    const d = document.createElement('button'); d.type = 'button';
+    d.className = 'dot' + (i ? '' : ' active');
+    d.setAttribute('aria-label', String(i + 1).padStart(2, '0') + ' · ' + s.name);
     d.addEventListener('click', () => { if (!busy && i !== cur) goto(i); });
-    d.addEventListener('mouseenter', () => {
+    const showTip = () => {
       const r = d.getBoundingClientRect();
       railtip.textContent = String(i + 1).padStart(2, '0') + ' · ' + s.name;
       railtip.style.left = (r.left + r.width / 2) + 'px';
       railtip.classList.add('show');
-    });
-    d.addEventListener('mouseleave', () => railtip.classList.remove('show'));
+    };
+    const hideTip = () => railtip.classList.remove('show');
+    d.addEventListener('mouseenter', showTip);
+    d.addEventListener('mouseleave', hideTip);
+    d.addEventListener('focus', showTip);
+    d.addEventListener('blur', hideTip);
     rail.appendChild(d);
   });
   const dots = Array.from(rail.children);
@@ -699,6 +711,7 @@
     if (i < 0 || i >= stations.length) return;
     const prev = cur; cur = i; overview = false;
     setHud(i);
+    history.replaceState(null, '', '#' + stations[i].el.id);
     Object.values(sceneRegistry).forEach(sc => sc.stop());
     const s = stations[i], isNew = i !== prev;
     if (s.el.dataset.fly === 'through-overview' && isNew) { flyThroughOverview(s); return; }
@@ -954,12 +967,24 @@
   function next() { if (!busy && cur < stations.length - 1) goto(cur + 1); }
   function prev() { if (!busy && cur > 0) goto(cur - 1); }
   window.addEventListener('keydown', e => {
-    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+    // Espace sur un bouton/lien focusé = activation native, pas navigation
+    const onControl = e.target.closest && e.target.closest('a, button');
+    if (e.key === 'ArrowRight' || (e.key === ' ' && !onControl) || e.key === 'PageDown') { e.preventDefault(); next(); }
     else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+    else if (e.key === 'Home') { e.preventDefault(); if (!busy) goto(0); }
+    else if (e.key === 'End') { e.preventDefault(); if (!busy) goto(stations.length - 1); }
     else if (e.key === 'o' || e.key === 'O' || e.key === 'ArrowUp') { e.preventDefault(); if (!busy) toOverview(); }
     else if (e.key === 'ArrowDown' || e.key === 'Escape') { e.preventDefault(); if (!busy) goto(cur); }
   });
-  stations.forEach((s, i) => s.el.addEventListener('click', () => { if (overview && !busy) goto(i); }));
+  stations.forEach((s, i) => s.el.addEventListener('click', e => {
+    if (overview && !busy) { e.preventDefault(); goto(i); }
+  }));
+
+  /* hash modifié à la main ou lien d'ancre : navigation propre via la caméra */
+  window.addEventListener('hashchange', () => {
+    const i = stations.findIndex(s => '#' + s.el.id === location.hash);
+    if (i >= 0 && i !== cur && !busy) goto(i);
+  });
 
   window.addEventListener('resize', () => {
     stations.forEach(s => { s.w = s.el.offsetWidth; s.h = s.el.offsetHeight; s.cx = s.x + s.w / 2; s.cy = s.y + s.h / 2; });

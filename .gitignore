@@ -6,3 +6,4 @@ node_modules/
 slidev-test/
 .playwright-mcp/
 *.png
+playwright/

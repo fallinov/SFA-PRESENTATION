@@ -28,6 +28,20 @@
 **Correction** : Remplacé par `../libs/tailwind.js` (lib locale)
 **Règle** : Toute présentation importée doit être auditée pour les CDN externes avant ajout. Remplacer systématiquement par les libs locales
 
+## 2026-04-24 — Overflow slides : min-h-screen et p-12 dans un viewport 1280×720
+
+**Contexte** : La présentation `site-cejef-copil.html` avait du contenu tronqué sur plusieurs slides (titre invisible, items coupés)
+**Erreur** : Toutes les slides utilisaient `min-h-screen` (inutile car le moteur force 1280×720) et `p-12` (96px de padding vertical, soit 13% du budget perdu). La slide de validation avec 8 items débordait de 186px
+**Correction** : Retiré `min-h-screen`, réduit `p-12` → `p-8`, ajouté `bg-slate-900` sur chaque slide (le scaling empêche l'héritage du fond body), scindé la slide 10 (8 items) en 2 slides de 4
+**Règle** : Toujours dimensionner le contenu pour 1280×720px fixe. Max ~580px de contenu vertical avec `p-8`. Pas de classes viewport-relatives. Chaque slide doit avoir son propre `bg-*`
+
+## 2026-08-19 — Decks deckadence : le scroll natif des ancres #sN désynchronise la caméra
+
+**Contexte** : Relecture de `devjs/113-demarrage.html` — test des liens directs `#sN` promis dans l'en-tête
+**Erreur** : `#viewport { overflow: hidden }` cache les scrollbars mais reste scrollable programmatiquement. Une navigation vers `#s14` (lien d'ancre, hash tapé à la main) déclenchait le scroll natif du fragment : le viewport se décalait de ~10000px, la caméra et le HUD ne le savaient pas → deck complètement désynchronisé
+**Correction** : `overflow: clip` sur `html`, `body` et `#viewport` (interdit tout scroll, même programmatique) + listener `hashchange` qui route vers `goto(i)` + `history.replaceState` à chaque navigation pour que l'URL suive la station courante (F5 reprend où on en était)
+**Règle** : Dans un moteur caméra à monde infini, toujours utiliser `overflow: clip` (pas `hidden`) sur les conteneurs, et gérer les ancres soi-même via `hashchange`. `replaceState` ne déclenche pas `hashchange` — pas de boucle
+
 ## 2026-03-14 — Spécificité CSS : styles globaux écrasent Tailwind inline
 
 **Contexte** : Les styles `.slide p { color: #cbd5e1; font-size: 1.125rem; }` écrasaient les classes Tailwind comme `text-sm` sur le HTML inline dans les slides
