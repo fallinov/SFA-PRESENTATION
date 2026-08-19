@@ -17,7 +17,7 @@ SFA-PRESENTATION/
 ├── assets/             # Fichiers partagés (logos SVG, backgrounds PNG)
 ├── libs/               # Librairies partagées (slides.js, slides.css, md2slides, etc.)
 ├── wordpress/          # ESIG 741 — Atelier CMS
-├── devjs/              # ESIG 122/141 — JavaScript & Vue.js
+├── devjs/              # ESIG 113/122/141 — HTML/CSS, JavaScript & Vue.js
 ├── cours-mots-de-passes/ # CEJEF — Formation sécurité
 ├── fiches-eleves/         # ESIG 113 — Fiches projets personnels (framework custom, pas slides.js)
 └── referentiel-logiciels/ # CEJEF — GCN, COPIL, SEN
@@ -30,9 +30,11 @@ SFA-PRESENTATION/
 - Système de slides unifié : `libs/slides.js` (navigation, clavier, touch, contraste) + `libs/slides.css`
 - Mode scroll (WordPress) : ajouter `data-nav="scroll"` sur `<body>`
 - Mode toggle (défaut) : `.slide` / `.slide.active`
+- **Decks deckadence** (ex. `devjs/113-demarrage.html`) : moteur caméra autonome (stations sur un plan, anime.js) — indépendant de `slides.js`, mêmes règles de souveraineté
 - Tailwind CSS local : `libs/tailwind.js`
 - Polices locales : Inter + JetBrains Mono dans `libs/fonts/`
 - Aucun CDN externe — tout est self-hosted
+- **Viewport de référence** : `slides.js` force chaque slide à **1280×720px** avec `transform: scale()`. Ne jamais utiliser `min-h-screen`, `100vh` ou d'autres unités viewport — le budget vertical est fixe (720px - padding). Chaque `.slide` doit avoir un fond explicite (`bg-slate-900`) car le scaling empêche l'héritage du body
 
 ### Assets
 - Tous les assets partagés dans `assets/` à la racine
@@ -46,6 +48,7 @@ SFA-PRESENTATION/
 - `tailwind.js` — Tailwind CSS (script standalone)
 - `fonts.css` — Déclarations @font-face (latin + latin-ext)
 - `fonts/` — Fichiers woff2 (Inter, JetBrains Mono)
+- `anime.umd.min.js` — anime.js v4 (requis par les decks deckadence)
 - Depuis un sous-dossier : `../libs/slides.js`, `../libs/slides.css`, etc.
 - Depuis la racine : `libs/slides.js`, `libs/slides.css`, etc.
 
